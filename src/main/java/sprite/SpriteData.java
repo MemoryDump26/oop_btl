@@ -8,7 +8,7 @@ public class SpriteData {
     final public int w;
     final public int h;
 
-    public SpriteData(String name, int frames, int w, int h) {
+public SpriteData(String name, int frames, int w, int h) {
         images = new Image[frames];
         this.frames = frames;
         this.w = w;
