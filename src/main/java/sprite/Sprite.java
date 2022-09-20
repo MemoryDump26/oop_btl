@@ -40,10 +40,18 @@ public class Sprite {
     }
 
     public void render() {
+        render(0, 0, data.w, data.h);
+    }
+
+    public void render(int x, int y) {
+        render(x, y, data.w, data.h);
+    }
+
+    public void render(int x, int y, int w, int h) {
         if (!visible) {
             return;
         }
-        gc.drawImage(data.images[currentFrame], 0, 0);
+        gc.drawImage(data.images[currentFrame], x, y, w, h);
         if (paused) {
             return;
         }

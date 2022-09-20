@@ -24,7 +24,7 @@ public class Main extends Application {
     Sprite test;
 
     public Main() {
-        testData = new SpriteData("test/test", 20);
+        testData = new SpriteData("test/test", 26, 1000, 1000);
         test = new Sprite(testData, gc);
     }
 
@@ -60,7 +60,7 @@ public class Main extends Application {
     }
     public void render() {
         //gc.drawImage(test.images[test.advance()], x, y);
-        test.render();
+        test.render(100, 100, 200, 200);
         gc.fillText("lmao", 100, 100);
         gc.strokeText("lmao", 100, 100);
     }
