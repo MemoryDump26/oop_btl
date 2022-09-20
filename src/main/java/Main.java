@@ -1,5 +1,7 @@
+import entity.Player;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -18,26 +20,21 @@ public class Main extends Application {
     Canvas mainCanvas = new Canvas(1000, 1000);
     GraphicsContext gc = mainCanvas.getGraphicsContext2D();
     Font theFont = Font.font( "Times New Roman", FontWeight.BOLD, 48 );
-    int x = 0;
-    int y = 0;
-    SpriteData testData;
-    Sprite test;
+    SpriteData playerSprite = new SpriteData("test/test", 26, 1000, 1000);
+    Player p1 = new Player(new Point2D(0, 0), playerSprite, gc);
 
     public Main() {
-        testData = new SpriteData("test/test", 26, 1000, 1000);
-        test = new Sprite(testData, gc);
     }
 
     public void start(Stage stage) {
         stage.setScene(scene);
         stage.setTitle("ayy lmao");
         root.getChildren().add(mainCanvas);
-        test.setTickPerFrame(3);
 
         gc.setFill(Color.AQUA);
-        gc.setStroke( Color.WHITE );
+        gc.setStroke(Color.BLACK);
         gc.setLineWidth(2);
-        gc.setFont( theFont );
+        gc.setFont(theFont);
 
         new AnimationTimer() {
             public void handle(long currentNanoTime) {
@@ -51,16 +48,14 @@ public class Main extends Application {
     }
 
     public void update() {
-        x = (x + 10) % 1000;
-        y = (y + 10) % 1000;
+        p1.moveRight();
     }
     public void renderClear() {
         gc.setGlobalBlendMode(BlendMode.SRC_OVER);
         gc.fillRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
     }
     public void render() {
-        //gc.drawImage(test.images[test.advance()], x, y);
-        test.render(100, 100, 200, 200);
+        p1.render();
         gc.fillText("lmao", 100, 100);
         gc.strokeText("lmao", 100, 100);
     }

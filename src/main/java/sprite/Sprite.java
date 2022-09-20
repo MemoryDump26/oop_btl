@@ -43,11 +43,11 @@ public class Sprite {
         render(0, 0, data.w, data.h);
     }
 
-    public void render(int x, int y) {
+    public void render(double x, double y) {
         render(x, y, data.w, data.h);
     }
 
-    public void render(int x, int y, int w, int h) {
+    public void render(double x, double y, double w, double h) {
         if (!visible) {
             return;
         }
