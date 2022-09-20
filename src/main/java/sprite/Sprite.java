@@ -1,31 +1,65 @@
 package sprite;
 
-import javafx.scene.image.Image;
+import javafx.scene.canvas.GraphicsContext;
 
 public class Sprite {
-    public Image[] images;
-    private int frames;
-    private int fps;
+    final private GraphicsContext gc;
+    private SpriteData data;
+
     private int currentFrame = 0;
+    private int tickPerFrame = 0;
+    private int ticks = 0;
+    private boolean loop = true;
+    private boolean visible = true;
+    private boolean paused = false;
 
-    public Sprite(String name, int frames, int fps) {
-        images = new Image[frames];
-        for (int i = 0; i < frames; i++) {
-            images[i] = new Image(name + i + ".png");
+    public Sprite(SpriteData data, GraphicsContext gc) {
+        this.data = data;
+        this.gc = gc;
+    }
+
+    public void setSpriteData(SpriteData data) {
+        this.data = data;
+        currentFrame = 0;
+    }
+
+    public void setTickPerFrame(int n) {
+        this.tickPerFrame = n - 1;
+    }
+
+    public void setLoop(boolean loop) {
+        this.loop = loop;
+    }
+
+    public void show() {
+        visible = true;
+    }
+
+    public void hide() {
+        visible = false;
+    }
+
+    public void render() {
+        if (!visible) {
+            return;
         }
-        this.frames = frames;
-        this.fps = fps;
+        gc.drawImage(data.images[currentFrame], 0, 0);
+        if (paused) {
+            return;
+        }
+        if (ticks < tickPerFrame) {
+            ticks++;
+        } else {
+            currentFrame++;
+            ticks = 0;
+        }
+        if (currentFrame == data.frames) {
+            if (loop) {
+                currentFrame = 0;
+            } else {
+                currentFrame--;
+                paused = true;
+            }
+        }
     }
-
-    public int advance() {
-        int tmp = currentFrame;
-        currentFrame = (currentFrame + 1) % frames;
-        return tmp;
-    }
-
-    /*public Sprite() {
-        images = new Image;
-        int frames = 0;
-        int fps = 0;
-    }*/
 }

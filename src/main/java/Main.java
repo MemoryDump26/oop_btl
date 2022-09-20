@@ -10,6 +10,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import sprite.Sprite;
+import sprite.SpriteData;
 
 public class Main extends Application {
     Group root = new Group();
@@ -19,16 +20,19 @@ public class Main extends Application {
     Font theFont = Font.font( "Times New Roman", FontWeight.BOLD, 48 );
     int x = 0;
     int y = 0;
+    SpriteData testData;
     Sprite test;
 
     public Main() {
-        test = new Sprite("test/test", 20, 60);
+        testData = new SpriteData("test/test", 20);
+        test = new Sprite(testData, gc);
     }
 
     public void start(Stage stage) {
         stage.setScene(scene);
         stage.setTitle("ayy lmao");
         root.getChildren().add(mainCanvas);
+        test.setTickPerFrame(3);
 
         gc.setFill(Color.AQUA);
         gc.setStroke( Color.WHITE );
@@ -55,7 +59,8 @@ public class Main extends Application {
         gc.fillRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
     }
     public void render() {
-        gc.drawImage(test.images[test.advance()], x, y);
+        //gc.drawImage(test.images[test.advance()], x, y);
+        test.render();
         gc.fillText("lmao", 100, 100);
         gc.strokeText("lmao", 100, 100);
     }
