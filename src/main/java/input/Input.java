@@ -1,21 +1,19 @@
 package input;
 
-import java.beans.PropertyChangeListener;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-
 public class Input {
     public static char lastKeyPress;
     public static char lastKeyReleased;
     public static ArrayList<KeyCode> inputList = new ArrayList<KeyCode>();
-    public HashMap<String, Boolean> Pr = new HashMap<String, Boolean>();
-
+    public Map<String, Boolean> Pr = new HashMap<String, Boolean>();
     public void attachEventHandlers(Scene s){
         keyReleaseHanlder krh = new keyReleaseHanlder();
         keyPressedHandler kph = new keyPressedHandler();
@@ -23,14 +21,16 @@ public class Input {
         s.setOnKeyPressed(kph);
     }
 
-    public boolean isKeyDown(KeyCode k, Map <String, Boolean> Arraylist) {
-        if(inputList.contains(k)){
+    public boolean isKeyPressed(KeyCode k, Map <String, Boolean> Pr) {
+        Keycode k1=k;
+        String a = toString(k);
+        Pr.clear();
+        if (inputList.contains(k)){
             return true;
-        }else {
+        } else {
             return false;
         }
     }
-
     public static List getInputList(){
         return inputList;
     }
@@ -55,7 +55,6 @@ class keyPressedHandler implements javafx.event.EventHandler<KeyEvent>{
         //System.out.println("The key pressed is : "+evt.getText()+" with keycode "+evt.getCode().getName());
         KeyCode code = evt.getCode();
 
-        // only add once... prevent duplicates
         if ( !Input.inputList.contains(code) )
             Input.inputList.add( code );
     }
