@@ -1,5 +1,7 @@
 import entity.Entity;
 import entity.Player;
+import input.Command;
+import input.MoveDownCommand;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.geometry.Point2D;
@@ -25,13 +27,14 @@ public class Main extends Application {
     SpriteData wallSprite = new SpriteData("test/test", 26, 100, 100);
     Player p1 = new Player(new Point2D(0, 0), playerSprite, gc);
     Entity[] wall = new Entity[5];
+    Command down = new MoveDownCommand();
 
     public Main() {
-        wall[0] = new Entity(new Point2D(0, 500), wallSprite, gc);
-        wall[1] = new Entity(new Point2D(100, 500), wallSprite, gc);
-        wall[2] = new Entity(new Point2D(200, 500), wallSprite, gc);
-        wall[3] = new Entity(new Point2D(300, 500), wallSprite, gc);
-        wall[4] = new Entity(new Point2D(400, 500), wallSprite, gc);
+        wall[0] = new Player(new Point2D(0, 500), wallSprite, gc);
+        wall[1] = new Player(new Point2D(100, 500), wallSprite, gc);
+        wall[2] = new Player(new Point2D(200, 500), wallSprite, gc);
+        wall[3] = new Player(new Point2D(300, 500), wallSprite, gc);
+        wall[4] = new Player(new Point2D(400, 500), wallSprite, gc);
     }
 
     public void start(Stage stage) {
@@ -56,7 +59,8 @@ public class Main extends Application {
     }
 
     public void update() {
-        p1.move(0, 10);
+        //p1.move(0, 10);
+        down.execute(p1);
         p1.update(wall);
     }
     public void renderClear() {

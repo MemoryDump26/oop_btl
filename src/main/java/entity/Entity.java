@@ -6,7 +6,7 @@ import javafx.scene.canvas.GraphicsContext;
 import sprite.Sprite;
 import sprite.SpriteData;
 
-public class Entity {
+public abstract class Entity {
     protected Point2D position;
     protected Rectangle2D hitBox;
     protected boolean collision = true;
@@ -29,4 +29,8 @@ public class Entity {
             return false;
         }
     }
+    public abstract void moveUp();
+    public abstract void moveDown();
+    public abstract void moveLeft();
+    public abstract void moveRight();
 }

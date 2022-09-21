@@ -39,12 +39,16 @@ public class Player extends Entity{
         velocity = velocity.add(x, y);
     }
     public void moveLeft() {
+        move(-speed, 0);
     }
     public void moveRight() {
+        move(speed, 0);
     }
     public void moveUp() {
+        move(0, -speed);
     }
     public void moveDown() {
+        move(0, speed);
     }
     public void bomb() {
     }
