@@ -1,10 +1,10 @@
 import entity.Entity;
 import entity.Player;
+import geometry.Point;
 import input.Command;
 import input.MoveDownCommand;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -14,7 +14,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import sprite.Sprite;
 import sprite.SpriteData;
 
 public class Main extends Application {
@@ -25,16 +24,16 @@ public class Main extends Application {
     Font theFont = Font.font( "Times New Roman", FontWeight.BOLD, 48 );
     SpriteData playerSprite = new SpriteData("test/test", 26, 100, 100);
     SpriteData wallSprite = new SpriteData("test/test", 26, 100, 100);
-    Player p1 = new Player(new Point2D(0, 0), playerSprite, gc);
+    Player p1 = new Player(new Point(0, 0), playerSprite, gc);
     Entity[] wall = new Entity[5];
     Command down = new MoveDownCommand();
 
     public Main() {
-        wall[0] = new Player(new Point2D(0, 500), wallSprite, gc);
-        wall[1] = new Player(new Point2D(100, 500), wallSprite, gc);
-        wall[2] = new Player(new Point2D(200, 500), wallSprite, gc);
-        wall[3] = new Player(new Point2D(300, 500), wallSprite, gc);
-        wall[4] = new Player(new Point2D(400, 500), wallSprite, gc);
+        wall[0] = new Player(new Point(0, 500), wallSprite, gc);
+        wall[1] = new Player(new Point(100, 500), wallSprite, gc);
+        wall[2] = new Player(new Point(200, 500), wallSprite, gc);
+        wall[3] = new Player(new Point(300, 500), wallSprite, gc);
+        wall[4] = new Player(new Point(400, 500), wallSprite, gc);
     }
 
     public void start(Stage stage) {
@@ -59,7 +58,6 @@ public class Main extends Application {
     }
 
     public void update() {
-        //p1.move(0, 10);
         down.execute(p1);
         p1.update(wall);
     }

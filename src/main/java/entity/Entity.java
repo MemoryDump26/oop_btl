@@ -1,20 +1,20 @@
 package entity;
 
-import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
+import geometry.Point;
+import geometry.Rectangle;
 import javafx.scene.canvas.GraphicsContext;
 import sprite.Sprite;
 import sprite.SpriteData;
 
 public abstract class Entity {
-    protected Point2D position;
-    protected Rectangle2D hitBox;
+    protected Point position;
+    protected Rectangle hitBox;
     protected boolean collision = true;
     protected Sprite sprite;
 
-    public Entity(Point2D spawn, SpriteData sprite, GraphicsContext gc) {
+    public Entity(Point spawn, SpriteData sprite, GraphicsContext gc) {
         this.position = spawn;
-        this.hitBox = new Rectangle2D(spawn.getX(), spawn.getY(), sprite.w, sprite.h);
+        this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), sprite.w, sprite.h);
         this.sprite = new Sprite(sprite, gc);
     }
 
@@ -24,7 +24,7 @@ public abstract class Entity {
 
     public boolean colliding(Entity e) {
         if (e.collision) {
-            return e.hitBox.intersects(this.hitBox);
+            return e.hitBox.intersect(this.hitBox);
         } else {
             return false;
         }

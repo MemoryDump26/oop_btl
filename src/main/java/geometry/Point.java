@@ -30,6 +30,11 @@ public class Point {
         this.x = x;
     }
 
+    public void zero() {
+        this.x = 0;
+        this.y = 0;
+    }
+
     public Point add(double x, double y) {
         this.x += x;
         this.y += y;
