@@ -2,6 +2,7 @@ import entity.Entity;
 import entity.Player;
 import geometry.Point;
 import input.Command;
+import input.Input;
 import input.MoveDownCommand;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -10,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -46,11 +48,14 @@ public class Main extends Application {
         gc.setLineWidth(2);
         gc.setFont(theFont);
 
+        Input.attachEventHandlers(scene);
+
         new AnimationTimer() {
             public void handle(long currentNanoTime) {
                 update();
                 renderClear();
                 render();
+                Input.clear();
             }
         }.start();
 
