@@ -1,14 +1,15 @@
 package input;
 
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 import java.util.ArrayList;
 
 public class Input {
-    static ArrayList<String> pressed = new ArrayList<String>();
-    static ArrayList<String> released = new ArrayList<String>();
-    static ArrayList<String> held = new ArrayList<String>();
+    static ArrayList<KeyCode> pressed = new ArrayList<KeyCode>();
+    static ArrayList<KeyCode> released = new ArrayList<KeyCode>();
+    static ArrayList<KeyCode> held = new ArrayList<KeyCode>();
     
     public static void attachEventHandlers(Scene s){
         s.setOnKeyReleased(new keyReleaseHandler());
@@ -20,13 +21,13 @@ public class Input {
         released.clear();
     }
 
-    public static boolean isKeyPressed(String k) {
+    public static boolean isKeyPressed(KeyCode k) {
         return pressed.contains(k);
     }
-    public static boolean isKeyReleased(String k) {
+    public static boolean isKeyReleased(KeyCode k) {
         return released.contains(k);
     }
-    public static boolean isKeyHeld(String k) {
+    public static boolean isKeyHeld(KeyCode k) {
         return held.contains(k);
     }
 }
@@ -34,7 +35,7 @@ public class Input {
 class keyPressedHandler implements javafx.event.EventHandler<KeyEvent>{
     @Override
     public void handle(KeyEvent e) {
-        String k = e.getCode().getName();
+        KeyCode k = e.getCode();
         if (!Input.held.contains(k) && !Input.pressed.contains(k)) {
             Input.pressed.add(k);
             Input.held.add(k);
@@ -45,7 +46,7 @@ class keyPressedHandler implements javafx.event.EventHandler<KeyEvent>{
 class keyReleaseHandler implements javafx.event.EventHandler<KeyEvent>{
     @Override
     public void handle(KeyEvent e) {
-        String k = e.getCode().getName();
+        KeyCode k = e.getCode();
         if (!Input.released.contains(k)) {
             Input.released.add(k);
         }

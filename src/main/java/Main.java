@@ -63,7 +63,9 @@ public class Main extends Application {
     }
 
     public void update() {
-        down.execute(p1);
+        if (Input.isKeyHeld(KeyCode.S)) {
+            down.execute(p1);
+        }
         p1.update(wall);
     }
     public void renderClear() {
