@@ -1,6 +1,8 @@
 package entity;
 
 import geometry.Point;
+import input.Input;
+import input.InputComponent;
 import javafx.scene.canvas.GraphicsContext;
 import sprite.SpriteData;
 
@@ -8,22 +10,27 @@ public class Player extends Entity{
     private int power = 1;
     private double speed = 3;
     private Point velocity = new Point(0, 0);
+    private InputComponent input;
 
-    public Player(Point spawn, SpriteData sprite, GraphicsContext gc) {
+    public Player(Point spawn, InputComponent input, SpriteData sprite, GraphicsContext gc) {
         super(spawn, sprite, gc);
+        this.input = input;
     }
 
     public void update(Entity[] wall) {
-        for (Entity e:wall) {
-            if (e.hitBox.intersect(hitBox)) {
-                velocity.zero();
-                break;
-            }
-        }
+        velocity.zero();
+        input.handle(this);
         position = position.add(velocity);
         hitBox.setX(position.getX());
         hitBox.setY(position.getY());
-        velocity.zero();
+        for (Entity e:wall) {
+            if (e.hitBox.intersect(hitBox)) {
+                position = position.subtract(velocity);
+                hitBox.setX(position.getX());
+                hitBox.setY(position.getY());
+                break;
+            }
+        }
     }
     public void stop() {
 

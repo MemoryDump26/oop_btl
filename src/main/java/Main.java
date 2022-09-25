@@ -1,9 +1,7 @@
 import entity.Entity;
 import entity.Player;
 import geometry.Point;
-import input.Command;
-import input.Input;
-import input.MoveDownCommand;
+import input.*;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -26,16 +24,22 @@ public class Main extends Application {
     Font theFont = Font.font( "Times New Roman", FontWeight.BOLD, 48 );
     SpriteData playerSprite = new SpriteData("test/test", 26, 100, 100);
     SpriteData wallSprite = new SpriteData("test/test", 26, 100, 100);
-    Player p1 = new Player(new Point(0, 0), playerSprite, gc);
+    InputComponent p1Inp = new PlayerInputComponent();
+    InputComponent nullInp = new NullInputComponent();
+    Player p1 = new Player(new Point(0, 0), p1Inp, playerSprite, gc);
     Entity[] wall = new Entity[5];
-    Command down = new MoveDownCommand();
 
     public Main() {
-        wall[0] = new Player(new Point(0, 500), wallSprite, gc);
-        wall[1] = new Player(new Point(100, 500), wallSprite, gc);
-        wall[2] = new Player(new Point(200, 500), wallSprite, gc);
-        wall[3] = new Player(new Point(300, 500), wallSprite, gc);
-        wall[4] = new Player(new Point(400, 500), wallSprite, gc);
+        wall[0] = new Player(new Point(0, 500), nullInp, wallSprite, gc);
+        wall[1] = new Player(new Point(100, 500), nullInp, wallSprite, gc);
+        wall[2] = new Player(new Point(200, 500), nullInp, wallSprite, gc);
+        wall[3] = new Player(new Point(300, 500), nullInp, wallSprite, gc);
+        wall[4] = new Player(new Point(400, 500), nullInp, wallSprite, gc);
+        p1Inp.addKeybind(KeyCode.W, Command.Up);
+        p1Inp.addKeybind(KeyCode.A, Command.Left);
+        p1Inp.addKeybind(KeyCode.S, Command.Down);
+        p1Inp.addKeybind(KeyCode.D, Command.Right);
+
     }
 
     public void start(Stage stage) {
@@ -63,9 +67,6 @@ public class Main extends Application {
     }
 
     public void update() {
-        if (Input.isKeyHeld(KeyCode.S)) {
-            down.execute(p1);
-        }
         p1.update(wall);
     }
     public void renderClear() {
