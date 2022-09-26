@@ -19,6 +19,7 @@ public class Player extends Entity{
 
     public void update(Entity[] wall) {
         input.handle(this);
+        hitBox.move(velocity.getX(), 0);
         for (Entity e:wall) {
             if (hitBox.intersect(e.hitBox)) {
                 double xOffset;
