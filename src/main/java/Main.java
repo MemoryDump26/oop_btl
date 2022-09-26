@@ -30,11 +30,11 @@ public class Main extends Application {
     Entity[] wall = new Entity[5];
 
     public Main() {
-        wall[0] = new Player(new Point(0, 500), nullInp, wallSprite, gc);
-        wall[1] = new Player(new Point(100, 500), nullInp, wallSprite, gc);
-        wall[2] = new Player(new Point(200, 500), nullInp, wallSprite, gc);
-        wall[3] = new Player(new Point(300, 500), nullInp, wallSprite, gc);
-        wall[4] = new Player(new Point(400, 500), nullInp, wallSprite, gc);
+        wall[0] = new Player(new Point(200, 200), nullInp, wallSprite, gc);
+        wall[1] = new Player(new Point(350, 500), nullInp, wallSprite, gc);
+        wall[2] = new Player(new Point(500, 500), nullInp, wallSprite, gc);
+        wall[3] = new Player(new Point(650, 500), nullInp, wallSprite, gc);
+        wall[4] = new Player(new Point(200, 350), nullInp, wallSprite, gc);
         p1Inp.addKeybind(KeyCode.W, Command.Up);
         p1Inp.addKeybind(KeyCode.A, Command.Left);
         p1Inp.addKeybind(KeyCode.S, Command.Down);
@@ -67,6 +67,8 @@ public class Main extends Application {
     }
 
     public void update() {
+        Command.Down.execute(p1);
+        Command.Right.execute(p1);
         p1.update(wall);
     }
     public void renderClear() {
