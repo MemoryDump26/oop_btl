@@ -19,28 +19,22 @@ public class Player extends Entity{
 
     public void update(Entity[] wall) {
         input.handle(this);
-        position = position.add(velocity.getX(), 0);
-        hitBox.setX(position.getX());
+        hitBox.move(velocity.getX(), 0);
         for (Entity e:wall) {
             if (hitBox.intersect(e.hitBox)) {
-                System.out.println("Touched along X\n");
                 double xOffset;
                 if (hitBox.getX() <= e.hitBox.getX()) xOffset = e.hitBox.getX() - (hitBox.getX() + hitBox.getW());
                 else xOffset = (e.hitBox.getX() + e.hitBox.getW()) - hitBox.getX();
-                position.add(xOffset, 0);
-                hitBox.setX(position.getX());
+                hitBox.move(xOffset, 0);
             }
         }
-        position = position.add(0, velocity.getY());
-        hitBox.setY(position.getY());
+        hitBox.move(0, velocity.getY());
         for (Entity e:wall) {
             if (hitBox.intersect(e.hitBox)) {
-                System.out.println("Touched along Y\n");
                 double yOffset;
                 if (hitBox.getY() <= e.hitBox.getY()) yOffset = e.hitBox.getY() - (hitBox.getY() + hitBox.getH());
                 else yOffset = (e.hitBox.getY() + e.hitBox.getH()) - hitBox.getY();
-                position.add(0, yOffset);
-                hitBox.setY(position.getY());
+                hitBox.move(0, yOffset);
             }
         }
         velocity.zero();

@@ -67,8 +67,6 @@ public class Main extends Application {
     }
 
     public void update() {
-        Command.Down.execute(p1);
-        Command.Right.execute(p1);
         p1.update(wall);
     }
     public void renderClear() {
