@@ -19,7 +19,7 @@ import sprite.SpriteData;
 public class Main extends Application {
     Group root = new Group();
     Scene scene = new Scene(root);
-    Canvas mainCanvas = new Canvas(1000, 1000);
+    Canvas mainCanvas = new Canvas(500, 500);
     GraphicsContext gc = mainCanvas.getGraphicsContext2D();
     Font theFont = Font.font( "Times New Roman", FontWeight.BOLD, 48 );
     SpriteData playerSprite = new SpriteData("test/test", 26, 100, 100);
@@ -33,7 +33,7 @@ public class Main extends Application {
         wall[0] = new Player(new Point(200, 200), nullInp, wallSprite, gc);
         wall[1] = new Player(new Point(350, 500), nullInp, wallSprite, gc);
         wall[2] = new Player(new Point(500, 500), nullInp, wallSprite, gc);
-        wall[3] = new Player(new Point(650, 500), nullInp, wallSprite, gc);
+        wall[3] = new Player(new Point(800, 500), nullInp, wallSprite, gc);
         wall[4] = new Player(new Point(200, 350), nullInp, wallSprite, gc);
         p1Inp.addKeybind(KeyCode.W, Command.Up);
         p1Inp.addKeybind(KeyCode.A, Command.Left);
