@@ -18,7 +18,6 @@ public abstract class Entity {
     public void render() {
         sprite.render(hitBox.getX(), hitBox.getY());
     }
-
     public abstract void moveUp();
     public abstract void moveDown();
     public abstract void moveLeft();
