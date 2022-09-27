@@ -10,15 +10,15 @@ public class Player extends Entity{
     private int power = 1;
     private double speed = 3;
     private Point velocity = new Point(0, 0);
-    private InputComponent input;
+    //private InputComponent input;
 
     public Player(Point spawn, InputComponent input, SpriteData sprite, GraphicsContext gc) {
         super(spawn, sprite, gc);
-        this.input = input;
+        //this.input = input;
     }
 
     public void update(Entity[] wall) {
-        input.handle(this);
+        //input.handle(this);
         hitBox.move(velocity.getX(), 0);
         for (Entity e:wall) {
             if (hitBox.intersect(e.hitBox)) {

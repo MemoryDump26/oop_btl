@@ -1,3 +1,4 @@
+import entity.DynamicEntity;
 import entity.Entity;
 import entity.Player;
 import geometry.Point;
@@ -22,11 +23,17 @@ public class Main extends Application {
     Canvas mainCanvas = new Canvas(1000, 1000);
     GraphicsContext gc = mainCanvas.getGraphicsContext2D();
     Font theFont = Font.font( "Times New Roman", FontWeight.BOLD, 48 );
+
     SpriteData playerSprite = new SpriteData("test/test", 26, 100, 100);
     SpriteData wallSprite = new SpriteData("test/test", 26, 100, 100);
     InputComponent p1Inp = new PlayerInputComponent();
+    CollisionComponent p1Col = new PlayerCollisionComponent();
+    DynamicEntity p1 = new DynamicEntity(new Point(0, 0), p1Inp, p1Col, playerSprite, gc);
+
     InputComponent nullInp = new NullInputComponent();
-    Player p1 = new Player(new Point(0, 0), p1Inp, playerSprite, gc);
+    InputComponent balloomAI = new BalloomAI();
+    //Player p1 = new Player(new Point(0, 0), p1Inp, playerSprite, gc);
+    //Player b1 = new Player(new Point(900, 900), balloomAI, playerSprite, gc);
     Entity[] wall = new Entity[5];
 
     public Main() {
@@ -39,7 +46,7 @@ public class Main extends Application {
         p1Inp.addKeybind(KeyCode.A, Command.Left);
         p1Inp.addKeybind(KeyCode.S, Command.Down);
         p1Inp.addKeybind(KeyCode.D, Command.Right);
-
+        p1.setSpeed(10);
     }
 
     public void start(Stage stage) {

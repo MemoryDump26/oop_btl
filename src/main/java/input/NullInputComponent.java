@@ -1,11 +1,12 @@
 package input;
 
+import entity.DynamicEntity;
 import entity.Entity;
 import javafx.scene.input.KeyCode;
 
 public class NullInputComponent extends InputComponent {
     @Override
-    public void handle(Entity e) {
+    public void handle(DynamicEntity e) {
         return;
     }
 
