@@ -6,6 +6,8 @@ import input.InputComponent;
 import javafx.scene.canvas.GraphicsContext;
 import sprite.SpriteData;
 
+import java.util.ArrayList;
+
 public class DynamicEntity extends Entity {
     public double speed;
     public Point velocity = new Point(0, 0);
@@ -18,7 +20,7 @@ public class DynamicEntity extends Entity {
         this.collision = collision;
     }
 
-    public void update(Entity[] wall) {
+    public void update(ArrayList<Entity> wall) {
         input.handle(this);
         collision.handle(this, wall);
         velocity.zero();
@@ -44,15 +46,19 @@ public class DynamicEntity extends Entity {
         velocity.add(x, y);
     }
     public void moveLeft() {
+        sprite.setCurrentAnimation("left");
         move(-speed, 0);
     }
     public void moveRight() {
+        sprite.setCurrentAnimation("right");
         move(speed, 0);
     }
     public void moveUp() {
+        sprite.setCurrentAnimation("up");
         move(0, -speed);
     }
     public void moveDown() {
+        sprite.setCurrentAnimation("down");
         move(0, speed);
     }
 }

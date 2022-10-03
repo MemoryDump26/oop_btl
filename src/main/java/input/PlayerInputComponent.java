@@ -1,7 +1,6 @@
 package input;
 
 import entity.DynamicEntity;
-import entity.Entity;
 import javafx.scene.input.KeyCode;
 
 import java.util.HashMap;
@@ -14,7 +13,6 @@ public class PlayerInputComponent extends InputComponent {
         for (Map.Entry<KeyCode, Command> k : keybinds.entrySet()) {
             if (Input.isKeyHeld(k.getKey())) {
                 k.getValue().execute(e);
-                System.out.println("Executed: " + k.getValue());
             }
         }
     }

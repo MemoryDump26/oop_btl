@@ -3,9 +3,11 @@ package input;
 import entity.DynamicEntity;
 import entity.Entity;
 
+import java.util.ArrayList;
+
 public class PlayerCollisionComponent extends CollisionComponent {
     @Override
-    public void handle(DynamicEntity e, Entity[] wall) {
+    public void handle(DynamicEntity e, ArrayList<Entity> wall) {
         e.hitBox.move(e.velocity.getX(), 0);
         for (Entity w:wall) {
             if (e.hitBox.intersect(w.hitBox)) {
