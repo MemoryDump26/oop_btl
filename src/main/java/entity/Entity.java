@@ -7,8 +7,8 @@ import sprite.Sprite;
 import sprite.SpriteData;
 
 public abstract class Entity {
-    public Rectangle hitBox;
-    public Sprite sprite;
+    private Rectangle hitBox;
+    protected Sprite sprite;
 
     public Entity(Point spawn, SpriteData sprite, GraphicsContext gc) {
         this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), sprite.w, sprite.h);
@@ -18,4 +18,13 @@ public abstract class Entity {
     public void render() {
         sprite.render(hitBox.getX(), hitBox.getY());
     }
+
+    public Rectangle getHitBox() {
+        return hitBox;
+    }
+
+    public Sprite getSprite() {
+        return sprite;
+    }
+
 }

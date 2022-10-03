@@ -9,10 +9,10 @@ import sprite.SpriteData;
 import java.util.ArrayList;
 
 public class DynamicEntity extends Entity {
-    public double speed;
-    public Point velocity = new Point(0, 0);
-    InputComponent input;
-    CollisionComponent collision;
+    private double speed;
+    private Point velocity = new Point(0, 0);
+    private InputComponent input;
+    private CollisionComponent collision;
 
     public DynamicEntity(Point spawn, InputComponent input, CollisionComponent collision, SpriteData sprite, GraphicsContext gc) {
         super(spawn, sprite, gc);
@@ -45,18 +45,22 @@ public class DynamicEntity extends Entity {
     public void move(double x, double y) {
         velocity.add(x, y);
     }
+
     public void moveLeft() {
         sprite.setCurrentAnimation("left");
         move(-speed, 0);
     }
+
     public void moveRight() {
         sprite.setCurrentAnimation("right");
         move(speed, 0);
     }
+
     public void moveUp() {
         sprite.setCurrentAnimation("up");
         move(0, -speed);
     }
+
     public void moveDown() {
         sprite.setCurrentAnimation("down");
         move(0, speed);

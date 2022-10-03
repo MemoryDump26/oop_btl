@@ -8,23 +8,31 @@ import java.util.ArrayList;
 public class PlayerCollisionComponent extends CollisionComponent {
     @Override
     public void handle(DynamicEntity e, ArrayList<Entity> wall) {
-        e.hitBox.move(e.velocity.getX(), 0);
-        for (Entity w:wall) {
-            if (e.hitBox.intersect(w.hitBox)) {
+        e.getHitBox().move(e.getVelocity().getX(), 0);
+        for (Entity m:wall) {
+            if (e.getHitBox().intersect(m.getHitBox())) {
+                double eX = e.getHitBox().getX();
+                double eW = e.getHitBox().getW();
+                double mX = m.getHitBox().getX();
+                double mW = m.getHitBox().getW();
                 double xOffset = 0;
-                if (e.hitBox.getX() <= w.hitBox.getX()) xOffset = w.hitBox.getX() - (e.hitBox.getX() + e.hitBox.getW());
-                else xOffset = (w.hitBox.getX() + w.hitBox.getW()) - e.hitBox.getX();
-                e.hitBox.move(xOffset, 0);
+                if (eX <= mX) xOffset = mX - (eX + eW);
+                else xOffset = (mX + mW) - eX;
+                e.getHitBox().move(xOffset, 0);
                 break;
             }
         }
-        e.hitBox.move(0, e.velocity.getY());
-        for (Entity w:wall) {
-            if (e.hitBox.intersect(w.hitBox)) {
+        e.getHitBox().move(0, e.getVelocity().getY());
+        for (Entity m:wall) {
+            if (e.getHitBox().intersect(m.getHitBox())) {
+                double eY = e.getHitBox().getY();
+                double eH = e.getHitBox().getH();
+                double mY = m.getHitBox().getY();
+                double mH = m.getHitBox().getH();
                 double yOffset = 0;
-                if (e.hitBox.getY() <= w.hitBox.getY()) yOffset = w.hitBox.getY() - (e.hitBox.getY() + e.hitBox.getH());
-                else yOffset = (w.hitBox.getY() + w.hitBox.getH()) - e.hitBox.getY();
-                e.hitBox.move(0, yOffset);
+                if (eY <= mY) yOffset = mY - (eY + eH);
+                else yOffset = (mY + mH) - eY;
+                e.getHitBox().move(0, yOffset);
                 break;
             }
         }
