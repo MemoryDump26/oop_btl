@@ -8,6 +8,8 @@ public abstract class CollisionComponent {
     public abstract void handle(Entity e, ArrayList<Entity> world);
 
     public static CollisionComponent Null = new CollisionComponent() {
+
+        @Override
         public void handle(Entity e, ArrayList<Entity> world) {
             return;
         }

@@ -9,6 +9,7 @@ public class DynamicCollisionComponent extends CollisionComponent {
     public void handle(Entity e, ArrayList<Entity> world) {
         e.getHitBox().move(e.getVelocity().getX(), 0);
         for (Entity m:world) {
+            if (!m.getCollisionState()) continue;
             if (e.getHitBox().intersect(m.getHitBox())) {
                 double eX = e.getHitBox().getX();
                 double eW = e.getHitBox().getW();
