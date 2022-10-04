@@ -16,6 +16,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import resources.Resources;
+import world.World;
 
 import java.util.ArrayList;
 
@@ -28,11 +30,13 @@ public class Main extends Application {
     InputComponent p1Inp = new PlayerInputComponent();
     CollisionComponent p1Col = new DynamicCollisionComponent();
     DynamicEntity p1;
+    World world = new World(gc);
 
     ArrayList<Entity> wall = new ArrayList<Entity>();
 
     public Main() {
         Resources.getResource("sprites");
+        world.createMap();
         p1 = new DynamicEntity(new Point(0, 0), p1Inp, p1Col, Resources.spriteDataMap.get("player"), gc);
         wall.add(new DynamicEntity(new Point(200, 200), InputComponent.Null, p1Col, Resources.spriteDataMap.get("wall"), gc));
         wall.add(new DynamicEntity(new Point(350, 500), InputComponent.Null, p1Col, Resources.spriteDataMap.get("wall"), gc));
@@ -79,6 +83,7 @@ public class Main extends Application {
         gc.fillRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
     }
     public void render() {
+        world.render();
         for (Entity e:wall) {
             e.render();
         }

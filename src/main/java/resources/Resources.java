@@ -1,3 +1,5 @@
+package resources;
+
 import javafx.scene.image.Image;
 import sprite.SpriteData;
 
