@@ -1,49 +1,35 @@
 package entity;
 
-import geometry.Point;
-import input.CollisionComponent;
+import collision.CollisionComponent;
 import input.InputComponent;
-import javafx.scene.canvas.GraphicsContext;
+import geometry.Point;
 import sprite.SpriteData;
 
-import java.util.ArrayList;
+import javafx.scene.canvas.GraphicsContext;
 
 public class DynamicEntity extends Entity {
-    private double speed;
-    private Point velocity = new Point(0, 0);
-    private InputComponent input;
-    private CollisionComponent collision;
 
     public DynamicEntity(Point spawn, InputComponent input, CollisionComponent collision, SpriteData sprite, GraphicsContext gc) {
-        super(spawn, sprite, gc);
-        this.input = input;
-        this.collision = collision;
-    }
-
-    public void update(ArrayList<Entity> wall) {
-        input.handle(this);
-        collision.handle(this, wall);
-        velocity.zero();
-    }
-
-    public double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
-
-    public Point getVelocity() {
-        return velocity;
-    }
-
-    public void setVelocity(Point velocity) {
-        this.velocity = velocity;
+        super(spawn, input, collision, sprite, gc);
     }
 
     public void move(double x, double y) {
         velocity.add(x, y);
+    }
+
+    public void moveTo(double x, double y) {
+        this.getHitBox().setX(x);
+        this.getHitBox().setY(y);
+    }
+
+    public void moveUp() {
+        sprite.setCurrentAnimation("up");
+        move(0, -speed);
+    }
+
+    public void moveDown() {
+        sprite.setCurrentAnimation("down");
+        move(0, speed);
     }
 
     public void moveLeft() {
@@ -56,13 +42,12 @@ public class DynamicEntity extends Entity {
         move(speed, 0);
     }
 
-    public void moveUp() {
-        sprite.setCurrentAnimation("up");
-        move(0, -speed);
-    }
+    public void touched(Entity e) {return;}
+    public void attack() {return;}
 
-    public void moveDown() {
-        sprite.setCurrentAnimation("down");
-        move(0, speed);
+    public void kill() {
+        sprite.setCurrentAnimation("dead");
+        sprite.setLoop(false);
+        return;
     }
 }

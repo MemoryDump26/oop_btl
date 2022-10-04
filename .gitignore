@@ -3,3 +3,6 @@ target/
 res/
 src/main/resources/
 taskell.md
+.classpath
+.project
+.settings/

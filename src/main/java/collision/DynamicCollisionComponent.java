@@ -1,15 +1,14 @@
-package input;
+package collision;
 
-import entity.DynamicEntity;
 import entity.Entity;
 
 import java.util.ArrayList;
 
-public class PlayerCollisionComponent extends CollisionComponent {
+public class DynamicCollisionComponent extends CollisionComponent {
     @Override
-    public void handle(DynamicEntity e, ArrayList<Entity> wall) {
+    public void handle(Entity e, ArrayList<Entity> world) {
         e.getHitBox().move(e.getVelocity().getX(), 0);
-        for (Entity m:wall) {
+        for (Entity m:world) {
             if (e.getHitBox().intersect(m.getHitBox())) {
                 double eX = e.getHitBox().getX();
                 double eW = e.getHitBox().getW();
@@ -23,7 +22,7 @@ public class PlayerCollisionComponent extends CollisionComponent {
             }
         }
         e.getHitBox().move(0, e.getVelocity().getY());
-        for (Entity m:wall) {
+        for (Entity m:world) {
             if (e.getHitBox().intersect(m.getHitBox())) {
                 double eY = e.getHitBox().getY();
                 double eH = e.getHitBox().getH();

@@ -1,3 +1,5 @@
+import collision.CollisionComponent;
+import collision.DynamicCollisionComponent;
 import entity.DynamicEntity;
 import entity.Entity;
 import geometry.Point;
@@ -24,11 +26,10 @@ public class Main extends Application {
     GraphicsContext gc = mainCanvas.getGraphicsContext2D();
     Font theFont = Font.font( "Times New Roman", FontWeight.BOLD, 48 );
     InputComponent p1Inp = new PlayerInputComponent();
-    CollisionComponent p1Col = new PlayerCollisionComponent();
+    CollisionComponent p1Col = new DynamicCollisionComponent();
     DynamicEntity p1;
 
     InputComponent nullInp = new NullInputComponent();
-    InputComponent balloomAI = new BalloomAI();
     ArrayList<Entity> wall = new ArrayList<Entity>();
 
     public Main() {

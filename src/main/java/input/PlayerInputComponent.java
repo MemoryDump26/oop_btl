@@ -1,6 +1,6 @@
 package input;
 
-import entity.DynamicEntity;
+import entity.Entity;
 import javafx.scene.input.KeyCode;
 
 import java.util.HashMap;
@@ -9,7 +9,7 @@ import java.util.Map;
 public class PlayerInputComponent extends InputComponent {
     private Map<KeyCode, Command> keybinds = new HashMap<KeyCode, Command>();
 
-    public void handle(DynamicEntity e) {
+    public void handle(Entity e) {
         for (Map.Entry<KeyCode, Command> k : keybinds.entrySet()) {
             if (Input.isKeyHeld(k.getKey())) {
                 k.getValue().execute(e);
