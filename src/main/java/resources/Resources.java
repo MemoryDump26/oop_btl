@@ -37,7 +37,7 @@ public class Resources {
             Image i = new Image("sprites" + File.separator + fileName);
             String[] parsed = fileName.split(File.separator + "|(?<=\\D)(?=\\d)|\\.");
             if (!spriteDataMap.containsKey(parsed[0])) {
-                spriteDataMap.put(parsed[0], new SpriteData(32, 32));
+                spriteDataMap.put(parsed[0], new SpriteData());
             }
             spriteDataMap.get(parsed[0]).addFrame(parsed[1], i);
         }
