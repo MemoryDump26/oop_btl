@@ -36,6 +36,8 @@ public class Main extends Application {
 
     public Main() {
         Resources.getSprites();
+        Resources.getLevels();
+        world.createLevelFromFile(Resources.levelList.get(0));
         p1 = new DynamicEntity(new Point(0, 0), p1Inp, p1Col, Resources.spriteDataMap.get("player"), gc);
         wall.add(new DynamicEntity(new Point(200, 200), InputComponent.Null, p1Col, Resources.spriteDataMap.get("wall"), gc));
         wall.add(new DynamicEntity(new Point(350, 500), InputComponent.Null, p1Col, Resources.spriteDataMap.get("wall"), gc));

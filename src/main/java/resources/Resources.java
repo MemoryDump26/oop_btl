@@ -13,6 +13,7 @@ import java.util.Map;
 
 public class Resources {
     public static Map<String, SpriteData> spriteDataMap = new HashMap<String, SpriteData>();
+    public static ArrayList<File> levelList = new ArrayList<File>();
 
     public static void getSprites() {
         try {
@@ -42,6 +43,21 @@ public class Resources {
         }
         catch (Exception e) {
             System.out.printf("Can't load sprite: %s\n", fileName);
+        }
+    }
+
+    public static void getLevels() {
+        try {
+            String levelDirPath = ClassLoader.getSystemClassLoader().getResource("levels").getPath();
+            Files.walk(Path.of(levelDirPath)).forEach((path) -> {
+                String fileName = path.toString();
+                if (fileName.contains(".")) {
+                    levelList.add(new File(fileName));
+                }
+            });
+            levelList.sort(Comparator.naturalOrder());
+        } catch (Exception e) {
+            System.out.printf("Can't load levels\n");
         }
     }
 }
