@@ -35,8 +35,7 @@ public class Main extends Application {
     ArrayList<Entity> wall = new ArrayList<Entity>();
 
     public Main() {
-        Resources.getResource("sprites");
-        world.createMap();
+        Resources.getSprites();
         p1 = new DynamicEntity(new Point(0, 0), p1Inp, p1Col, Resources.spriteDataMap.get("player"), gc);
         wall.add(new DynamicEntity(new Point(200, 200), InputComponent.Null, p1Col, Resources.spriteDataMap.get("wall"), gc));
         wall.add(new DynamicEntity(new Point(350, 500), InputComponent.Null, p1Col, Resources.spriteDataMap.get("wall"), gc));
@@ -83,7 +82,7 @@ public class Main extends Application {
         gc.fillRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
     }
     public void render() {
-        world.render();
+        //world.render();
         for (Entity e:wall) {
             e.render();
         }

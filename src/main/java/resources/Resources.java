@@ -12,28 +12,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Resources {
-    public static ArrayList<String> spriteDirArray = new ArrayList<String>();
     public static Map<String, SpriteData> spriteDataMap = new HashMap<String, SpriteData>();
 
-    public static void getResource(String type) {
+    public static void getSprites() {
         try {
-            String spriteDirPath = ClassLoader.getSystemClassLoader().getResource(type).getPath();
+            ArrayList<String> spriteDirArray = new ArrayList<String>();
+            String spriteDirPath = ClassLoader.getSystemClassLoader().getResource("sprites").getPath();
             Files.walk(Path.of(spriteDirPath)).forEach((path) -> {
                 String fileName = Path.of(spriteDirPath).relativize(path).toString();
                 if (fileName.contains(".")) spriteDirArray.add(fileName);
             });
             spriteDirArray.sort(Comparator.naturalOrder());
             for (String r:spriteDirArray) {
-                loadResources(r, type);
+                loadSprite(r);
             }
         } catch (Exception e) {
-            System.out.printf("Can't get %s resources\n", type);
+            System.out.printf("Can't get sprites\n");
         }
     }
 
-    public static void loadResources(String fileName, String type) {
+    public static void loadSprite(String fileName) {
         try {
-            Image i = new Image(type + File.separator + fileName);
+            Image i = new Image("sprites" + File.separator + fileName);
             String[] parsed = fileName.split(File.separator + "|(?<=\\D)(?=\\d)|\\.");
             if (!spriteDataMap.containsKey(parsed[0])) {
                 spriteDataMap.put(parsed[0], new SpriteData(32, 32));
@@ -41,7 +41,7 @@ public class Resources {
             spriteDataMap.get(parsed[0]).addFrame(parsed[1], i);
         }
         catch (Exception e) {
-            System.out.printf("Can't load %s: %s\n", type, fileName);
+            System.out.printf("Can't load sprite: %s\n", fileName);
         }
     }
 }
