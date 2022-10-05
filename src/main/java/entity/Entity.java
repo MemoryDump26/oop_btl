@@ -28,6 +28,14 @@ public abstract class Entity {
         this.sprite = new Sprite(sprite, gc);
     }
 
+    public Entity(Point spawn, Entity p) {
+        this.input = p.input;
+        this.collision= p.collision;
+        this.collisionState = p.collisionState;
+        this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), p.hitBox.getW(), p.hitBox.getH());
+        this.sprite = new Sprite(p.sprite);
+    }
+
     public void update(ArrayList<Entity> world) {
         input.handle(this);
         collision.handle(this, world);

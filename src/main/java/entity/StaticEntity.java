@@ -13,6 +13,10 @@ public class StaticEntity extends Entity {
         super(spawn, input, collision, sprite, gc);
     }
 
+    public StaticEntity(Point spawn, StaticEntity p) {
+        super(spawn, p);
+    }
+
     public void move(double x, double y) {}
     public void moveTo(double x, double y) {}
     public void moveUp() {}

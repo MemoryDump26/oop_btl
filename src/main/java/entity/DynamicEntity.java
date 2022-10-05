@@ -13,6 +13,10 @@ public class DynamicEntity extends Entity {
         super(spawn, input, collision, sprite, gc);
     }
 
+    public DynamicEntity(Point spawn, DynamicEntity p) {
+        super(spawn, p);
+    }
+
     public void move(double x, double y) {
         velocity.add(x, y);
     }
