@@ -7,4 +7,21 @@ public abstract class InputComponent {
     public abstract void handle(Entity e);
     public abstract void addKeybind(KeyCode k, Command c);
     public abstract void removeKeybind(KeyCode k);
+
+    public static InputComponent Null = new InputComponent() {
+        @Override
+        public void handle(Entity e) {
+            return;
+        }
+
+        @Override
+        public void addKeybind(KeyCode k, Command c) {
+            return;
+        }
+
+        @Override
+        public void removeKeybind(KeyCode k) {
+            return;
+        }
+    };
 }

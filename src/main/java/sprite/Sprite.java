@@ -8,8 +8,9 @@ public class Sprite {
     private SpriteData data;
     public static Sprite grass;
 
+    private String currentAnimation = new String();
     private int currentFrame = 0;
-    private int tickPerFrame = 0;
+    private int tickPerFrame = 2;
     private int ticks = 0;
     private boolean loop = true;
     private boolean visible = true;
@@ -17,7 +18,15 @@ public class Sprite {
 
     public Sprite(SpriteData data, GraphicsContext gc) {
         this.data = data;
+        this.currentAnimation = data.currentAnimation;
         this.gc = gc;
+    }
+
+    public void setCurrentAnimation(String name) {
+        if (data.animations.containsKey(name)) {
+            this.currentAnimation = name;
+        }
+        else System.out.printf("Animation: %s doesn't exists!!!1!\n", name);
     }
 
     public void setSpriteData(SpriteData data) {
@@ -27,6 +36,7 @@ public class Sprite {
 
     public void setTickPerFrame(int n) {
         this.tickPerFrame = n - 1;
+        currentFrame = 0;
     }
 
     public void setLoop(boolean loop) {
@@ -53,7 +63,7 @@ public class Sprite {
         if (!visible) {
             return;
         }
-        gc.drawImage(data.images[currentFrame], x, y, w, h);
+        gc.drawImage(data.animations.get(currentAnimation).get(currentFrame), x, y, w, h);
         if (paused) {
             return;
         }
@@ -63,7 +73,7 @@ public class Sprite {
             currentFrame++;
             ticks = 0;
         }
-        if (currentFrame == data.frames) {
+        if (currentFrame == data.animations.get(currentAnimation).size()) {
             if (loop) {
                 currentFrame = 0;
             } else {

@@ -1,5 +1,7 @@
+import collision.CollisionComponent;
+import collision.DynamicCollisionComponent;
+import entity.DynamicEntity;
 import entity.Entity;
-import entity.Player;
 import geometry.Point;
 import input.*;
 import javafx.animation.AnimationTimer;
@@ -14,32 +16,39 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import sprite.SpriteData;
+import resources.Resources;
+import world.World;
+
+import java.util.ArrayList;
 
 public class Main extends Application {
     Group root = new Group();
     Scene scene = new Scene(root);
-    Canvas mainCanvas = new Canvas(500, 500);
+    Canvas mainCanvas = new Canvas(1000, 1000);
     GraphicsContext gc = mainCanvas.getGraphicsContext2D();
     Font theFont = Font.font( "Times New Roman", FontWeight.BOLD, 48 );
-    SpriteData playerSprite = new SpriteData("test/test", 26, 100, 100);
-    SpriteData wallSprite = new SpriteData("test/test", 26, 100, 100);
     InputComponent p1Inp = new PlayerInputComponent();
-    InputComponent nullInp = new NullInputComponent();
-    Player p1 = new Player(new Point(0, 0), p1Inp, playerSprite, gc);
-    Entity[] wall = new Entity[5];
+    CollisionComponent p1Col = new DynamicCollisionComponent();
+    DynamicEntity p1;
+    World world = new World(gc);
+
+    ArrayList<Entity> wall = new ArrayList<Entity>();
 
     public Main() {
-        wall[0] = new Player(new Point(200, 200), nullInp, wallSprite, gc);
-        wall[1] = new Player(new Point(350, 500), nullInp, wallSprite, gc);
-        wall[2] = new Player(new Point(500, 500), nullInp, wallSprite, gc);
-        wall[3] = new Player(new Point(800, 500), nullInp, wallSprite, gc);
-        wall[4] = new Player(new Point(200, 350), nullInp, wallSprite, gc);
+        Resources.getResource("sprites");
+        world.createMap();
+        p1 = new DynamicEntity(new Point(0, 0), p1Inp, p1Col, Resources.spriteDataMap.get("player"), gc);
+        wall.add(new DynamicEntity(new Point(200, 200), InputComponent.Null, p1Col, Resources.spriteDataMap.get("wall"), gc));
+        wall.add(new DynamicEntity(new Point(350, 500), InputComponent.Null, p1Col, Resources.spriteDataMap.get("wall"), gc));
+        wall.add(new DynamicEntity(new Point(500, 500), InputComponent.Null, p1Col, Resources.spriteDataMap.get("wall"), gc));
+        wall.add(new DynamicEntity(new Point(650, 500), InputComponent.Null, p1Col, Resources.spriteDataMap.get("wall"), gc));
+        wall.add(new DynamicEntity(new Point(200, 350), InputComponent.Null, p1Col, Resources.spriteDataMap.get("wall"), gc));
+
         p1Inp.addKeybind(KeyCode.W, Command.Up);
         p1Inp.addKeybind(KeyCode.A, Command.Left);
         p1Inp.addKeybind(KeyCode.S, Command.Down);
         p1Inp.addKeybind(KeyCode.D, Command.Right);
-
+        p1.setSpeed(10);
     }
 
     public void start(Stage stage) {
@@ -74,6 +83,7 @@ public class Main extends Application {
         gc.fillRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
     }
     public void render() {
+        world.render();
         for (Entity e:wall) {
             e.render();
         }
