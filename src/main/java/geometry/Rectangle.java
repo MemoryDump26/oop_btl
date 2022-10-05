@@ -62,8 +62,8 @@ public class Rectangle {
     }
 
     public boolean intersect(double x, double y, double w, double h) {
-        if (this.x >= x + w || this.x + this.w <= x) return false;
-        else if (this.y >= y + h || this.y + this.h <= y) return false;
+        if (this.x > x + w - 1 || this.x + this.w - 1 < x) return false;
+        else if (this.y > y + h - 1|| this.y + this.h - 1 < y) return false;
         return true;
     }
 

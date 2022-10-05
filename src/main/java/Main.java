@@ -49,7 +49,7 @@ public class Main extends Application {
         p1Inp.addKeybind(KeyCode.A, Command.Left);
         p1Inp.addKeybind(KeyCode.S, Command.Down);
         p1Inp.addKeybind(KeyCode.D, Command.Right);
-        p1.setSpeed(10);
+        p1.setSpeed(4);
     }
 
     public void start(Stage stage) {
@@ -77,7 +77,8 @@ public class Main extends Application {
     }
 
     public void update() {
-        p1.update(wall);
+        //p1.update(wall);
+        p1.update(world.getNearbyEntities(p1));
     }
     public void renderClear() {
         gc.setGlobalBlendMode(BlendMode.SRC_OVER);

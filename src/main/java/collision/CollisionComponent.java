@@ -34,6 +34,7 @@ public abstract class CollisionComponent {
             }
             e.getHitBox().move(0, e.getVelocity().getY());
             for (Entity m:world) {
+                if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
                     double eY = e.getHitBox().getY();
                     double eH = e.getHitBox().getH();
