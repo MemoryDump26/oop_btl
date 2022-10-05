@@ -22,6 +22,12 @@ public class Sprite {
         this.gc = gc;
     }
 
+    public Sprite(Sprite p) {
+        this.data = p.data;
+        this.currentAnimation = p.currentAnimation;
+        this.gc = p.gc;
+    }
+
     public void setCurrentAnimation(String name) {
         if (data.animations.containsKey(name)) {
             this.currentAnimation = name;
