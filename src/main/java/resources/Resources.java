@@ -19,7 +19,9 @@ public class Resources {
         try {
             ArrayList<String> spriteDirArray = new ArrayList<String>();
             String tmp = ClassLoader.getSystemClassLoader().getResource("sprites").getPath();
-            String spriteDirPath = tmp.substring(1);
+            String spriteDirPath;
+            if (File.separator == "/" ) spriteDirPath = tmp;
+                else spriteDirPath = tmp.substring(1);
             Files.walk(Path.of(spriteDirPath)).forEach((path) -> {
                 String fileName = Path.of(spriteDirPath).relativize(path).toString();
                 if (fileName.contains(".")) spriteDirArray.add(fileName);
@@ -51,8 +53,9 @@ public class Resources {
 
     public static void getLevels() {
         try {
-            String tmp = ClassLoader.getSystemClassLoader().getResource("levels").getPath();
-            String levelDirPath = tmp.replace( "/", File.separator).substring(1);
+            String levelDirPath = ClassLoader.getSystemClassLoader().getResource("levels").getPath();
+            if (File.separator == "/") {}
+                else levelDirPath = levelDirPath.substring(1);
             Files.walk(Path.of(levelDirPath)).forEach((path) -> {
                 String fileName = path.toString();
                 if (fileName.contains(".")) {
