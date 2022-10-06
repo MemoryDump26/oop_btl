@@ -2,7 +2,10 @@ import collision.CollisionComponent;
 import entity.DynamicEntity;
 import entity.Entity;
 import geometry.Point;
-import input.*;
+import input.Command;
+import input.Input;
+import input.InputComponent;
+import input.PlayerInputComponent;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -17,6 +20,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import options.Globals;
 import resources.Resources;
+import resources.SoundFX;
 import world.World;
 
 import java.util.ArrayList;
@@ -55,6 +59,8 @@ public class Main extends Application {
     }
 
     public void start(Stage stage) {
+        SoundFX.play();
+        SoundFX.play();
         stage.setScene(scene);
         stage.setTitle("ayy lmao");
         root.getChildren().add(mainCanvas);
