@@ -44,6 +44,7 @@ public class World {
             Resources.spriteDataMap.get("brick"),
             this.gc
         );
+        pBrick.getSprite().setCurrentAnimation("brick");
 
         pGrass = new StaticEntity(
             new Point(0, 0),

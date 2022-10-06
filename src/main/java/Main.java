@@ -15,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import options.Globals;
 import resources.Resources;
 import world.World;
 
@@ -34,11 +35,12 @@ public class Main extends Application {
     ArrayList<Entity> wall = new ArrayList<Entity>();
 
     public Main() {
+        gc.setImageSmoothing(false);
         Resources.getSprites();
         Resources.getLevels();
         world = new World(gc);
         world.createLevelFromFile(Resources.levelList.get(0));
-        p1 = new DynamicEntity(new Point(32, 32), p1Inp, CollisionComponent.Dynamic, Resources.spriteDataMap.get("player"), gc);
+        p1 = new DynamicEntity(new Point(Globals.cellSize, Globals.cellSize), p1Inp, CollisionComponent.Dynamic, Resources.spriteDataMap.get("player"), gc);
         wall.add(new DynamicEntity(new Point(200, 200), InputComponent.Null, CollisionComponent.Static, Resources.spriteDataMap.get("wall"), gc));
         wall.add(new DynamicEntity(new Point(350, 500), InputComponent.Null, CollisionComponent.Static, Resources.spriteDataMap.get("wall"), gc));
         wall.add(new DynamicEntity(new Point(500, 500), InputComponent.Null, CollisionComponent.Static, Resources.spriteDataMap.get("wall"), gc));
