@@ -1,5 +1,6 @@
 import collision.CollisionComponent;
 import entity.DynamicEntity;
+import entity.StaticEntity;
 import entity.Entity;
 import geometry.Point;
 import input.*;
@@ -30,6 +31,7 @@ public class Main extends Application {
 
     InputComponent p1Inp = new PlayerInputComponent();
     DynamicEntity p1;
+    StaticEntity b1;
     World world;
 
     ArrayList<Entity> wall = new ArrayList<Entity>();
@@ -41,6 +43,9 @@ public class Main extends Application {
         world = new World(gc);
         world.createLevelFromFile(Resources.levelList.get(0));
         p1 = new DynamicEntity(new Point(Globals.cellSize, Globals.cellSize), p1Inp, CollisionComponent.Dynamic, Resources.spriteDataMap.get("player"), gc);
+        b1 = new StaticEntity(new Point(Globals.cellSize, Globals.cellSize), World.pBomb);
+        world.objects.add(b1);
+        world.objects.add(p1);
         wall.add(new DynamicEntity(new Point(200, 200), InputComponent.Null, CollisionComponent.Static, Resources.spriteDataMap.get("wall"), gc));
         wall.add(new DynamicEntity(new Point(350, 500), InputComponent.Null, CollisionComponent.Static, Resources.spriteDataMap.get("wall"), gc));
         wall.add(new DynamicEntity(new Point(500, 500), InputComponent.Null, CollisionComponent.Static, Resources.spriteDataMap.get("wall"), gc));
@@ -80,6 +85,7 @@ public class Main extends Application {
 
     public void update() {
         //p1.update(wall);
+        b1.update(world.getNearbyEntities(b1));
         p1.update(world.getNearbyEntities(p1));
     }
     public void renderClear() {
@@ -91,7 +97,8 @@ public class Main extends Application {
         for (Entity e:wall) {
             e.render();
         }
-        p1.render();
+        //b1.render();
+        //p1.render();
         gc.fillText("lmao", 100, 100);
         gc.strokeText("lmao", 100, 100);
     }

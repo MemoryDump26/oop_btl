@@ -18,14 +18,15 @@ public class World {
     private GraphicsContext gc;
 
     private int num;
-    private Entity[][] matrix;
+    public Entity[][] matrix;
+    public ArrayList<Entity> objects = new ArrayList<Entity>();
     private int width;
     private int height;
 
     private static StaticEntity pWall;
     private static StaticEntity pBrick;
     private static StaticEntity pGrass;
-    private static StaticEntity pBomb;
+    public static StaticEntity pBomb;
 
     public World(GraphicsContext gc) {
         this.gc = gc;
@@ -103,7 +104,6 @@ public class World {
         ArrayList<Entity> result = new ArrayList<Entity>();
         int row = getCurrentRow(e);
         int col = getCurrentCol(e);
-        System.out.printf("%d, %d\n", row, col);
         result.add(matrix[row-1][col-1]);
         result.add(matrix[row-1][col]);
         result.add(matrix[row-1][col+1]);
@@ -113,8 +113,15 @@ public class World {
         result.add(matrix[row+1][col-1]);
         result.add(matrix[row+1][col]);
         result.add(matrix[row+1][col+1]);
+        result.addAll(objects);
+        // ???.
+        result.remove(e);
 
         return result;
+    }
+
+    public void spawn(int row, int col, StaticEntity e) {
+        objects.add(new StaticEntity(spawnAt(row, col), e));
     }
 
     public Point spawnAt(int row, int col) {
@@ -136,6 +143,9 @@ public class World {
             for (int col = 0; col < height; col++) {
                 matrix[row][col].render();
             }
+        }
+        for (Entity e:objects) {
+            e.render();
         }
     }
 }

@@ -24,7 +24,7 @@ public abstract class Entity {
         this.input = input;
         this.collision = collision;
         //collisionState = (!collision.equals(CollisionComponent.Null));
-        collisionState = collision.getDefaultState();
+        this.collisionState = collision.getDefaultState();
         this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), sprite.w, sprite.h);
         this.sprite = new Sprite(sprite, gc);
     }
@@ -32,7 +32,8 @@ public abstract class Entity {
     public Entity(Point spawn, Entity p) {
         this.input = p.input;
         this.collision= p.collision;
-        this.collisionState = p.collisionState;
+        //this.collisionState = p.collisionState;
+        this.collisionState = collision.getDefaultState();
         this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), p.hitBox.getW(), p.hitBox.getH());
         this.sprite = new Sprite(p.sprite);
     }

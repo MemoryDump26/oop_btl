@@ -73,7 +73,21 @@ public abstract class CollisionComponent {
     public static CollisionComponent Bomb = new CollisionComponent() {
         @Override
         public void handle(Entity e, ArrayList<Entity> world) {
-
+            if (e.getCollisionState() == false) {
+                boolean notColliding = true;
+                for (Entity m:world) {
+                    if (!m.getCollisionState()) continue;
+                    if (e.getHitBox().intersect(m.getHitBox())) {
+                        notColliding = false;
+                        System.out.println("Bomb colliding!!!!111!!");
+                        break;
+                    }
+                }
+                if (notColliding) {
+                    System.out.println("Bomb collision set to true!!!!");
+                    e.setCollisionState(true);
+                }
+            }
         }
 
         @Override
