@@ -23,7 +23,8 @@ public abstract class Entity {
     public Entity(Point spawn, InputComponent input, CollisionComponent collision, SpriteData sprite, GraphicsContext gc) {
         this.input = input;
         this.collision = collision;
-        collisionState = (!collision.equals(CollisionComponent.Null));
+        //collisionState = (!collision.equals(CollisionComponent.Null));
+        collisionState = collision.getDefaultState();
         this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), sprite.w, sprite.h);
         this.sprite = new Sprite(sprite, gc);
     }

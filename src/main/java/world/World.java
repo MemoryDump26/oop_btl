@@ -25,6 +25,7 @@ public class World {
     private static StaticEntity pWall;
     private static StaticEntity pBrick;
     private static StaticEntity pGrass;
+    private static StaticEntity pBomb;
 
     public World(GraphicsContext gc) {
         this.gc = gc;
@@ -53,6 +54,15 @@ public class World {
             Resources.spriteDataMap.get("grass"),
             gc
         );
+
+        pBomb = new StaticEntity(
+            new Point(0, 0),
+            InputComponent.Null,
+            CollisionComponent.Bomb,
+            Resources.spriteDataMap.get("bomb"),
+            gc
+        );
+        pBomb.getSprite().setCurrentAnimation("bomb");
     }
 
     public void createLevelFromFile(File file) {

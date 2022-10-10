@@ -6,12 +6,16 @@ import java.util.ArrayList;
 
 public abstract class CollisionComponent {
     public abstract void handle(Entity e, ArrayList<Entity> world);
+    public abstract boolean getDefaultState();
 
     public static CollisionComponent Null = new CollisionComponent() {
         @Override
         public void handle(Entity e, ArrayList<Entity> world) {
             return;
         }
+
+        @Override
+        public boolean getDefaultState() {return false;}
     };
 
     public static CollisionComponent Dynamic = new CollisionComponent() {
@@ -48,6 +52,9 @@ public abstract class CollisionComponent {
                 }
             }
         }
+
+        @Override
+        public boolean getDefaultState() {return true;}
     };
 
     public static CollisionComponent Static = new CollisionComponent() {
@@ -58,5 +65,18 @@ public abstract class CollisionComponent {
                 e.touched(m);
             }
         }
+
+        @Override
+        public boolean getDefaultState() {return true;}
+    };
+
+    public static CollisionComponent Bomb = new CollisionComponent() {
+        @Override
+        public void handle(Entity e, ArrayList<Entity> world) {
+
+        }
+
+        @Override
+        public boolean getDefaultState() {return false;}
     };
 }
