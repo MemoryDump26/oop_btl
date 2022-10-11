@@ -48,6 +48,7 @@ public class Main extends Application {
         b1 = new StaticEntity(new Point(Globals.cellSize, Globals.cellSize), World.pBomb);
         world.objects.add(b1);
         world.objects.add(p1);
+        world.spawnFlame(5, 5, 3, 0, 0);
         wall.add(new DynamicEntity(new Point(200, 200), InputComponent.Null, CollisionComponent.Static, Resources.spriteDataMap.get("wall"), gc));
         wall.add(new DynamicEntity(new Point(350, 500), InputComponent.Null, CollisionComponent.Static, Resources.spriteDataMap.get("wall"), gc));
         wall.add(new DynamicEntity(new Point(500, 500), InputComponent.Null, CollisionComponent.Static, Resources.spriteDataMap.get("wall"), gc));

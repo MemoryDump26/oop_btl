@@ -23,6 +23,7 @@ public class Sprite {
     public Sprite(Sprite p) {
         this.data = p.data;
         this.currentAnimation = p.currentAnimation;
+        this.loop = p.loop;
         this.gc = p.gc;
     }
 
