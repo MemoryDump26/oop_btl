@@ -18,6 +18,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import options.Globals;
 import resources.Resources;
+import timer.Timer;
 import world.World;
 
 import java.util.ArrayList;
@@ -27,12 +28,13 @@ public class Main extends Application {
     Scene scene = new Scene(root);
     Canvas mainCanvas = new Canvas(1000, 1000);
     GraphicsContext gc = mainCanvas.getGraphicsContext2D();
-    Font theFont = Font.font( "Times New Roman", FontWeight.BOLD, 48 );
+    Font theFont = Font.font("Ariel", FontWeight.BOLD, 48);
 
     InputComponent p1Inp = new PlayerInputComponent();
     DynamicEntity p1;
     StaticEntity b1;
     World world;
+    Timer t1 = new Timer(9999, false);
 
     ArrayList<Entity> wall = new ArrayList<Entity>();
 
@@ -57,6 +59,7 @@ public class Main extends Application {
         p1Inp.addKeybind(KeyCode.S, Command.Down);
         p1Inp.addKeybind(KeyCode.D, Command.Right);
         p1.setSpeed(4);
+        t1.start();
     }
 
     public void start(Stage stage) {
@@ -73,6 +76,10 @@ public class Main extends Application {
 
         new AnimationTimer() {
             public void handle(long currentNanoTime) {
+                if (Input.isKeyPressed(KeyCode.P)) {
+                    if (t1.isPausing()) t1.resume();
+                    else t1.pause();
+                }
                 update();
                 renderClear();
                 render();
@@ -99,8 +106,9 @@ public class Main extends Application {
         }
         //b1.render();
         //p1.render();
-        gc.fillText("lmao", 100, 100);
-        gc.strokeText("lmao", 100, 100);
+        String time = String.format("%d", t1.getElapsedTimeInSecond());
+        gc.fillText(time, 100, 100);
+        gc.strokeText(time, 100, 100);
     }
 
     public static void main(String[] args) {
