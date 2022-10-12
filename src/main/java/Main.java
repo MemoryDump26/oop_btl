@@ -42,6 +42,7 @@ public class Main extends Application {
         gc.setImageSmoothing(false);
         Resources.getSprites();
         Resources.getLevels();
+        Resources.getSoundFX();
         world = new World(gc);
         world.createLevelFromFile(Resources.levelList.get(0));
         p1 = new DynamicEntity(new Point(Globals.cellSize, Globals.cellSize), p1Inp, CollisionComponent.Dynamic, Resources.spriteDataMap.get("player"), gc);
@@ -59,7 +60,6 @@ public class Main extends Application {
     }
 
     public void start(Stage stage) {
-        SoundFX.play();
         SoundFX.play();
         stage.setScene(scene);
         stage.setTitle("ayy lmao");
