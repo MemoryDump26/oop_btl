@@ -49,11 +49,6 @@ public class Main extends Application {
         world.objects.add(b1);
         world.objects.add(p1);
         world.spawnFlame(5, 5, 3, 0, 0);
-        wall.add(new DynamicEntity(new Point(200, 200), InputComponent.Null, CollisionComponent.Static, Resources.spriteDataMap.get("wall"), gc));
-        wall.add(new DynamicEntity(new Point(350, 500), InputComponent.Null, CollisionComponent.Static, Resources.spriteDataMap.get("wall"), gc));
-        wall.add(new DynamicEntity(new Point(500, 500), InputComponent.Null, CollisionComponent.Static, Resources.spriteDataMap.get("wall"), gc));
-        wall.add(new DynamicEntity(new Point(650, 500), InputComponent.Null, CollisionComponent.Static, Resources.spriteDataMap.get("wall"), gc));
-        wall.add(new DynamicEntity(new Point(200, 350), InputComponent.Null, CollisionComponent.Static, Resources.spriteDataMap.get("wall"), gc));
 
         p1Inp.addKeybind(KeyCode.W, Command.Up);
         p1Inp.addKeybind(KeyCode.A, Command.Left);
@@ -92,9 +87,12 @@ public class Main extends Application {
     }
 
     public void update() {
-        //p1.update(wall);
-        b1.update(world.getNearbyEntities(b1));
-        p1.update(world.getNearbyEntities(p1));
+        if (t1.getElapsedTimeInSecond() > 3) {
+            for (Entity e:world.objects) {
+                e.kill();
+            }
+        }
+        world.update();
     }
     public void renderClear() {
         gc.setGlobalBlendMode(BlendMode.SRC_OVER);
@@ -102,14 +100,6 @@ public class Main extends Application {
     }
     public void render() {
         world.render();
-        for (Entity e:wall) {
-            e.render();
-        }
-        //b1.render();
-        //p1.render();
-        String time = String.format("%d", t1.getElapsedTimeInSecond());
-        gc.fillText(time, 100, 100);
-        gc.strokeText(time, 100, 100);
     }
 
     public static void main(String[] args) {

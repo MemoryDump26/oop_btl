@@ -73,8 +73,9 @@ public class World {
             Resources.spriteDataMap.get("explosion"),
             gc
         );
-        pFlame.getSprite().setLoop(false);
-        pFlame.getSprite().setCurrentAnimation("center");
+        pFlame.kill();
+        /*pFlame.getSprite().setLoop(false);
+        pFlame.getSprite().setCurrentAnimation("center");*/
 
     }
 
@@ -177,6 +178,13 @@ public class World {
     public int getCurrentCol(Entity e) {
         double col = e.getHitBox().getX() / Globals.cellSize;
         return (int)col;
+    }
+
+    public void update() {
+        objects.removeIf(Entity::isDead);
+        for (Entity e:objects) {
+            e.update(getNearbyEntities(e));
+        }
     }
 
     public void render() {

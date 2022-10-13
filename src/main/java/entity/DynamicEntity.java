@@ -52,6 +52,6 @@ public class DynamicEntity extends Entity {
     public void kill() {
         sprite.setCurrentAnimation("dead");
         sprite.setLoop(false);
-        return;
+        dead = true;
     }
 }

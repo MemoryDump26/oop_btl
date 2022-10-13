@@ -16,6 +16,7 @@ public abstract class Entity {
     protected Rectangle hitBox;
     protected Sprite sprite;
     protected boolean collisionState;
+    protected boolean dead = false;
 
     protected InputComponent input;
     protected CollisionComponent collision;
@@ -30,8 +31,9 @@ public abstract class Entity {
 
     public Entity(Point spawn, Entity p) {
         this.input = p.input;
-        this.collision= p.collision;
+        this.collision = p.collision;
         this.collisionState = collision.getDefaultState();
+        this.dead = p.dead;
         this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), p.hitBox.getW(), p.hitBox.getH());
         this.sprite = new Sprite(p.sprite);
     }
@@ -51,6 +53,9 @@ public abstract class Entity {
     public double getSpeed() {return speed;}
     public Point getVelocity() {return velocity;}
     public boolean getCollisionState() {return collisionState;}
+    public boolean isDead() {
+        return dead && sprite.isPausing();
+    }
 
     public void setSpeed(double speed) {this.speed = speed;}
     public void setVelocity(Point velocity) {this.velocity = velocity;}
