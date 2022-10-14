@@ -2,6 +2,7 @@ package input;
 
 import entity.Entity;
 import javafx.scene.input.KeyCode;
+import world.World;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +10,7 @@ import java.util.Map;
 public class PlayerInputComponent extends InputComponent {
     private Map<KeyCode, Command> keybinds = new HashMap<KeyCode, Command>();
 
-    public void handle(Entity e) {
+    public void handle(Entity e, World w) {
         for (Map.Entry<KeyCode, Command> k : keybinds.entrySet()) {
             if (Input.isKeyHeld(k.getKey())) {
                 k.getValue().execute(e);

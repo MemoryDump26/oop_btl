@@ -5,21 +5,19 @@ import input.Command;
 
 public class Timer {
 
-    private long startTime;
-    private long pauseTime;
+    private long startTime = 0;
+    private long pauseTime = 0;
     private long duration;
     private boolean oneShot;
     private Command c;
     private Entity e;
 
-    private boolean running;
-    private boolean pausing;
+    private boolean running = false;
+    private boolean pausing = false;
 
     public Timer(long duration, boolean oneShot) {
-        startTime = 0;
-        pauseTime = 0;
-        running = false;
-        pausing = false;
+        this.duration = duration;
+        this.oneShot = oneShot;
     }
 
     public void start() {
@@ -48,6 +46,12 @@ public class Timer {
         pauseTime = 0;
         running = true;
         pausing = false;
+    }
+
+    public void update() {
+        if (getElapsedTimeInSecond() >= duration && oneShot) {
+            pause();
+        }
     }
 
     public boolean isRunning() {return running;}

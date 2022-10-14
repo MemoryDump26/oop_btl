@@ -4,6 +4,7 @@ import collision.CollisionComponent;
 import entity.Entity;
 import entity.StaticEntity;
 import geometry.Point;
+import input.BombLogic;
 import input.InputComponent;
 import javafx.scene.canvas.GraphicsContext;
 import resources.Resources;
@@ -20,6 +21,7 @@ public class World {
     private int num;
     public Entity[][] field;
     public ArrayList<Entity> objects = new ArrayList<Entity>();
+    public ArrayList<Entity> newSpawn = new ArrayList<Entity>();
     private int width;
     private int height;
 
@@ -117,24 +119,21 @@ public class World {
         ArrayList<Entity> result = new ArrayList<Entity>();
         int row = getCurrentRow(e);
         int col = getCurrentCol(e);
-        result.add(field[row-1][col-1]);
-        result.add(field[row-1][col]);
-        result.add(field[row-1][col+1]);
-        result.add(field[row][col-1]);
-        result.add(field[row][col]);
-        result.add(field[row][col+1]);
-        result.add(field[row+1][col-1]);
-        result.add(field[row+1][col]);
-        result.add(field[row+1][col+1]);
+        for (int i = row - 1; i <= row + 1; i++) {
+            if (i < 0 || i >= height - 1) continue;
+            for (int j = col - 1; j <= col + 1; j++) {
+                if (j < 0 || j >= width - 1) continue;
+                result.add(field[i][j]);
+            }
+        }
         result.addAll(objects);
-        // ???.
         result.remove(e);
 
         return result;
     }
 
     public void spawn(int row, int col, StaticEntity e) {
-        objects.add(new StaticEntity(spawnAt(row, col), e));
+        newSpawn.add(new StaticEntity(spawnAt(row, col), e));
     }
 
     public void spawnFlame(int row, int col, int power, int rowOffset, int colOffset) {
@@ -166,6 +165,18 @@ public class World {
         }
     }
 
+    public void spawnBomb(int row, int col, int power) {
+        StaticEntity b = new StaticEntity(
+            spawnAt(row, col),
+            new BombLogic(power),
+            CollisionComponent.Bomb,
+            Resources.spriteDataMap.get("bomb"),
+            gc
+        );
+        b.getSprite().setCurrentAnimation("bomb");
+        newSpawn.add(b);
+    }
+
     public Point spawnAt(int row, int col) {
         return new Point(col * Globals.cellSize, row * Globals.cellSize);
     }
@@ -182,8 +193,10 @@ public class World {
 
     public void update() {
         objects.removeIf(Entity::isDead);
+        objects.addAll(newSpawn);
+        newSpawn.clear();
         for (Entity e:objects) {
-            e.update(getNearbyEntities(e));
+            e.update(getNearbyEntities(e), this);
         }
     }
 

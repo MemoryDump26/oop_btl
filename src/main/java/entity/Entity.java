@@ -8,6 +8,8 @@ import sprite.Sprite;
 import sprite.SpriteData;
 
 import javafx.scene.canvas.GraphicsContext;
+import world.World;
+
 import java.util.ArrayList;
 
 public abstract class Entity {
@@ -38,8 +40,8 @@ public abstract class Entity {
         this.sprite = new Sprite(p.sprite);
     }
 
-    public void update(ArrayList<Entity> world) {
-        input.handle(this);
+    public void update(ArrayList<Entity> world, World w) {
+        input.handle(this, w);
         collision.handle(this, world);
         velocity.zero();
     }
