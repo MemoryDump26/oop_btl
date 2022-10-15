@@ -26,8 +26,10 @@ public class StaticEntity extends Entity {
     public void touched(Entity e) {}
     public void attack() {}
     public void kill() {
-        sprite.setCurrentAnimation("dead");
-        sprite.setLoop(false);
-        dead = true;
+        if (destructible) {
+            sprite.setCurrentAnimation("dead");
+            sprite.setLoop(false);
+            dead = true;
+        }
     }
 }

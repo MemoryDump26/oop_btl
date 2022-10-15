@@ -45,7 +45,7 @@ public class World {
         pBrick = new StaticEntity(
             new Point(0, 0),
             InputComponent.Null,
-            CollisionComponent.Static,
+            CollisionComponent.Destructibles,
             Resources.spriteDataMap.get("brick"),
             this.gc
         );
@@ -71,7 +71,7 @@ public class World {
         pFlame = new StaticEntity(
             new Point(0, 0),
             InputComponent.Null,
-            CollisionComponent.Null,
+            CollisionComponent.Flame,
             Resources.spriteDataMap.get("explosion"),
             gc
         );
@@ -192,6 +192,13 @@ public class World {
     }
 
     public void update() {
+        for (int row = 0; row < width; row++) {
+            for (int col = 0; col < height; col++) {
+                if (field[row][col].isDead()) {
+                    field[row][col] = new StaticEntity(spawnAt(row, col), pGrass);
+                }
+            }
+        }
         objects.removeIf(Entity::isDead);
         objects.addAll(newSpawn);
         newSpawn.clear();

@@ -18,6 +18,7 @@ public abstract class Entity {
     protected Rectangle hitBox;
     protected Sprite sprite;
     protected boolean collisionState;
+    protected boolean destructible;
     protected boolean dead = false;
 
     protected InputComponent input;
@@ -27,6 +28,7 @@ public abstract class Entity {
         this.input = input;
         this.collision = collision;
         this.collisionState = collision.getDefaultState();
+        this.destructible = collision.isDestructibles();
         this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), sprite.w, sprite.h);
         this.sprite = new Sprite(sprite, gc);
     }
@@ -35,6 +37,7 @@ public abstract class Entity {
         this.input = p.input;
         this.collision = p.collision;
         this.collisionState = collision.getDefaultState();
+        this.destructible = collision.isDestructibles();
         this.dead = p.dead;
         this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), p.hitBox.getW(), p.hitBox.getH());
         this.sprite = new Sprite(p.sprite);

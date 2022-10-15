@@ -50,8 +50,10 @@ public class DynamicEntity extends Entity {
     public void attack() {return;}
 
     public void kill() {
-        sprite.setCurrentAnimation("dead");
-        sprite.setLoop(false);
-        dead = true;
+        if (destructible) {
+            sprite.setCurrentAnimation("dead");
+            sprite.setLoop(false);
+            dead = true;
+        }
     }
 }
