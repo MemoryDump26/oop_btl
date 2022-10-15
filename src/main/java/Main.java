@@ -1,3 +1,4 @@
+import attack.BombAttack;
 import collision.CollisionComponent;
 import entity.Entity;
 import geometry.Point;
@@ -41,14 +42,23 @@ public class Main extends Application {
         Resources.getLevels();
         world = new World(gc);
         world.createLevelFromFile(Resources.levelList.get(0));
-        p1 = new Entity(new Point(Globals.cellSize, Globals.cellSize), p1Inp, CollisionComponent.Dynamic, Resources.spriteDataMap.get("player"), gc);
-        world.objects.add(p1);
+        p1 = new Entity(
+            new Point(Globals.cellSize, Globals.cellSize),
+            p1Inp,
+            CollisionComponent.Dynamic,
+            new BombAttack(1),
+            world,
+            Resources.spriteDataMap.get("player"),
+            gc
+        );
+        world.players.add(p1);
         world.spawnBomb(3, 3, 4);
 
         p1Inp.addKeybind(KeyCode.W, Command.Up);
         p1Inp.addKeybind(KeyCode.A, Command.Left);
         p1Inp.addKeybind(KeyCode.S, Command.Down);
         p1Inp.addKeybind(KeyCode.D, Command.Right);
+        p1Inp.addKeybind(KeyCode.J, Command.Attack);
         p1.setSpeed(4);
         t1.start();
     }

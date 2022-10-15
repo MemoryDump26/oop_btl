@@ -1,5 +1,6 @@
 package world;
 
+import attack.AttackComponent;
 import collision.CollisionComponent;
 import entity.Entity;
 import geometry.Point;
@@ -20,6 +21,7 @@ public class World {
     private int num;
     public Entity[][] field;
     public ArrayList<Entity> objects = new ArrayList<Entity>();
+    public ArrayList<Entity> players = new ArrayList<Entity>();
     public ArrayList<Entity> newSpawn = new ArrayList<Entity>();
     private int width;
     private int height;
@@ -37,6 +39,8 @@ public class World {
             new Point(0, 0),
             InputComponent.Null,
             CollisionComponent.Static,
+            AttackComponent.Null,
+            this,
             Resources.spriteDataMap.get("wall"),
             this.gc
         );
@@ -45,6 +49,8 @@ public class World {
             new Point(0, 0),
             InputComponent.Null,
             CollisionComponent.Destructibles,
+            AttackComponent.Null,
+            this,
             Resources.spriteDataMap.get("brick"),
             this.gc
         );
@@ -54,6 +60,8 @@ public class World {
             new Point(0, 0),
             InputComponent.Null,
             CollisionComponent.Null,
+            AttackComponent.Null,
+            this,
             Resources.spriteDataMap.get("grass"),
             gc
         );
@@ -62,6 +70,8 @@ public class World {
             new Point(0, 0),
             InputComponent.Null,
             CollisionComponent.Bomb,
+            AttackComponent.Null,
+            this,
             Resources.spriteDataMap.get("bomb"),
             gc
         );
@@ -71,6 +81,8 @@ public class World {
             new Point(0, 0),
             InputComponent.Null,
             CollisionComponent.Flame,
+            AttackComponent.Null,
+            this,
             Resources.spriteDataMap.get("explosion"),
             gc
         );
@@ -84,13 +96,13 @@ public class World {
         try {
             Scanner sc = new Scanner(file);
             num = sc.nextInt();
-            width = sc.nextInt();
             height = sc.nextInt();
+            width = sc.nextInt();
             sc.nextLine();
-            field = new Entity[width][height];
-            for (int row = 0; row < width; row++) {
+            field = new Entity[height][width];
+            for (int row = 0; row < height; row++) {
                 String tmp = sc.nextLine();
-                for (int col = 0; col < height; col++) {
+                for (int col = 0; col < width; col++) {
                     System.out.printf("%c", tmp.charAt(col));
                     Entity ins;
                     switch (tmp.charAt(col)) {
@@ -119,13 +131,14 @@ public class World {
         int row = getCurrentRow(e);
         int col = getCurrentCol(e);
         for (int i = row - 1; i <= row + 1; i++) {
-            if (i < 0 || i >= height - 1) continue;
+            if (i < 0 || i > height - 1) continue;
             for (int j = col - 1; j <= col + 1; j++) {
-                if (j < 0 || j >= width - 1) continue;
+                if (j < 0 || j > width - 1) continue;
                 result.add(field[i][j]);
             }
         }
         result.addAll(objects);
+        result.addAll(players);
         result.remove(e);
 
         return result;
@@ -169,6 +182,8 @@ public class World {
             spawnAt(row, col),
             new BombLogic(power),
             CollisionComponent.Bomb,
+            AttackComponent.Null,
+            this,
             Resources.spriteDataMap.get("bomb"),
             gc
         );
@@ -191,28 +206,35 @@ public class World {
     }
 
     public void update() {
-        for (int row = 0; row < width; row++) {
-            for (int col = 0; col < height; col++) {
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
                 if (field[row][col].isDead()) {
                     field[row][col] = new Entity(spawnAt(row, col), pGrass);
                 }
             }
         }
         objects.removeIf(Entity::isDead);
+        players.removeIf(Entity::isDead);
         objects.addAll(newSpawn);
         newSpawn.clear();
         for (Entity e:objects) {
-            e.update(getNearbyEntities(e), this);
+            e.update();
+        }
+        for (Entity e:players) {
+            e.update();
         }
     }
 
     public void render() {
-        for (int row = 0; row < width; row++) {
-            for (int col = 0; col < height; col++) {
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
                 field[row][col].render();
             }
         }
         for (Entity e:objects) {
+            e.render();
+        }
+        for (Entity e:players) {
             e.render();
         }
     }

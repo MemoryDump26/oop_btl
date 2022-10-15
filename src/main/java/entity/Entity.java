@@ -1,5 +1,6 @@
 package entity;
 
+import attack.AttackComponent;
 import collision.CollisionComponent;
 import input.InputComponent;
 import geometry.Point;
@@ -21,12 +22,24 @@ public class Entity {
     protected boolean destructible;
     protected boolean dead = false;
 
+    protected World w;
     protected InputComponent input;
     protected CollisionComponent collision;
+    protected AttackComponent attack;
 
-    public Entity(Point spawn, InputComponent input, CollisionComponent collision, SpriteData sprite, GraphicsContext gc) {
+    public Entity(
+        Point spawn,
+        InputComponent input,
+        CollisionComponent collision,
+        AttackComponent attack,
+        World w,
+        SpriteData sprite,
+        GraphicsContext gc
+    ) {
         this.input = input;
         this.collision = collision;
+        this.attack = attack;
+        this.w = w;
         this.collisionState = collision.getDefaultState();
         this.destructible = collision.isDestructibles();
         this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), sprite.w, sprite.h);
@@ -36,6 +49,8 @@ public class Entity {
     public Entity(Point spawn, Entity p) {
         this.input = p.input;
         this.collision = p.collision;
+        this.attack = p.attack;
+        this.w = p.w;
         this.collisionState = collision.getDefaultState();
         this.destructible = collision.isDestructibles();
         this.dead = p.dead;
@@ -43,9 +58,9 @@ public class Entity {
         this.sprite = new Sprite(p.sprite);
     }
 
-    public void update(ArrayList<Entity> world, World w) {
+    public void update() {
         input.handle(this, w);
-        collision.handle(this, world);
+        collision.handle(this, w.getNearbyEntities(this));
         velocity.zero();
     }
 
@@ -105,9 +120,14 @@ public class Entity {
         move(speed, 0);
     }
 
+    public void attack() {
+        attack.handle(this, w);
+    }
+
     public void kill() {
         if (destructible) {
             sprite.setCurrentAnimation("dead");
+            sprite.setTickPerFrame(10);
             sprite.setLoop(false);
             dead = true;
         }
