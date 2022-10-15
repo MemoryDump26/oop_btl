@@ -2,7 +2,6 @@ package world;
 
 import collision.CollisionComponent;
 import entity.Entity;
-import entity.StaticEntity;
 import geometry.Point;
 import input.BombLogic;
 import input.InputComponent;
@@ -25,16 +24,16 @@ public class World {
     private int width;
     private int height;
 
-    private static StaticEntity pWall;
-    private static StaticEntity pBrick;
-    private static StaticEntity pGrass;
-    public static StaticEntity pBomb;
-    public static StaticEntity pFlame;
+    private static Entity pWall;
+    private static Entity pBrick;
+    private static Entity pGrass;
+    private static Entity pBomb;
+    private static Entity pFlame;
 
     public World(GraphicsContext gc) {
         this.gc = gc;
 
-        pWall = new StaticEntity(
+        pWall = new Entity(
             new Point(0, 0),
             InputComponent.Null,
             CollisionComponent.Static,
@@ -42,7 +41,7 @@ public class World {
             this.gc
         );
 
-        pBrick = new StaticEntity(
+        pBrick = new Entity(
             new Point(0, 0),
             InputComponent.Null,
             CollisionComponent.Destructibles,
@@ -51,7 +50,7 @@ public class World {
         );
         pBrick.getSprite().setCurrentAnimation("brick");
 
-        pGrass = new StaticEntity(
+        pGrass = new Entity(
             new Point(0, 0),
             InputComponent.Null,
             CollisionComponent.Null,
@@ -59,7 +58,7 @@ public class World {
             gc
         );
 
-        pBomb = new StaticEntity(
+        pBomb = new Entity(
             new Point(0, 0),
             InputComponent.Null,
             CollisionComponent.Bomb,
@@ -68,7 +67,7 @@ public class World {
         );
         pBomb.getSprite().setCurrentAnimation("bomb");
 
-        pFlame = new StaticEntity(
+        pFlame = new Entity(
             new Point(0, 0),
             InputComponent.Null,
             CollisionComponent.Flame,
@@ -93,7 +92,7 @@ public class World {
                 String tmp = sc.nextLine();
                 for (int col = 0; col < height; col++) {
                     System.out.printf("%c", tmp.charAt(col));
-                    StaticEntity ins;
+                    Entity ins;
                     switch (tmp.charAt(col)) {
                         case '#':
                             ins = pWall;
@@ -105,7 +104,7 @@ public class World {
                             ins = pGrass;
                             break;
                     }
-                    field[row][col] = new StaticEntity(spawnAt(row, col), ins);
+                    field[row][col] = new Entity(spawnAt(row, col), ins);
                 }
                 System.out.println();
             }
@@ -132,8 +131,8 @@ public class World {
         return result;
     }
 
-    public void spawn(int row, int col, StaticEntity e) {
-        newSpawn.add(new StaticEntity(spawnAt(row, col), e));
+    public void spawn(int row, int col, Entity e) {
+        newSpawn.add(new Entity(spawnAt(row, col), e));
     }
 
     public void spawnFlame(int row, int col, int power, int rowOffset, int colOffset) {
@@ -166,7 +165,7 @@ public class World {
     }
 
     public void spawnBomb(int row, int col, int power) {
-        StaticEntity b = new StaticEntity(
+        Entity b = new Entity(
             spawnAt(row, col),
             new BombLogic(power),
             CollisionComponent.Bomb,
@@ -195,7 +194,7 @@ public class World {
         for (int row = 0; row < width; row++) {
             for (int col = 0; col < height; col++) {
                 if (field[row][col].isDead()) {
-                    field[row][col] = new StaticEntity(spawnAt(row, col), pGrass);
+                    field[row][col] = new Entity(spawnAt(row, col), pGrass);
                 }
             }
         }

@@ -1,6 +1,4 @@
 import collision.CollisionComponent;
-import entity.DynamicEntity;
-import entity.StaticEntity;
 import entity.Entity;
 import geometry.Point;
 import input.*;
@@ -31,8 +29,7 @@ public class Main extends Application {
     Font theFont = Font.font("Ariel", FontWeight.BOLD, 48);
 
     InputComponent p1Inp = new PlayerInputComponent();
-    DynamicEntity p1;
-    StaticEntity b1;
+    Entity p1;
     World world;
     Timer t1 = new Timer(9999, false);
 
@@ -44,7 +41,7 @@ public class Main extends Application {
         Resources.getLevels();
         world = new World(gc);
         world.createLevelFromFile(Resources.levelList.get(0));
-        p1 = new DynamicEntity(new Point(Globals.cellSize, Globals.cellSize), p1Inp, CollisionComponent.Dynamic, Resources.spriteDataMap.get("player"), gc);
+        p1 = new Entity(new Point(Globals.cellSize, Globals.cellSize), p1Inp, CollisionComponent.Dynamic, Resources.spriteDataMap.get("player"), gc);
         world.objects.add(p1);
         world.spawnBomb(3, 3, 4);
 

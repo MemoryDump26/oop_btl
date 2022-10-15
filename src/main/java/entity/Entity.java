@@ -12,7 +12,7 @@ import world.World;
 
 import java.util.ArrayList;
 
-public abstract class Entity {
+public class Entity {
     protected double speed;
     protected Point velocity = new Point(0, 0);
     protected Rectangle hitBox;
@@ -66,7 +66,7 @@ public abstract class Entity {
     public void setVelocity(Point velocity) {this.velocity = velocity;}
     public void setCollisionState(boolean collisionState) {this.collisionState = collisionState;}
 
-    public abstract void move(double x, double y);
+    /*public abstract void move(double x, double y);
     public abstract void moveTo(double x, double y);
     public abstract void moveUp();
     public abstract void moveDown();
@@ -74,5 +74,42 @@ public abstract class Entity {
     public abstract void moveRight();
     public abstract void touched(Entity e);
     public abstract void attack();
-    public abstract void kill();
+    public abstract void kill();*/
+
+    public void move(double x, double y) {
+        velocity.add(x, y);
+    }
+
+    public void moveTo(double x, double y) {
+        this.getHitBox().setX(x);
+        this.getHitBox().setY(y);
+    }
+
+    public void moveUp() {
+        sprite.setCurrentAnimation("up");
+        move(0, -speed);
+    }
+
+    public void moveDown() {
+        sprite.setCurrentAnimation("down");
+        move(0, speed);
+    }
+
+    public void moveLeft() {
+        sprite.setCurrentAnimation("left");
+        move(-speed, 0);
+    }
+
+    public void moveRight() {
+        sprite.setCurrentAnimation("right");
+        move(speed, 0);
+    }
+
+    public void kill() {
+        if (destructible) {
+            sprite.setCurrentAnimation("dead");
+            sprite.setLoop(false);
+            dead = true;
+        }
+    }
 }
