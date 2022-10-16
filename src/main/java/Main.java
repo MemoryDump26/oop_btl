@@ -60,7 +60,6 @@ public class Main extends Application {
     }
 
     public void start(Stage stage) {
-        SoundFX.play();
         stage.setScene(scene);
         stage.setTitle("ayy lmao");
         root.getChildren().add(mainCanvas);

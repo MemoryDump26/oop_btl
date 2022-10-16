@@ -21,7 +21,14 @@ public class SoundFX{
             System.out.printf("cant get media");
         }
     }
-    private static void stopSound(String fileName){
+    private static void setLoop(AudioClip file, int i){
+        file.setCycleCount(i);
+    }
+    private static void stopSound(AudioClip fileName){
+        fileName.stop();
+    }
+
+    private static void stopAll() {
 
     }
 

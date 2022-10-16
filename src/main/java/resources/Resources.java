@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class Resources {
     public static Map<String, SpriteData> spriteDataMap = new HashMap<String, SpriteData>();
-    public static Map<String, String> soundDataMap = new HashMap<>();
+    public static Map<String, AudioClip> soundDataMap = new HashMap<>();
     public static ArrayList<File> levelList = new ArrayList<File>();
 
     public static void getSprites() {
@@ -101,7 +101,7 @@ public class Resources {
             System.out.printf("%s\n",fileName);
             String[] parsed = fileName.split("/|\\|(?<=\\D)(?=\\d)|\\.");
             if (!soundDataMap.containsKey(parsed[parsed.length-2])) {
-                soundDataMap.put(parsed[parsed.length - 2], fileName);
+                soundDataMap.put(parsed[parsed.length - 2], new AudioClip("File:/" + fileName));
             }
         }
         catch (Exception e) {
@@ -109,10 +109,4 @@ public class Resources {
         }
     }
 
-    public static void playSound(String file) {
-        if (!soundDataMap.containsKey(file)) {
-            AudioClip audio = new AudioClip("File:/" + soundDataMap.get(file));
-            audio.play();
-        }
-    }
 }
