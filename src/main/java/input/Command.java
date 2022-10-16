@@ -29,6 +29,12 @@ public abstract class Command {
             e.moveRight();
         }
     };
+    public static Command Attack = new Command() {
+        @Override
+        public void execute(Entity e) {
+            e.attack();
+        }
+    };
     public static Command Null = new Command() {
         @Override
         public void execute(Entity e) {

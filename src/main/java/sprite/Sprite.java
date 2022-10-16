@@ -10,7 +10,7 @@ public class Sprite {
 
     private String currentAnimation = new String();
     private int currentFrame = 0;
-    private int tickPerFrame = 2;
+    private int tickPerFrame = 4;
     private int ticks = 0;
     private boolean loop = true;
     private boolean visible = true;
@@ -25,6 +25,7 @@ public class Sprite {
     public Sprite(Sprite p) {
         this.data = p.data;
         this.currentAnimation = p.currentAnimation;
+        this.loop = p.loop;
         this.gc = p.gc;
     }
 
@@ -55,6 +56,18 @@ public class Sprite {
 
     public void hide() {
         visible = false;
+    }
+
+    public void pause() {
+        paused = true;
+    }
+
+    public void resume() {
+        paused = false;
+    }
+
+    public boolean isPausing() {
+        return paused;
     }
 
     public void render() {
