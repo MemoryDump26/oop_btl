@@ -2,6 +2,7 @@ package input;
 
 import entity.Entity;
 import javafx.scene.input.KeyCode;
+import resources.SoundFX;
 import timer.Timer;
 import world.World;
 
@@ -21,6 +22,7 @@ public class BombLogic extends InputComponent {
             t.stop();
             w.spawnFlame(w.getCurrentRow(e), w.getCurrentCol(e), power, 0, 0);
             e.kill();
+            SoundFX.play("/explosion.wav");
         }
     }
 

@@ -20,6 +20,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import options.Globals;
 import resources.Resources;
+import resources.SoundFX;
 import timer.Timer;
 import world.World;
 
@@ -68,6 +69,7 @@ public class Main extends Application {
     }
 
     public void start(Stage stage) {
+        SoundFX.play("/stage_theme.mp3");
         stage.setScene(scene);
         stage.setTitle("ayy lmao");
         root.getChildren().add(mainCanvas);

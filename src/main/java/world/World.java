@@ -178,17 +178,21 @@ public class World {
     }
 
     public void spawnBomb(int row, int col, int power) {
-        Entity b = new Entity(
-            spawnAt(row, col),
-            new BombLogic(power),
-            CollisionComponent.Bomb,
-            AttackComponent.Null,
-            this,
-            Resources.spriteDataMap.get("bomb"),
-            gc
-        );
-        b.getSprite().setCurrentAnimation("bomb");
-        newSpawn.add(b);
+        Entity entity = field[row][col];
+        if (field[row][col] == pBomb) {
+        } else {
+            Entity b = new Entity(
+                    spawnAt(row, col),
+                    new BombLogic(power),
+                    CollisionComponent.Bomb,
+                    AttackComponent.Null,
+                    this,
+                    Resources.spriteDataMap.get("bomb"),
+                    gc
+            );
+            b.getSprite().setCurrentAnimation("bomb");
+            newSpawn.add(b);
+        }
     }
 
     public Point spawnAt(int row, int col) {

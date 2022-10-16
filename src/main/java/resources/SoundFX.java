@@ -5,8 +5,8 @@ import javafx.scene.media.AudioClip;
 
 public class SoundFX{
 
-    public static void play() {
-        String fileName = "/stage_theme.mp3";
+    public static void play(String t) {
+        String fileName = t;
         playSound(fileName);
     }
 
