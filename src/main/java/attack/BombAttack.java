@@ -1,6 +1,7 @@
 package attack;
 
 import entity.Entity;
+import geometry.Point;
 import world.World;
 
 public class BombAttack extends AttackComponent {
@@ -15,6 +16,9 @@ public class BombAttack extends AttackComponent {
 
     @Override
     public void handle(Entity e, World w) {
-        w.spawnBomb(w.getCurrentRow(e), w.getCurrentCol(e), power);
+        Point p = w.getBoardPosition(e);
+        int row = (int)p.getY();
+        int col = (int)p.getX();
+        w.spawnBomb(row, col, power);
     }
 }

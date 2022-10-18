@@ -17,15 +17,18 @@ public class Entity {
     protected double speed;
     protected Point velocity = new Point(0, 0);
     protected Rectangle hitBox;
-    protected Sprite sprite;
     protected boolean collisionState;
     protected boolean destructible;
+    protected boolean harmful = false;
     protected boolean dead = false;
+    public ArrayList<World.Direction> availMove = new ArrayList<>();
+    public World.Direction currentDirection = World.Direction.UP;
 
     protected World w;
     protected InputComponent input;
     protected CollisionComponent collision;
     protected AttackComponent attack;
+    protected Sprite sprite;
 
     public Entity(
         Point spawn,
@@ -53,7 +56,9 @@ public class Entity {
         this.w = p.w;
         this.collisionState = collision.getDefaultState();
         this.destructible = collision.isDestructibles();
+        this.harmful = p.harmful;
         this.dead = p.dead;
+        this.speed = p.speed;
         this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), p.hitBox.getW(), p.hitBox.getH());
         this.sprite = new Sprite(p.sprite);
     }
@@ -73,23 +78,20 @@ public class Entity {
     public double getSpeed() {return speed;}
     public Point getVelocity() {return velocity;}
     public boolean getCollisionState() {return collisionState;}
-    public boolean isDead() {
+    public boolean isDead() {return dead;}
+    public boolean clearable() {
         return dead && sprite.isPausing();
+    }
+    public boolean isHarmful() {
+        return harmful;
     }
 
     public void setSpeed(double speed) {this.speed = speed;}
     public void setVelocity(Point velocity) {this.velocity = velocity;}
     public void setCollisionState(boolean collisionState) {this.collisionState = collisionState;}
-
-    /*public abstract void move(double x, double y);
-    public abstract void moveTo(double x, double y);
-    public abstract void moveUp();
-    public abstract void moveDown();
-    public abstract void moveLeft();
-    public abstract void moveRight();
-    public abstract void touched(Entity e);
-    public abstract void attack();
-    public abstract void kill();*/
+    public void setHarmful(boolean harmful) {
+        this.harmful = harmful;
+    }
 
     public void move(double x, double y) {
         velocity.add(x, y);

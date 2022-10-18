@@ -20,8 +20,6 @@ import resources.Resources;
 import timer.Timer;
 import world.World;
 
-import java.util.ArrayList;
-
 public class Main extends Application {
     Group root = new Group();
     Scene scene = new Scene(root);
@@ -29,12 +27,9 @@ public class Main extends Application {
     GraphicsContext gc = mainCanvas.getGraphicsContext2D();
     Font theFont = Font.font("Ariel", FontWeight.BOLD, 48);
 
-    InputComponent p1Inp = new PlayerInputComponent();
-    Entity p1;
+    PlayerInputComponent p1Inp = new PlayerInputComponent();
     World world;
     Timer t1 = new Timer(9999, false);
-
-    ArrayList<Entity> wall = new ArrayList<Entity>();
 
     public Main() {
         gc.setImageSmoothing(false);
@@ -42,7 +37,7 @@ public class Main extends Application {
         Resources.getLevels();
         world = new World(gc);
         world.createLevelFromFile(Resources.levelList.get(0));
-        p1 = new Entity(
+        Entity p1 = new Entity(
             new Point(Globals.cellSize, Globals.cellSize),
             p1Inp,
             CollisionComponent.Dynamic,
@@ -52,13 +47,12 @@ public class Main extends Application {
             gc
         );
         world.players.add(p1);
-        world.spawnBomb(3, 3, 4);
 
-        p1Inp.addKeybind(KeyCode.W, Command.Up);
-        p1Inp.addKeybind(KeyCode.A, Command.Left);
-        p1Inp.addKeybind(KeyCode.S, Command.Down);
-        p1Inp.addKeybind(KeyCode.D, Command.Right);
-        p1Inp.addKeybind(KeyCode.J, Command.Attack);
+        p1Inp.addKeybind(KeyCode.W, Command.Up, "hold");
+        p1Inp.addKeybind(KeyCode.A, Command.Left, "hold");
+        p1Inp.addKeybind(KeyCode.S, Command.Down, "hold");
+        p1Inp.addKeybind(KeyCode.D, Command.Right, "hold");
+        p1Inp.addKeybind(KeyCode.J, Command.Attack, "press");
         p1.setSpeed(4);
         t1.start();
     }

@@ -4,6 +4,7 @@ import attack.AttackComponent;
 import collision.CollisionComponent;
 import entity.Entity;
 import geometry.Point;
+import input.BalloomAI;
 import input.BombLogic;
 import input.InputComponent;
 import javafx.scene.canvas.GraphicsContext;
@@ -31,6 +32,14 @@ public class World {
     private static Entity pGrass;
     private static Entity pBomb;
     private static Entity pFlame;
+    private static Entity pBalloom;
+
+    public enum Direction {
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT,
+    }
 
     public World(GraphicsContext gc) {
         this.gc = gc;
@@ -87,9 +96,19 @@ public class World {
             gc
         );
         pFlame.kill();
-        /*pFlame.getSprite().setLoop(false);
-        pFlame.getSprite().setCurrentAnimation("center");*/
+        pFlame.setHarmful(true);
 
+        pBalloom = new Entity(
+            new Point(0, 0),
+            new BalloomAI(),
+            CollisionComponent.Dynamic,
+            AttackComponent.Null,
+            this,
+            Resources.spriteDataMap.get("balloom"),
+            gc
+        );
+        pBalloom.setSpeed(1);
+        pBalloom.setHarmful(true);
     }
 
     public void createLevelFromFile(File file) {
@@ -112,6 +131,10 @@ public class World {
                         case '*':
                             ins = pBrick;
                             break;
+                        case '1':
+                            ins = pGrass;
+                            objects.add(new Entity(spawnAt(row, col), pBalloom));
+                            break;
                         default:
                             ins = pGrass;
                             break;
@@ -128,8 +151,9 @@ public class World {
 
     public ArrayList<Entity> getNearbyEntities(Entity e) {
         ArrayList<Entity> result = new ArrayList<Entity>();
-        int row = getCurrentRow(e);
-        int col = getCurrentCol(e);
+        Point p = getBoardPosition(e);
+        int row = (int)p.getY();
+        int col = (int)p.getX();
         for (int i = row - 1; i <= row + 1; i++) {
             if (i < 0 || i > height - 1) continue;
             for (int j = col - 1; j <= col + 1; j++) {
@@ -195,6 +219,13 @@ public class World {
         return new Point(col * Globals.cellSize, row * Globals.cellSize);
     }
 
+    public Point getBoardPosition(Entity e) {
+        Point p = e.getHitBox().getCenter();
+        double row = p.getY() / Globals.cellSize;
+        double col = p.getX() / Globals.cellSize;
+        return new Point((int)col, (int)row);
+    }
+
     public int getCurrentRow(Entity e) {
         double row = e.getHitBox().getY() / Globals.cellSize;
         return (int)row;
@@ -213,14 +244,14 @@ public class World {
                 }
             }
         }
-        objects.removeIf(Entity::isDead);
-        players.removeIf(Entity::isDead);
+        objects.removeIf(Entity::clearable);
+        players.removeIf(Entity::clearable);
         objects.addAll(newSpawn);
         newSpawn.clear();
-        for (Entity e:objects) {
+        for (Entity e:players) {
             e.update();
         }
-        for (Entity e:players) {
+        for (Entity e:objects) {
             e.update();
         }
     }
