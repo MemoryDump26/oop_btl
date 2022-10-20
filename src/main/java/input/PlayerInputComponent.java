@@ -8,21 +8,42 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PlayerInputComponent extends InputComponent {
-    private Map<KeyCode, Command> keybinds = new HashMap<KeyCode, Command>();
+    private Map<KeyCode, Command> pKeybinds = new HashMap<KeyCode, Command>();
+    private Map<KeyCode, Command> hKeybinds = new HashMap<KeyCode, Command>();
+    private Map<KeyCode, Command> rKeybinds = new HashMap<KeyCode, Command>();
 
     public void handle(Entity e, World w) {
-        for (Map.Entry<KeyCode, Command> k : keybinds.entrySet()) {
+        if (e.isDead()) return;
+        for (Map.Entry<KeyCode, Command> k : pKeybinds.entrySet()) {
+            if (Input.isKeyPressed(k.getKey())) {
+                k.getValue().execute(e);
+            }
+        }
+        for (Map.Entry<KeyCode, Command> k : hKeybinds.entrySet()) {
             if (Input.isKeyHeld(k.getKey())) {
+                k.getValue().execute(e);
+            }
+        }
+        for (Map.Entry<KeyCode, Command> k : rKeybinds.entrySet()) {
+            if (Input.isKeyReleased(k.getKey())) {
                 k.getValue().execute(e);
             }
         }
     }
 
-    public void addKeybind(KeyCode k, Command c) {
-        keybinds.put(k, c);
+    public void addKeybind(KeyCode k, Command c, String type) {
+        switch (type) {
+            case "press" -> pKeybinds.put(k, c);
+            case "hold" -> hKeybinds.put(k, c);
+            case "release" -> rKeybinds.put(k, c);
+        }
     }
 
-    public void removeKeybind(KeyCode k) {
-        keybinds.remove(k);
+    public void removeKeybind(KeyCode k, String type) {
+        switch (type) {
+            case "press" -> pKeybinds.remove(k);
+            case "hold" -> hKeybinds.remove(k);
+            case "release" -> rKeybinds.remove(k);
+        }
     }
 }

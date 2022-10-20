@@ -27,6 +27,10 @@ public abstract class CollisionComponent {
             for (Entity m:world) {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
+                    if (m.isHarmful()) {
+                        e.kill();
+                        break;
+                    }
                     double eX = e.getHitBox().getX();
                     double eW = e.getHitBox().getW();
                     double mX = m.getHitBox().getX();
@@ -42,6 +46,10 @@ public abstract class CollisionComponent {
             for (Entity m:world) {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
+                    if (m.isHarmful()) {
+                        e.kill();
+                        break;
+                    }
                     double eY = e.getHitBox().getY();
                     double eH = e.getHitBox().getH();
                     double mY = m.getHitBox().getY();
