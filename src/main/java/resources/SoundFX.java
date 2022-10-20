@@ -2,8 +2,13 @@ package resources;
 
 import javafx.scene.media.AudioClip;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class SoundFX{
+
+    public static List<AudioClip> a = new ArrayList<>();
 
     public static void play(String t) {
         String fileName = t;
@@ -14,23 +19,17 @@ public class SoundFX{
     private static void playSound(String fileName){
         try {
             String path = ClassLoader.getSystemClassLoader().getResource("SoundFX").getPath();
-            AudioClip note = new AudioClip("File:" + path + fileName);
+            a.add(new AudioClip("File:" + path + fileName));
+            a.get(a.size()-1).play();
             System.out.printf("File:" + path + fileName + "\n");
-            note.play();
         } catch (Exception e) {
             System.out.printf("cant get media");
         }
     }
-    private static void setLoop(AudioClip file, int i){
-        file.setCycleCount(i);
+    public static void stopSound(){
+        for (AudioClip i : a) {
+            i.stop();
+        }
     }
-    private static void stopSound(AudioClip fileName){
-        fileName.stop();
-    }
-
-    private static void stopAll() {
-
-    }
-
 }
 

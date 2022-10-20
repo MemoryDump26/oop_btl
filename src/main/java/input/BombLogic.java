@@ -1,7 +1,6 @@
 package input;
 
 import entity.Entity;
-import javafx.scene.input.KeyCode;
 import resources.SoundFX;
 import timer.Timer;
 import world.World;
@@ -22,6 +21,7 @@ public class BombLogic extends InputComponent {
         if (t.getElapsedTimeInSecond() >= 2) {
             t.stop();
             e.kill();
+            SoundFX.stopSound();
             SoundFX.play("/explosion.wav");
         }
         if (!exploded && e.isDead()) {

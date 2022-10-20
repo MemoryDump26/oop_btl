@@ -4,7 +4,6 @@ import entity.Entity;
 import geometry.Point;
 import input.Command;
 import input.Input;
-import input.InputComponent;
 import input.PlayerInputComponent;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -33,7 +32,7 @@ public class Main extends Application {
 
     PlayerInputComponent p1Inp = new PlayerInputComponent();
     World world;
-    Timer t1 = new Timer(9999, false);
+    Timer t1 = new Timer(5, false);
 
     public Main() {
         gc.setImageSmoothing(false);
