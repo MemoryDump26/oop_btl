@@ -5,8 +5,8 @@ import collision.CollisionComponent;
 import entity.Entity;
 import geometry.Point;
 import input.BalloomAI;
-import input.BombLogic;
 import input.InputComponent;
+import input.BrickLogic;
 import javafx.scene.canvas.GraphicsContext;
 import resources.Resources;
 import options.Globals;
@@ -33,6 +33,7 @@ public class World {
     private static Entity pBomb;
     private static Entity pFlame;
     private static Entity pBalloom;
+    private static Entity pFlamePower;
 
     public enum Direction {
         UP,
@@ -96,6 +97,7 @@ public class World {
             gc
         );
         pFlame.kill();
+        pFlame.getSprite().setTickPerFrame(3);
         pFlame.setHarmful(true);
 
         pBalloom = new Entity(
@@ -109,6 +111,17 @@ public class World {
         );
         pBalloom.setSpeed(1);
         pBalloom.setHarmful(true);
+
+        pFlamePower = new Entity(
+            new Point(0, 0),
+            InputComponent.Null,
+            CollisionComponent.FlamePower,
+            AttackComponent.Null,
+            this,
+            Resources.spriteDataMap.get("power"),
+            gc
+        );
+        pFlamePower.getSprite().setCurrentAnimation("flames");
     }
 
     public void createLevelFromFile(File file) {
@@ -123,7 +136,7 @@ public class World {
                 String tmp = sc.nextLine();
                 for (int col = 0; col < width; col++) {
                     System.out.printf("%c", tmp.charAt(col));
-                    Entity ins;
+                    Entity ins = pGrass;
                     switch (tmp.charAt(col)) {
                         case '#':
                             ins = pWall;
@@ -132,8 +145,12 @@ public class World {
                             ins = pBrick;
                             break;
                         case '1':
-                            ins = pGrass;
                             objects.add(new Entity(spawnAt(row, col), pBalloom));
+                            break;
+                        case 'f':
+                            ins = new Entity(spawnAt(row, col), pBrick);
+                            InputComponent inp = new BrickLogic(pFlamePower);
+                            ins.setInput(inp);
                             break;
                         default:
                             ins = pGrass;
@@ -201,7 +218,7 @@ public class World {
         }
     }
 
-    public void spawnBomb(int row, int col, int power) {
+    /*public void spawnBomb(int row, int col, int power) {
         Entity b = new Entity(
             spawnAt(row, col),
             new BombLogic(power),
@@ -213,7 +230,7 @@ public class World {
         );
         b.getSprite().setCurrentAnimation("bomb");
         newSpawn.add(b);
-    }
+    }*/
 
     public Point spawnAt(int row, int col) {
         return new Point(col * Globals.cellSize, row * Globals.cellSize);
@@ -239,7 +256,8 @@ public class World {
     public void update() {
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
-                if (field[row][col].isDead()) {
+                field[row][col].update();
+                if (field[row][col].clearable()) {
                     field[row][col] = new Entity(spawnAt(row, col), pGrass);
                 }
             }

@@ -41,7 +41,7 @@ public class Main extends Application {
             new Point(Globals.cellSize, Globals.cellSize),
             p1Inp,
             CollisionComponent.Dynamic,
-            new BombAttack(1),
+            new BombAttack(1, 1),
             world,
             Resources.spriteDataMap.get("player"),
             gc

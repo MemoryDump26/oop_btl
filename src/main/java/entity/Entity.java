@@ -73,25 +73,30 @@ public class Entity {
         sprite.render(hitBox.getX(), hitBox.getY());
     }
 
-    public Rectangle getHitBox() {return hitBox;}
-    public Sprite getSprite() {return sprite;}
     public double getSpeed() {return speed;}
     public Point getVelocity() {return velocity;}
+    public Rectangle getHitBox() {return hitBox;}
     public boolean getCollisionState() {return collisionState;}
+    public boolean isHarmful() {return harmful;}
     public boolean isDead() {return dead;}
     public boolean clearable() {
         return dead && sprite.isPausing();
     }
-    public boolean isHarmful() {
-        return harmful;
-    }
+
+    public InputComponent getInput() {return input;}
+    public CollisionComponent getCollision() {return collision;}
+    public AttackComponent getAttack() {return attack;}
+    public Sprite getSprite() {return sprite;}
 
     public void setSpeed(double speed) {this.speed = speed;}
     public void setVelocity(Point velocity) {this.velocity = velocity;}
+    public void setHitBox(Rectangle hitBox) {this.hitBox = hitBox;}
     public void setCollisionState(boolean collisionState) {this.collisionState = collisionState;}
-    public void setHarmful(boolean harmful) {
-        this.harmful = harmful;
-    }
+    public void setHarmful(boolean harmful) {this.harmful = harmful;}
+
+    public void setInput(InputComponent input) {this.input = input;}
+    public void setCollision(CollisionComponent collision) {this.collision = collision;}
+    public void setAttack(AttackComponent attack) {this.attack = attack;}
 
     public void move(double x, double y) {
         velocity.add(x, y);

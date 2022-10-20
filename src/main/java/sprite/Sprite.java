@@ -23,15 +23,19 @@ public class Sprite {
     public Sprite(Sprite p) {
         this.data = p.data;
         this.currentAnimation = p.currentAnimation;
+        this.tickPerFrame = p.tickPerFrame;
         this.loop = p.loop;
+        this.visible = p.visible;
+        this.paused = p.paused;
         this.gc = p.gc;
     }
+
+    public GraphicsContext getGc() {return gc;}
 
     public void setCurrentAnimation(String name) {
         if (data.animations.containsKey(name)) {
             this.currentAnimation = name;
         }
-        else System.out.printf("Animation: %s doesn't exists!!!1!\n", name);
     }
 
     public void setSpriteData(SpriteData data) {

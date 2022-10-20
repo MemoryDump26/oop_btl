@@ -1,5 +1,6 @@
 package collision;
 
+import attack.BombAttack;
 import entity.Entity;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public abstract class CollisionComponent {
     public static CollisionComponent Dynamic = new CollisionComponent() {
         @Override
         public void handle(Entity e, ArrayList<Entity> world) {
+            if (e.isDead()) return;
             e.getHitBox().move(e.getVelocity().getX(), 0);
             for (Entity m:world) {
                 if (!m.getCollisionState()) continue;
@@ -89,6 +91,7 @@ public abstract class CollisionComponent {
         public boolean getDefaultState() {return true;}
         public boolean isDestructibles() {return true;}
     };
+
     public static CollisionComponent Bomb = new CollisionComponent() {
         @Override
         public void handle(Entity e, ArrayList<Entity> world) {
@@ -98,12 +101,10 @@ public abstract class CollisionComponent {
                     if (!m.getCollisionState()) continue;
                     if (e.getHitBox().intersect(m.getHitBox())) {
                         notColliding = false;
-                        System.out.println("Bomb colliding!!!!111!!");
                         break;
                     }
                 }
                 if (notColliding) {
-                    System.out.println("Bomb collision set to true!!!!");
                     e.setCollisionState(true);
                 }
             }
@@ -128,6 +129,30 @@ public abstract class CollisionComponent {
 
         @Override
         public boolean getDefaultState() {return false;}
+        public boolean isDestructibles() {return true;}
+    };
+
+    public static CollisionComponent FlamePower = new CollisionComponent() {
+        @Override
+        public void handle(Entity e, ArrayList<Entity> world) {
+            for (Entity m:world) {
+                if (!m.getCollisionState()) continue;
+                if (e.isDead()) return;
+                if (e.getHitBox().intersect(m.getHitBox())) {
+                    if (m.getAttack() instanceof BombAttack) {
+                        BombAttack a = (BombAttack) m.getAttack();
+                        a.setPower(a.getPower() + 1);
+                        e.kill();
+                        break;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public boolean getDefaultState() {return false;}
+
+        @Override
         public boolean isDestructibles() {return true;}
     };
 }
