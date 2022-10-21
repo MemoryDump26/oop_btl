@@ -53,7 +53,7 @@ public class Main extends Application {
         p1Inp.addKeybind(KeyCode.S, Command.Down, "hold");
         p1Inp.addKeybind(KeyCode.D, Command.Right, "hold");
         p1Inp.addKeybind(KeyCode.J, Command.Attack, "press");
-        p1.setSpeed(4);
+        p1.setSpeed(3);
         t1.start();
     }
 

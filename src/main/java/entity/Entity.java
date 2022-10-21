@@ -21,8 +21,6 @@ public class Entity {
     protected boolean destructible;
     protected boolean harmful = false;
     protected boolean dead = false;
-    public ArrayList<World.Direction> availMove = new ArrayList<>();
-    public World.Direction currentDirection = World.Direction.UP;
 
     protected World w;
     protected InputComponent input;
@@ -145,7 +143,7 @@ public class Entity {
     }
 
     public void kill() {
-        if (destructible) {
+        if (!dead && destructible) {
             sprite.setCurrentAnimation("dead");
             sprite.setTickPerFrame(10);
             sprite.setLoop(false);

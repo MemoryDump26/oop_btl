@@ -2,6 +2,9 @@ package collision;
 
 import attack.BombAttack;
 import entity.Entity;
+import input.PlayerInputComponent;
+import options.Globals;
+import world.World;
 
 import java.util.ArrayList;
 
@@ -36,10 +39,6 @@ public abstract class CollisionComponent {
             for (Entity m:world) {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
-                    if (m.isHarmful()) {
-                        e.kill();
-                        break;
-                    }
                     double eX = e.getHitBox().getX();
                     double eW = e.getHitBox().getW();
                     double mX = m.getHitBox().getX();
@@ -51,14 +50,16 @@ public abstract class CollisionComponent {
                     break;
                 }
             }
+            int col = World.getCurrentCol(e);
+            int gridX = col * (int)Globals.cellSize;
+            double eX = e.getHitBox().getX();
+            if (eX - gridX < e.getSpeed()) e.moveTo(gridX, e.getHitBox().getY());
+            else if (gridX + Globals.cellSize - eX < e.getSpeed()) e.moveTo(gridX + Globals.cellSize, e.getHitBox().getY());
+
             e.getHitBox().move(0, e.getVelocity().getY());
             for (Entity m:world) {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
-                    if (m.isHarmful()) {
-                        e.kill();
-                        break;
-                    }
                     double eY = e.getHitBox().getY();
                     double eH = e.getHitBox().getH();
                     double mY = m.getHitBox().getY();
@@ -70,6 +71,11 @@ public abstract class CollisionComponent {
                     break;
                 }
             }
+            int row = World.getCurrentRow(e);
+            int gridY = row * (int)Globals.cellSize;
+            double eY = e.getHitBox().getY();
+            if (eY - gridY < e.getSpeed()) e.moveTo(e.getHitBox().getX(), gridY);
+            else if (gridY + Globals.cellSize - eY < e.getSpeed()) e.moveTo(e.getHitBox().getX(), gridY + Globals.cellSize);
         }
     };
 
@@ -159,6 +165,53 @@ public abstract class CollisionComponent {
                     if (m.getAttack() instanceof BombAttack) {
                         BombAttack a = (BombAttack) m.getAttack();
                         a.setPower(a.getPower() + 1);
+                        e.kill();
+                        break;
+                    }
+                }
+            }
+        }
+    };
+
+    public static CollisionComponent BombPower = new CollisionComponent() {
+        @Override
+        public void onAttach(Entity e) {
+            e.setCollisionState(false);
+            e.setDestructible(true);
+        }
+
+        @Override
+        public void handle(Entity e, ArrayList<Entity> world) {
+            if (e.isDead()) return;
+            for (Entity m:world) {
+                if (!m.getCollisionState()) continue;
+                if (e.getHitBox().intersect(m.getHitBox())) {
+                    if (m.getAttack() instanceof BombAttack) {
+                        BombAttack a = (BombAttack) m.getAttack();
+                        a.setNumOfBombs(a.getNumOfBombs() + 1);
+                        e.kill();
+                        break;
+                    }
+                }
+            }
+        }
+    };
+
+    public static CollisionComponent SpeedPower = new CollisionComponent() {
+        @Override
+        public void onAttach(Entity e) {
+            e.setCollisionState(false);
+            e.setDestructible(true);
+        }
+
+        @Override
+        public void handle(Entity e, ArrayList<Entity> world) {
+            if (e.isDead()) return;
+            for (Entity m:world) {
+                if (!m.getCollisionState()) continue;
+                if (e.getHitBox().intersect(m.getHitBox())) {
+                    if (m.getInput() instanceof PlayerInputComponent) {
+                        m.setSpeed(m.getSpeed() + 1);
                         e.kill();
                         break;
                     }

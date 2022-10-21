@@ -34,6 +34,8 @@ public class World {
     private static Entity pFlame;
     private static Entity pBalloom;
     private static Entity pFlamePower;
+    private static Entity pBombPower;
+    private static Entity pSpeedPower;
 
     public enum Direction {
         UP,
@@ -122,6 +124,28 @@ public class World {
             gc
         );
         pFlamePower.getSprite().setCurrentAnimation("flames");
+
+        pBombPower = new Entity(
+                new Point(0, 0),
+                InputComponent.Null,
+                CollisionComponent.BombPower,
+                AttackComponent.Null,
+                this,
+                Resources.spriteDataMap.get("power"),
+                gc
+        );
+        pBombPower.getSprite().setCurrentAnimation("bombs");
+
+        pSpeedPower = new Entity(
+                new Point(0, 0),
+                InputComponent.Null,
+                CollisionComponent.SpeedPower,
+                AttackComponent.Null,
+                this,
+                Resources.spriteDataMap.get("power"),
+                gc
+        );
+        pSpeedPower.getSprite().setCurrentAnimation("speed");
     }
 
     public void createLevelFromFile(File file) {
@@ -145,12 +169,21 @@ public class World {
                             ins = pBrick;
                             break;
                         case '1':
-                            objects.add(new Entity(spawnAt(row, col), pBalloom));
+                            Entity balloom = new Entity(spawnAt(row, col), pBalloom);
+                            balloom.setInput(new BalloomAI());
+                            objects.add(balloom);
                             break;
                         case 'f':
                             ins = new Entity(spawnAt(row, col), pBrick);
-                            InputComponent inp = new BrickLogic(pFlamePower);
-                            ins.setInput(inp);
+                            ins.setInput(new BrickLogic(pFlamePower));
+                            break;
+                        case 'b':
+                            ins = new Entity(spawnAt(row, col), pBrick);
+                            ins.setInput(new BrickLogic(pBombPower));
+                            break;
+                        case 's':
+                            ins = new Entity(spawnAt(row, col), pBrick);
+                            ins.setInput(new BrickLogic(pSpeedPower));
                             break;
                         default:
                             ins = pGrass;
@@ -168,6 +201,16 @@ public class World {
 
     public ArrayList<Entity> getNearbyEntities(Entity e) {
         ArrayList<Entity> result = new ArrayList<Entity>();
+        result.addAll(getNearbyStaticEntities(e));
+        result.addAll(objects);
+        result.addAll(getNearbyPlayers(e));
+        result.remove(e);
+
+        return result;
+    }
+
+    public ArrayList<Entity> getNearbyStaticEntities(Entity e) {
+        ArrayList<Entity> result = new ArrayList<Entity>();
         Point p = getBoardPosition(e);
         int row = (int)p.getY();
         int col = (int)p.getX();
@@ -178,10 +221,14 @@ public class World {
                 result.add(field[i][j]);
             }
         }
-        result.addAll(objects);
+        result.remove(e);
+        return result;
+    }
+
+    public ArrayList<Entity> getNearbyPlayers(Entity e) {
+        ArrayList<Entity> result = new ArrayList<Entity>();
         result.addAll(players);
         result.remove(e);
-
         return result;
     }
 
@@ -227,19 +274,19 @@ public class World {
         return new Point(col * Globals.cellSize, row * Globals.cellSize);
     }
 
-    public Point getBoardPosition(Entity e) {
+    public static Point getBoardPosition(Entity e) {
         Point p = e.getHitBox().getCenter();
         double row = p.getY() / Globals.cellSize;
         double col = p.getX() / Globals.cellSize;
         return new Point((int)col, (int)row);
     }
 
-    public int getCurrentRow(Entity e) {
+    public static int getCurrentRow(Entity e) {
         double row = e.getHitBox().getY() / Globals.cellSize;
         return (int)row;
     }
 
-    public int getCurrentCol(Entity e) {
+    public static int getCurrentCol(Entity e) {
         double col = e.getHitBox().getX() / Globals.cellSize;
         return (int)col;
     }
@@ -257,10 +304,10 @@ public class World {
         players.removeIf(Entity::clearable);
         objects.addAll(newSpawn);
         newSpawn.clear();
-        for (Entity e:players) {
+        for (Entity e:objects) {
             e.update();
         }
-        for (Entity e:objects) {
+        for (Entity e:players) {
             e.update();
         }
     }

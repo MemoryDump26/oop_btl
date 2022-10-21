@@ -26,11 +26,12 @@ public class BombLogic extends InputComponent {
     public void handle(Entity e, World w) {
         if (t.getElapsedTimeInSecond() >= 2) {
             t.stop();
-            parent.setNumOfBombs(parent.getNumOfBombs() + 1);
             e.kill();
         }
         if (!exploded && e.isDead()) {
+            parent.setNumOfBombs(parent.getNumOfBombs() + 1);
             w.spawnFlame(w.getCurrentRow(e), w.getCurrentCol(e), power, 0, 0);
+            exploded = true;
         }
     }
 }
