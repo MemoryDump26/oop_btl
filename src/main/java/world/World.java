@@ -212,25 +212,16 @@ public class World {
                 if (rowOffset == 0 && colOffset == -1) animation = "horizontalLeft";
                 if (rowOffset == 0 && colOffset == 1) animation = "horizontalRight";
             }
+            if (field[row][col].getCollisionState()) {
+                animation = "hidden";
+            }
+            else {
+                spawnFlame(row + rowOffset, col + colOffset, power - 1, rowOffset, colOffset);
+            }
             pFlame.getSprite().setCurrentAnimation(animation);
             spawn(row, col, pFlame);
-            spawnFlame(row + rowOffset, col + colOffset, power - 1, rowOffset, colOffset);
         }
     }
-
-    /*public void spawnBomb(int row, int col, int power) {
-        Entity b = new Entity(
-            spawnAt(row, col),
-            new BombLogic(power),
-            CollisionComponent.Bomb,
-            AttackComponent.Null,
-            this,
-            Resources.spriteDataMap.get("bomb"),
-            gc
-        );
-        b.getSprite().setCurrentAnimation("bomb");
-        newSpawn.add(b);
-    }*/
 
     public Point spawnAt(int row, int col) {
         return new Point(col * Globals.cellSize, row * Globals.cellSize);

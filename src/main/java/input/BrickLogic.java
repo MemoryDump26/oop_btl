@@ -20,6 +20,10 @@ public class BrickLogic extends InputComponent {
     }
 
     @Override
+    public void onAttach(Entity e) {
+    }
+
+    @Override
     public void handle(Entity e, World w) {
         if (spawned) return;
         if (e.isDead() && spawnOnDead != null) {

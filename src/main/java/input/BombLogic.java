@@ -2,7 +2,6 @@ package input;
 
 import attack.BombAttack;
 import entity.Entity;
-import javafx.scene.input.KeyCode;
 import timer.Timer;
 import world.World;
 
@@ -17,6 +16,10 @@ public class BombLogic extends InputComponent {
         this.parent = parent;
         this.t = new Timer(3, true);
         t.start();
+    }
+
+    @Override
+    public void onAttach(Entity e) {
     }
 
     @Override

@@ -6,22 +6,29 @@ import entity.Entity;
 import java.util.ArrayList;
 
 public abstract class CollisionComponent {
+    public abstract void onAttach(Entity e);
     public abstract void handle(Entity e, ArrayList<Entity> world);
-    public abstract boolean getDefaultState();
-    public abstract boolean isDestructibles();
 
     public static CollisionComponent Null = new CollisionComponent() {
+        @Override
+        public void onAttach(Entity e) {
+            e.setCollisionState(false);
+            e.setDestructible(false);
+        }
+
         @Override
         public void handle(Entity e, ArrayList<Entity> world) {
             return;
         }
-
-        @Override
-        public boolean getDefaultState() {return false;}
-        public boolean isDestructibles() {return false;}
     };
 
     public static CollisionComponent Dynamic = new CollisionComponent() {
+        @Override
+        public void onAttach(Entity e) {
+            e.setCollisionState(true);
+            e.setDestructible(true);
+        }
+
         @Override
         public void handle(Entity e, ArrayList<Entity> world) {
             if (e.isDead()) return;
@@ -64,35 +71,41 @@ public abstract class CollisionComponent {
                 }
             }
         }
-
-        @Override
-        public boolean getDefaultState() {return true;}
-        public boolean isDestructibles() {return true;}
     };
 
     public static CollisionComponent Static = new CollisionComponent() {
         @Override
-        public void handle(Entity e, ArrayList<Entity> world) {
-            return;
+        public void onAttach(Entity e) {
+            e.setCollisionState(true);
+            e.setDestructible(false);
         }
 
         @Override
-        public boolean getDefaultState() {return true;}
-        public boolean isDestructibles() {return false;}
+        public void handle(Entity e, ArrayList<Entity> world) {
+            return;
+        }
     };
 
     public static CollisionComponent Destructibles = new CollisionComponent() {
         @Override
-        public void handle(Entity e, ArrayList<Entity> world) {
-            return;
+        public void onAttach(Entity e) {
+            e.setCollisionState(true);
+            e.setDestructible(true);
         }
 
         @Override
-        public boolean getDefaultState() {return true;}
-        public boolean isDestructibles() {return true;}
+        public void handle(Entity e, ArrayList<Entity> world) {
+            return;
+        }
     };
 
     public static CollisionComponent Bomb = new CollisionComponent() {
+        @Override
+        public void onAttach(Entity e) {
+            e.setCollisionState(false);
+            e.setDestructible(true);
+        }
+
         @Override
         public void handle(Entity e, ArrayList<Entity> world) {
             if (e.getCollisionState() == false) {
@@ -109,13 +122,15 @@ public abstract class CollisionComponent {
                 }
             }
         }
-
-        @Override
-        public boolean getDefaultState() {return false;}
-        public boolean isDestructibles() {return true;}
     };
 
     public static CollisionComponent Flame = new CollisionComponent() {
+        @Override
+        public void onAttach(Entity e) {
+            e.setCollisionState(false);
+            e.setDestructible(true);
+        }
+
         @Override
         public void handle(Entity e, ArrayList<Entity> world) {
             for (Entity m:world) {
@@ -126,18 +141,20 @@ public abstract class CollisionComponent {
                 }
             }
         }
-
-        @Override
-        public boolean getDefaultState() {return false;}
-        public boolean isDestructibles() {return true;}
     };
 
     public static CollisionComponent FlamePower = new CollisionComponent() {
         @Override
+        public void onAttach(Entity e) {
+            e.setCollisionState(false);
+            e.setDestructible(true);
+        }
+
+        @Override
         public void handle(Entity e, ArrayList<Entity> world) {
+            if (e.isDead()) return;
             for (Entity m:world) {
                 if (!m.getCollisionState()) continue;
-                if (e.isDead()) return;
                 if (e.getHitBox().intersect(m.getHitBox())) {
                     if (m.getAttack() instanceof BombAttack) {
                         BombAttack a = (BombAttack) m.getAttack();
@@ -148,11 +165,5 @@ public abstract class CollisionComponent {
                 }
             }
         }
-
-        @Override
-        public boolean getDefaultState() {return false;}
-
-        @Override
-        public boolean isDestructibles() {return true;}
     };
 }

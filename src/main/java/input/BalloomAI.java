@@ -8,6 +8,10 @@ import java.util.Random;
 public class BalloomAI extends InputComponent {
 
     @Override
+    public void onAttach(Entity e) {
+    }
+
+    @Override
     public void handle(Entity e, World w) {
         Random r = new Random();
         e.availMove.clear();

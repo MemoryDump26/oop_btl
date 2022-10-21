@@ -43,10 +43,10 @@ public class Entity {
         this.collision = collision;
         this.attack = attack;
         this.w = w;
-        this.collisionState = collision.getDefaultState();
-        this.destructible = collision.isDestructibles();
         this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), sprite.w, sprite.h);
         this.sprite = new Sprite(sprite, gc);
+        collision.onAttach(this);
+        input.onAttach(this);
     }
 
     public Entity(Point spawn, Entity p) {
@@ -54,13 +54,13 @@ public class Entity {
         this.collision = p.collision;
         this.attack = p.attack;
         this.w = p.w;
-        this.collisionState = collision.getDefaultState();
-        this.destructible = collision.isDestructibles();
         this.harmful = p.harmful;
         this.dead = p.dead;
         this.speed = p.speed;
         this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), p.hitBox.getW(), p.hitBox.getH());
         this.sprite = new Sprite(p.sprite);
+        input.onAttach(this);
+        collision.onAttach(this);
     }
 
     public void update() {
@@ -77,6 +77,7 @@ public class Entity {
     public Point getVelocity() {return velocity;}
     public Rectangle getHitBox() {return hitBox;}
     public boolean getCollisionState() {return collisionState;}
+    public boolean isDestructible() {return destructible;}
     public boolean isHarmful() {return harmful;}
     public boolean isDead() {return dead;}
     public boolean clearable() {
@@ -92,11 +93,23 @@ public class Entity {
     public void setVelocity(Point velocity) {this.velocity = velocity;}
     public void setHitBox(Rectangle hitBox) {this.hitBox = hitBox;}
     public void setCollisionState(boolean collisionState) {this.collisionState = collisionState;}
+    public void setDestructible(boolean destructible) {this.destructible = destructible;}
     public void setHarmful(boolean harmful) {this.harmful = harmful;}
+    public void setDead(boolean dead) {this.dead = dead;}
 
-    public void setInput(InputComponent input) {this.input = input;}
-    public void setCollision(CollisionComponent collision) {this.collision = collision;}
-    public void setAttack(AttackComponent attack) {this.attack = attack;}
+    public void setInput(InputComponent input) {
+        this.input = input;
+        input.onAttach(this);
+    }
+
+    public void setCollision(CollisionComponent collision) {
+        this.collision = collision;
+        collision.onAttach(this);
+    }
+
+    public void setAttack(AttackComponent attack) {
+        this.attack = attack;
+    }
 
     public void move(double x, double y) {
         velocity.add(x, y);
