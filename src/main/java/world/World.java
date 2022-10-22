@@ -1,13 +1,13 @@
 package world;
 
 import attack.AttackComponent;
+import attack.BombAttack;
 import collision.CollisionComponent;
 import entity.Entity;
 import geometry.Point;
-import input.BalloomAI;
-import input.InputComponent;
-import input.BrickLogic;
+import input.*;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
 import resources.Resources;
 import options.Globals;
 
@@ -23,10 +23,16 @@ public class World {
     public Entity[][] field;
     public ArrayList<Entity> objects = new ArrayList<Entity>();
     public ArrayList<Entity> players = new ArrayList<Entity>();
+    public ArrayList<Entity> enemies = new ArrayList<Entity>();
     public ArrayList<Entity> newSpawn = new ArrayList<Entity>();
     private int width;
     private int height;
+    private boolean cleared = false;
 
+    private PlayerInputComponent p1Inp = new PlayerInputComponent();
+    private PlayerInputComponent p2Inp = new PlayerInputComponent();
+
+    private static Entity pPlayer;
     private static Entity pWall;
     private static Entity pBrick;
     private static Entity pGrass;
@@ -36,6 +42,7 @@ public class World {
     private static Entity pFlamePower;
     private static Entity pBombPower;
     private static Entity pSpeedPower;
+    private static Entity pPortal;
 
     public enum Direction {
         UP,
@@ -46,6 +53,23 @@ public class World {
 
     public World(GraphicsContext gc) {
         this.gc = gc;
+
+        p1Inp.addKeybind(KeyCode.W, Command.Up, "hold");
+        p1Inp.addKeybind(KeyCode.A, Command.Left, "hold");
+        p1Inp.addKeybind(KeyCode.S, Command.Down, "hold");
+        p1Inp.addKeybind(KeyCode.D, Command.Right, "hold");
+        p1Inp.addKeybind(KeyCode.J, Command.Attack, "press");
+
+        pPlayer = new Entity(
+            new Point(0, 0),
+            InputComponent.Null,
+            CollisionComponent.Dynamic,
+            AttackComponent.Null,
+            this,
+            Resources.spriteDataMap.get("player"),
+            gc
+        );
+        pPlayer.setSpeed(3);
 
         pWall = new Entity(
             new Point(0, 0),
@@ -126,29 +150,39 @@ public class World {
         pFlamePower.getSprite().setCurrentAnimation("flames");
 
         pBombPower = new Entity(
-                new Point(0, 0),
-                InputComponent.Null,
-                CollisionComponent.BombPower,
-                AttackComponent.Null,
-                this,
-                Resources.spriteDataMap.get("power"),
-                gc
+            new Point(0, 0),
+            InputComponent.Null,
+            CollisionComponent.BombPower,
+            AttackComponent.Null,
+            this,
+            Resources.spriteDataMap.get("power"),
+            gc
         );
         pBombPower.getSprite().setCurrentAnimation("bombs");
 
         pSpeedPower = new Entity(
-                new Point(0, 0),
-                InputComponent.Null,
-                CollisionComponent.SpeedPower,
-                AttackComponent.Null,
-                this,
-                Resources.spriteDataMap.get("power"),
-                gc
+            new Point(0, 0),
+            InputComponent.Null,
+            CollisionComponent.SpeedPower,
+            AttackComponent.Null,
+            this,
+            Resources.spriteDataMap.get("power"),
+            gc
         );
         pSpeedPower.getSprite().setCurrentAnimation("speed");
+
+        pPortal = new Entity(
+            new Point(0, 0),
+            InputComponent.Null,
+            CollisionComponent.Portal,
+            AttackComponent.Null,
+            this,
+            Resources.spriteDataMap.get("portal"),
+            gc
+        );
     }
 
-    public void createLevelFromFile(File file) {
+    public void createLevelFromFile(File file, boolean isNextLevel) {
         try {
             Scanner sc = new Scanner(file);
             num = sc.nextInt();
@@ -156,12 +190,27 @@ public class World {
             width = sc.nextInt();
             sc.nextLine();
             field = new Entity[height][width];
+
+            objects.clear();
+            enemies.clear();
+            newSpawn.clear();
+            if (!isNextLevel) players.clear();
+            int currentPlayer = 0;
             for (int row = 0; row < height; row++) {
                 String tmp = sc.nextLine();
                 for (int col = 0; col < width; col++) {
                     System.out.printf("%c", tmp.charAt(col));
                     Entity ins = pGrass;
                     switch (tmp.charAt(col)) {
+                        case 'p':
+                            if (currentPlayer < players.size()) {
+                                players.get(currentPlayer).moveTo(row * Globals.cellSize, col * Globals.cellSize);
+                                currentPlayer++;
+                            }
+                            else {
+                                spawnPlayer(row, col, p1Inp, new BombAttack(1, 1));
+                            }
+                            break;
                         case '#':
                             ins = pWall;
                             break;
@@ -171,7 +220,11 @@ public class World {
                         case '1':
                             Entity balloom = new Entity(spawnAt(row, col), pBalloom);
                             balloom.setInput(new BalloomAI());
-                            objects.add(balloom);
+                            enemies.add(balloom);
+                            break;
+                        case 'x':
+                            ins = new Entity(spawnAt(row, col), pBrick);
+                            ins.setInput(new BrickLogic(pPortal));
                             break;
                         case 'f':
                             ins = new Entity(spawnAt(row, col), pBrick);
@@ -203,6 +256,7 @@ public class World {
         ArrayList<Entity> result = new ArrayList<Entity>();
         result.addAll(getNearbyStaticEntities(e));
         result.addAll(objects);
+        result.addAll(enemies);
         result.addAll(getNearbyPlayers(e));
         result.remove(e);
 
@@ -232,8 +286,24 @@ public class World {
         return result;
     }
 
+    public boolean isLevelCleared() {
+        return enemies.isEmpty();
+    }
+
+    public void setCleared(boolean cleared) {
+        this.cleared = cleared;
+    }
+
     public void spawn(int row, int col, Entity e) {
         newSpawn.add(new Entity(spawnAt(row, col), e));
+    }
+
+    public void spawnPlayer(int row, int col, InputComponent input, AttackComponent attack) {
+        Entity p = new Entity(spawnAt(row, col), pPlayer);
+        p.setInput(input);
+        p.setAttack(attack);
+        p.setDestructible(false);
+        players.add(p);
     }
 
     public void spawnFlame(int row, int col, int power, int rowOffset, int colOffset) {
@@ -274,19 +344,19 @@ public class World {
         return new Point(col * Globals.cellSize, row * Globals.cellSize);
     }
 
-    public static Point getBoardPosition(Entity e) {
+    public Point getBoardPosition(Entity e) {
         Point p = e.getHitBox().getCenter();
         double row = p.getY() / Globals.cellSize;
         double col = p.getX() / Globals.cellSize;
         return new Point((int)col, (int)row);
     }
 
-    public static int getCurrentRow(Entity e) {
+    public int getCurrentRow(Entity e) {
         double row = e.getHitBox().getY() / Globals.cellSize;
         return (int)row;
     }
 
-    public static int getCurrentCol(Entity e) {
+    public int getCurrentCol(Entity e) {
         double col = e.getHitBox().getX() / Globals.cellSize;
         return (int)col;
     }
@@ -301,14 +371,22 @@ public class World {
             }
         }
         objects.removeIf(Entity::clearable);
+        enemies.removeIf(Entity::clearable);
         players.removeIf(Entity::clearable);
         objects.addAll(newSpawn);
         newSpawn.clear();
         for (Entity e:objects) {
             e.update();
         }
+        for (Entity e:enemies) {
+            e.update();
+        }
         for (Entity e:players) {
             e.update();
+        }
+        if (cleared) {
+            createLevelFromFile(Resources.levelList.get((num + 1) % Resources.levelList.size()), true);
+            cleared = false;
         }
     }
 
@@ -319,6 +397,9 @@ public class World {
             }
         }
         for (Entity e:objects) {
+            e.render();
+        }
+        for (Entity e:enemies) {
             e.render();
         }
         for (Entity e:players) {

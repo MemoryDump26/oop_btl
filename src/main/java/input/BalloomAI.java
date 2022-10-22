@@ -17,6 +17,7 @@ public class BalloomAI extends InputComponent {
 
     @Override
     public void handle(Entity e, World w) {
+        if (e.isDead()) return;
         availMove.clear();
         availMove.add(World.Direction.UP);
         availMove.add(World.Direction.DOWN);

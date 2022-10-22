@@ -43,8 +43,8 @@ public class Entity {
         this.w = w;
         this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), sprite.w, sprite.h);
         this.sprite = new Sprite(sprite, gc);
-        collision.onAttach(this);
         input.onAttach(this);
+        collision.onAttach(this);
     }
 
     public Entity(Point spawn, Entity p) {
@@ -52,6 +52,7 @@ public class Entity {
         this.collision = p.collision;
         this.attack = p.attack;
         this.w = p.w;
+        this.destructible = p.destructible;
         this.harmful = p.harmful;
         this.dead = p.dead;
         this.speed = p.speed;
@@ -63,7 +64,7 @@ public class Entity {
 
     public void update() {
         input.handle(this, w);
-        collision.handle(this, w.getNearbyEntities(this));
+        collision.handle(this, w);
         velocity.zero();
     }
 

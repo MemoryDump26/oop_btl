@@ -6,11 +6,9 @@ import input.PlayerInputComponent;
 import options.Globals;
 import world.World;
 
-import java.util.ArrayList;
-
 public abstract class CollisionComponent {
     public abstract void onAttach(Entity e);
-    public abstract void handle(Entity e, ArrayList<Entity> world);
+    public abstract void handle(Entity e, World w);
 
     public static CollisionComponent Null = new CollisionComponent() {
         @Override
@@ -20,7 +18,7 @@ public abstract class CollisionComponent {
         }
 
         @Override
-        public void handle(Entity e, ArrayList<Entity> world) {
+        public void handle(Entity e, World w) {
             return;
         }
     };
@@ -33,10 +31,10 @@ public abstract class CollisionComponent {
         }
 
         @Override
-        public void handle(Entity e, ArrayList<Entity> world) {
+        public void handle(Entity e, World w) {
             if (e.isDead()) return;
             e.getHitBox().move(e.getVelocity().getX(), 0);
-            for (Entity m:world) {
+            for (Entity m:w.getNearbyEntities(e)) {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
                     double eX = e.getHitBox().getX();
@@ -50,14 +48,14 @@ public abstract class CollisionComponent {
                     break;
                 }
             }
-            int col = World.getCurrentCol(e);
+            int col = w.getCurrentCol(e);
             int gridX = col * (int)Globals.cellSize;
             double eX = e.getHitBox().getX();
             if (eX - gridX < e.getSpeed()) e.moveTo(gridX, e.getHitBox().getY());
             else if (gridX + Globals.cellSize - eX < e.getSpeed()) e.moveTo(gridX + Globals.cellSize, e.getHitBox().getY());
 
             e.getHitBox().move(0, e.getVelocity().getY());
-            for (Entity m:world) {
+            for (Entity m:w.getNearbyEntities(e)) {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
                     double eY = e.getHitBox().getY();
@@ -71,7 +69,7 @@ public abstract class CollisionComponent {
                     break;
                 }
             }
-            int row = World.getCurrentRow(e);
+            int row = w.getCurrentRow(e);
             int gridY = row * (int)Globals.cellSize;
             double eY = e.getHitBox().getY();
             if (eY - gridY < e.getSpeed()) e.moveTo(e.getHitBox().getX(), gridY);
@@ -87,7 +85,7 @@ public abstract class CollisionComponent {
         }
 
         @Override
-        public void handle(Entity e, ArrayList<Entity> world) {
+        public void handle(Entity e, World w) {
             return;
         }
     };
@@ -100,7 +98,7 @@ public abstract class CollisionComponent {
         }
 
         @Override
-        public void handle(Entity e, ArrayList<Entity> world) {
+        public void handle(Entity e, World w) {
             return;
         }
     };
@@ -113,10 +111,10 @@ public abstract class CollisionComponent {
         }
 
         @Override
-        public void handle(Entity e, ArrayList<Entity> world) {
+        public void handle(Entity e, World w) {
             if (e.getCollisionState() == false) {
                 boolean notColliding = true;
-                for (Entity m:world) {
+                for (Entity m:w.getNearbyEntities(e)) {
                     if (!m.getCollisionState()) continue;
                     if (e.getHitBox().intersect(m.getHitBox())) {
                         notColliding = false;
@@ -138,8 +136,8 @@ public abstract class CollisionComponent {
         }
 
         @Override
-        public void handle(Entity e, ArrayList<Entity> world) {
-            for (Entity m:world) {
+        public void handle(Entity e, World w) {
+            for (Entity m:w.getNearbyEntities(e))  {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
                     m.kill();
@@ -157,13 +155,12 @@ public abstract class CollisionComponent {
         }
 
         @Override
-        public void handle(Entity e, ArrayList<Entity> world) {
+        public void handle(Entity e, World w) {
             if (e.isDead()) return;
-            for (Entity m:world) {
+            for (Entity m:w.getNearbyPlayers(e)) {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
-                    if (m.getAttack() instanceof BombAttack) {
-                        BombAttack a = (BombAttack) m.getAttack();
+                    if (m.getAttack() instanceof BombAttack a) {
                         a.setPower(a.getPower() + 1);
                         e.kill();
                         break;
@@ -181,13 +178,12 @@ public abstract class CollisionComponent {
         }
 
         @Override
-        public void handle(Entity e, ArrayList<Entity> world) {
+        public void handle(Entity e, World w) {
             if (e.isDead()) return;
-            for (Entity m:world) {
+            for (Entity m:w.getNearbyPlayers(e)) {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
-                    if (m.getAttack() instanceof BombAttack) {
-                        BombAttack a = (BombAttack) m.getAttack();
+                    if (m.getAttack() instanceof BombAttack a) {
                         a.setNumOfBombs(a.getNumOfBombs() + 1);
                         e.kill();
                         break;
@@ -205,14 +201,34 @@ public abstract class CollisionComponent {
         }
 
         @Override
-        public void handle(Entity e, ArrayList<Entity> world) {
+        public void handle(Entity e, World w) {
             if (e.isDead()) return;
-            for (Entity m:world) {
+            for (Entity m:w.getNearbyPlayers(e)) {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
-                    if (m.getInput() instanceof PlayerInputComponent) {
-                        m.setSpeed(m.getSpeed() + 1);
-                        e.kill();
+                    m.setSpeed(m.getSpeed() + 1);
+                    e.kill();
+                    break;
+                }
+            }
+        }
+    };
+
+    public static CollisionComponent Portal = new CollisionComponent() {
+        @Override
+        public void onAttach(Entity e) {
+            e.setCollisionState(false);
+            e.setDestructible(true);
+        }
+
+        @Override
+        public void handle(Entity e, World w) {
+            if (e.isDead()) return;
+            for (Entity m:w.getNearbyPlayers(e)) {
+                if (!m.getCollisionState()) continue;
+                if (e.getHitBox().intersect(m.getHitBox())) {
+                    if (w.isLevelCleared()) {
+                        w.setCleared(true);
                         break;
                     }
                 }
