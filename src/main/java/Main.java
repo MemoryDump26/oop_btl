@@ -9,7 +9,6 @@ import javafx.scene.effect.BlendMode;
 import javafx.stage.Stage;
 import resources.Resources;
 import resources.SoundFX;
-import timer.Timer;
 import world.World;
 
 public class Main extends Application {
@@ -19,8 +18,6 @@ public class Main extends Application {
     GraphicsContext gc = mainCanvas.getGraphicsContext2D();
 
     World world;
-
-    Timer t1 = new Timer(999, false);
 
     public Main() {
         gc.setImageSmoothing(false);

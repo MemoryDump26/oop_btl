@@ -101,12 +101,11 @@ public class Resources {
             System.out.printf("%s\n",fileName);
             String[] parsed = fileName.split("/|\\|(?<=\\D)(?=\\d)|\\.");
             if (!soundDataMap.containsKey(parsed[parsed.length-2])) {
-                soundDataMap.put(parsed[parsed.length - 2], new AudioClip("File:/" + fileName));
+                soundDataMap.put(parsed[parsed.length - 2], new AudioClip("File:" + fileName));
             }
         }
         catch (Exception e) {
             System.out.printf("Can't load sounds: %s\n", fileName);
         }
     }
-
 }
