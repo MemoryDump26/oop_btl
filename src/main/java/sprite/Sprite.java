@@ -3,8 +3,10 @@ package sprite;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Sprite {
+    public static Object BrickTile;
     final private GraphicsContext gc;
     private SpriteData data;
+    public static Sprite grass;
 
     private String currentAnimation = new String();
     private int currentFrame = 0;

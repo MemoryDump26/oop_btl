@@ -393,7 +393,6 @@ public class World {
             spawn(row, col, pFlame);
         }
     }
-
     public Point spawnAt(int row, int col) {
         return new Point(col * Globals.cellSize, row * Globals.cellSize);
     }
