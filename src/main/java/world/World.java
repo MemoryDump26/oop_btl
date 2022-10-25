@@ -39,6 +39,7 @@ public class World {
     private static Entity pBomb;
     private static Entity pFlame;
     private static Entity pBalloom;
+    private static Entity pOneal;
     private static Entity pFlamePower;
     private static Entity pBombPower;
     private static Entity pSpeedPower;
@@ -128,7 +129,7 @@ public class World {
 
         pBalloom = new Entity(
             new Point(0, 0),
-            new BalloomAI(),
+            InputComponent.Null,
             CollisionComponent.Dynamic,
             AttackComponent.Null,
             this,
@@ -137,6 +138,18 @@ public class World {
         );
         pBalloom.setSpeed(1);
         pBalloom.setHarmful(true);
+
+        pOneal = new Entity(
+            new Point(0, 0),
+            InputComponent.Null,
+            CollisionComponent.Dynamic,
+            AttackComponent.Null,
+            this,
+            Resources.spriteDataMap.get("oneal"),
+            gc
+        );
+        pOneal.setSpeed(1);
+        pOneal.setHarmful(true);
 
         pFlamePower = new Entity(
             new Point(0, 0),
@@ -222,6 +235,11 @@ public class World {
                             balloom.setInput(new BalloomAI());
                             enemies.add(balloom);
                             break;
+                        case '2':
+                            Entity oneal = new Entity(spawnAt(row, col), pOneal);
+                            oneal.setInput(new OnealAI());
+                            enemies.add(oneal);
+                            break;
                         case 'x':
                             ins = new Entity(spawnAt(row, col), pBrick);
                             ins.setInput(new BrickLogic(pPortal));
@@ -284,6 +302,26 @@ public class World {
         result.addAll(players);
         result.remove(e);
         return result;
+    }
+
+    public boolean isOccupied(int row, int col) {
+        if (field[row][col].getCollisionState()) return true;
+        for (Entity e:objects) {
+            int eRow = getCurrentRow(e);
+            int eCol = getCurrentCol(e);
+            if (eRow == row && eCol == col) return true;
+        }
+        for (Entity e:enemies) {
+            int eRow = getCurrentRow(e);
+            int eCol = getCurrentCol(e);
+            if (eRow == row && eCol == col) return true;
+        }
+        for (Entity e:players) {
+            int eRow = getCurrentRow(e);
+            int eCol = getCurrentCol(e);
+            if (eRow == row && eCol == col) return true;
+        }
+        return false;
     }
 
     public boolean isLevelCleared() {
@@ -383,6 +421,7 @@ public class World {
         }
         for (Entity e:players) {
             e.update();
+            //System.out.printf("%f, %f\n", e.getHitBox().getX(), e.getHitBox().getY());
         }
         if (cleared) {
             createLevelFromFile(Resources.levelList.get((num + 1) % Resources.levelList.size()), true);

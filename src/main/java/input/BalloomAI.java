@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class BalloomAI extends InputComponent {
-    private ArrayList<World.Direction> availMove = new ArrayList<>();
-    private World.Direction currentDirection = World.Direction.UP;
-    private Random r = new Random();
+    protected ArrayList<World.Direction> availMove = new ArrayList<>();
+    protected World.Direction currentDirection = World.Direction.UP;
+    protected Random r = new Random();
 
     @Override
     public void onAttach(Entity e) {
