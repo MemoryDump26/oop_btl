@@ -1,11 +1,14 @@
 package world;
 
+import attack.AttackComponent;
+import attack.BombAttack;
 import collision.CollisionComponent;
+import collision.PowerCollisionComponent;
 import entity.Entity;
-import entity.StaticEntity;
 import geometry.Point;
-import input.InputComponent;
+import input.*;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
 import resources.Resources;
 import options.Globals;
 
@@ -18,67 +21,228 @@ public class World {
     private GraphicsContext gc;
 
     private int num;
-    private Entity[][] matrix;
+    public Entity[][] field;
+    public ArrayList<Entity> objects = new ArrayList<>();
+    public ArrayList<Entity> players = new ArrayList<>();
+    public ArrayList<Entity> enemies = new ArrayList<>();
+    public ArrayList<Entity> newSpawn = new ArrayList<>();
     private int width;
     private int height;
+    private boolean cleared = false;
 
-    private static StaticEntity pWall;
-    private static StaticEntity pBrick;
-    private static StaticEntity pGrass;
+    private PlayerInputComponent p1Inp = new PlayerInputComponent();
+    private PlayerInputComponent p2Inp = new PlayerInputComponent();
+
+    private static Entity pPlayer;
+    private static Entity pWall;
+    private static Entity pBrick;
+    private static Entity pGrass;
+    private static Entity pBomb;
+    private static Entity pFlame;
+    private static Entity pBalloom;
+    private static Entity pOneal;
+    private static Entity pPower;
+    private static Entity pPortal;
+
+    public enum Direction {
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT,
+    }
 
     public World(GraphicsContext gc) {
         this.gc = gc;
 
-        pWall = new StaticEntity(
+        p1Inp.addKeybind(KeyCode.W, Command.Up, "hold");
+        p1Inp.addKeybind(KeyCode.A, Command.Left, "hold");
+        p1Inp.addKeybind(KeyCode.S, Command.Down, "hold");
+        p1Inp.addKeybind(KeyCode.D, Command.Right, "hold");
+        p1Inp.addKeybind(KeyCode.J, Command.Attack, "press");
+
+        pPlayer = new Entity(
+            new Point(0, 0),
+            InputComponent.Null,
+            CollisionComponent.Dynamic,
+            AttackComponent.Null,
+            this,
+            Resources.spriteDataMap.get("player"),
+            gc
+        );
+        pPlayer.setSpeed(3);
+
+        pWall = new Entity(
             new Point(0, 0),
             InputComponent.Null,
             CollisionComponent.Static,
+            AttackComponent.Null,
+            this,
             Resources.spriteDataMap.get("wall"),
             this.gc
         );
 
-        pBrick = new StaticEntity(
+        pBrick = new Entity(
             new Point(0, 0),
             InputComponent.Null,
-            CollisionComponent.Static,
+            CollisionComponent.Destructibles,
+            AttackComponent.Null,
+            this,
             Resources.spriteDataMap.get("brick"),
             this.gc
         );
+        pBrick.getSprite().setCurrentAnimation("brick");
 
-        pGrass = new StaticEntity(
+        pGrass = new Entity(
             new Point(0, 0),
             InputComponent.Null,
             CollisionComponent.Null,
+            AttackComponent.Null,
+            this,
             Resources.spriteDataMap.get("grass"),
+            gc
+        );
+
+        pBomb = new Entity(
+            new Point(0, 0),
+            InputComponent.Null,
+            CollisionComponent.Bomb,
+            AttackComponent.Null,
+            this,
+            Resources.spriteDataMap.get("bomb"),
+            gc
+        );
+        pBomb.getSprite().setCurrentAnimation("bomb");
+
+        pFlame = new Entity(
+            new Point(0, 0),
+            InputComponent.Null,
+            CollisionComponent.Flame,
+            AttackComponent.Null,
+            this,
+            Resources.spriteDataMap.get("explosion"),
+            gc
+        );
+        pFlame.kill();
+        pFlame.getSprite().setTickPerFrame(3);
+
+        pBalloom = new Entity(
+            new Point(0, 0),
+            InputComponent.Null,
+            CollisionComponent.Dynamic,
+            AttackComponent.Null,
+            this,
+            Resources.spriteDataMap.get("balloom"),
+            gc
+        );
+        pBalloom.setSpeed(1);
+
+        pOneal = new Entity(
+            new Point(0, 0),
+            InputComponent.Null,
+            CollisionComponent.Dynamic,
+            AttackComponent.Null,
+            this,
+            Resources.spriteDataMap.get("oneal"),
+            gc
+        );
+        pOneal.setSpeed(1);
+
+        pPower = new Entity(
+            new Point(0, 0),
+            InputComponent.Null,
+            CollisionComponent.Null,
+            AttackComponent.Null,
+            this,
+            Resources.spriteDataMap.get("power"),
+            gc
+        );
+
+        pPortal = new Entity(
+            new Point(0, 0),
+            InputComponent.Null,
+            CollisionComponent.Portal,
+            AttackComponent.Null,
+            this,
+            Resources.spriteDataMap.get("portal"),
             gc
         );
     }
 
-    public void createLevelFromFile(File file) {
+    public void createLevelFromFile(File file, boolean isNextLevel) {
         try {
             Scanner sc = new Scanner(file);
             num = sc.nextInt();
-            width = sc.nextInt();
             height = sc.nextInt();
+            width = sc.nextInt();
             sc.nextLine();
-            matrix = new Entity[width][height];
-            for (int row = 0; row < width; row++) {
+            field = new Entity[height][width];
+
+            objects.clear();
+            enemies.clear();
+            newSpawn.clear();
+            if (!isNextLevel) players.clear();
+            int currentPlayer = 0;
+            for (int row = 0; row < height; row++) {
                 String tmp = sc.nextLine();
-                for (int col = 0; col < height; col++) {
+                for (int col = 0; col < width; col++) {
                     System.out.printf("%c", tmp.charAt(col));
-                    StaticEntity ins;
+                    Entity ins = pGrass;
                     switch (tmp.charAt(col)) {
+                        case 'p':
+                            if (currentPlayer < players.size()) {
+                                players.get(currentPlayer).moveTo(row * Globals.cellSize, col * Globals.cellSize);
+                                currentPlayer++;
+                            }
+                            else {
+                                spawnPlayer(row, col, p1Inp, new BombAttack(1, 1));
+                            }
+                            break;
                         case '#':
                             ins = pWall;
                             break;
                         case '*':
                             ins = pBrick;
                             break;
+                        case '1':
+                            Entity balloom = new Entity(spawnAt(row, col), pBalloom);
+                            balloom.setInput(new BalloomAI());
+                            enemies.add(balloom);
+                            break;
+                        case '2':
+                            Entity oneal = new Entity(spawnAt(row, col), pOneal);
+                            oneal.setInput(new OnealAI());
+                            enemies.add(oneal);
+                            break;
+                        case 'x':
+                            ins = new Entity(spawnAt(row, col), pBrick);
+                            ins.setInput(new BrickLogic(pPortal));
+                            break;
+                        case 'f':
+                            Entity flamePower = new Entity(new Point(), pPower);
+                            flamePower.setCollision(new PowerCollisionComponent(Command.FlamePower));
+                            flamePower.getSprite().setCurrentAnimation("flames");
+                            ins = new Entity(spawnAt(row, col), pBrick);
+                            ins.setInput(new BrickLogic(flamePower));
+                            break;
+                        case 'b':
+                            Entity bombPower = new Entity(new Point(), pPower);
+                            bombPower.setCollision(new PowerCollisionComponent(Command.BombPower));
+                            bombPower.getSprite().setCurrentAnimation("bombs");
+                            ins = new Entity(spawnAt(row, col), pBrick);
+                            ins.setInput(new BrickLogic(bombPower));
+                            break;
+                        case 's':
+                            Entity speedPower = new Entity(new Point(), pPower);
+                            speedPower.setCollision(new PowerCollisionComponent(Command.SpeedPower));
+                            speedPower.getSprite().setCurrentAnimation("speed");
+                            ins = new Entity(spawnAt(row, col), pBrick);
+                            ins.setInput(new BrickLogic(speedPower));
+                            break;
                         default:
                             ins = pGrass;
                             break;
                     }
-                    matrix[row][col] = new StaticEntity(spawnAt(row, col), ins);
+                    field[row][col] = new Entity(spawnAt(row, col), ins);
                 }
                 System.out.println();
             }
@@ -89,42 +253,202 @@ public class World {
     }
 
     public ArrayList<Entity> getNearbyEntities(Entity e) {
-        ArrayList<Entity> result = new ArrayList<Entity>();
-        int row = getCurrentRow(e);
-        int col = getCurrentCol(e);
-        System.out.printf("%d, %d\n", row, col);
-        result.add(matrix[row-1][col-1]);
-        result.add(matrix[row-1][col]);
-        result.add(matrix[row-1][col+1]);
-        result.add(matrix[row][col-1]);
-        result.add(matrix[row][col]);
-        result.add(matrix[row][col+1]);
-        result.add(matrix[row+1][col-1]);
-        result.add(matrix[row+1][col]);
-        result.add(matrix[row+1][col+1]);
+        return getNearbyEntities(e, true, true, true, true);
+    }
+
+    public ArrayList<Entity> getNearbyEntities(
+            Entity e,
+            boolean incStatic,
+            boolean incObjects,
+            boolean incEnemies,
+            boolean incPlayers
+    ) {
+        ArrayList<Entity> result = new ArrayList<>();
+        if (incStatic) result.addAll(getNearbyStaticEntities(e));
+        if (incObjects) result.addAll(getNearby(e, objects));
+        if (incEnemies) result.addAll(getNearby(e, enemies));
+        if (incPlayers) result.addAll(getNearby(e, players));
 
         return result;
     }
 
+    public ArrayList<Entity> getNearbyStaticEntities(Entity e) {
+        ArrayList<Entity> result = new ArrayList<>();
+        Point p = getBoardPosition(e);
+        int row = (int)p.getY();
+        int col = (int)p.getX();
+        for (int i = row - 1; i <= row + 1; i++) {
+            if (i < 0 || i > height - 1) continue;
+            for (int j = col - 1; j <= col + 1; j++) {
+                if (j < 0 || j > width - 1) continue;
+                result.add(field[i][j]);
+            }
+        }
+        result.remove(e);
+        return result;
+    }
+
+    private ArrayList<Entity> getNearby(Entity e, ArrayList<Entity> fromSet) {
+        ArrayList<Entity> result = new ArrayList<>();
+        Point pE = getBoardPosition(e);
+        int eRow = (int)pE.getY();
+        int eCol = (int)pE.getX();
+        for (Entity m:fromSet) {
+            Point pM = getBoardPosition(m);
+            int mRow = (int)pM.getY();
+            int mCol = (int)pM.getX();
+            if (Math.abs(eRow - mRow) < 2 && Math.abs(eCol - mCol) < 2) result.add(m);
+        }
+        result.remove(e);
+        return result;
+    }
+
+    public ArrayList<Direction> getAvailableMoves(
+            Entity e,
+            ArrayList<Entity> constraintSet
+    ) {
+        Point p = getBoardPosition(e);
+        int row = (int) p.getY();
+        int col = (int) p.getX();
+        /*int row = getCurrentRow(e);
+        int col = getCurrentCol(e);*/
+        ArrayList<Direction> result = new ArrayList<>();
+        if (!isOccupied(row - 1, col, constraintSet)) result.add(Direction.UP);
+        if (!isOccupied(row + 1, col, constraintSet)) result.add(Direction.DOWN);
+        if (!isOccupied(row, col - 1, constraintSet)) result.add(Direction.LEFT);
+        if (!isOccupied(row, col + 1, constraintSet)) result.add(Direction.RIGHT);
+        return result;
+    }
+
+    public boolean isOccupied(int row, int col, ArrayList<Entity> constraintSet) {
+        for (Entity e:constraintSet) {
+            if (!e.getCollisionState()) continue;
+            Point p = getBoardPosition(e);
+            int eRow = (int) p.getY();
+            int eCol = (int) p.getX();
+            if (eRow == row && eCol == col) return true;
+        }
+        return false;
+    }
+
+    public boolean isLevelCleared() {
+        return enemies.isEmpty();
+    }
+
+    public void setCleared(boolean cleared) {
+        this.cleared = cleared;
+    }
+
+    public void spawn(int row, int col, Entity e) {
+        newSpawn.add(new Entity(spawnAt(row, col), e));
+    }
+
+    public void spawnPlayer(int row, int col, InputComponent input, AttackComponent attack) {
+        Entity p = new Entity(spawnAt(row, col), pPlayer);
+        p.setInput(input);
+        p.setAttack(attack);
+        p.setDestructible(false);
+        players.add(p);
+    }
+
+    public void spawnFlame(int row, int col, int power, int rowOffset, int colOffset) {
+        if (power < 0) return;
+
+        if (rowOffset == 0 && colOffset == 0) {
+            pFlame.getSprite().setCurrentAnimation("center");
+            spawn(row, col, pFlame);
+            spawnFlame(row - 1, col, power - 1, -1, 0);
+            spawnFlame(row + 1, col, power - 1, 1, 0);
+            spawnFlame(row, col - 1, power - 1, 0, -1);
+            spawnFlame(row, col + 1, power - 1, 0, 1);
+        }
+        else {
+            String animation = new String();
+            if (power >= 1) {
+                if (rowOffset == 0) animation = "horizontal";
+                else animation = "vertical";
+            }
+            else {
+                if (rowOffset == -1 && colOffset == 0) animation = "verticalUp";
+                if (rowOffset == 1 && colOffset == 0) animation = "verticalDown";
+                if (rowOffset == 0 && colOffset == -1) animation = "horizontalLeft";
+                if (rowOffset == 0 && colOffset == 1) animation = "horizontalRight";
+            }
+            if (field[row][col].getCollisionState()) {
+                animation = "hidden";
+            }
+            else {
+                spawnFlame(row + rowOffset, col + colOffset, power - 1, rowOffset, colOffset);
+            }
+            pFlame.getSprite().setCurrentAnimation(animation);
+            spawn(row, col, pFlame);
+        }
+    }
     public Point spawnAt(int row, int col) {
         return new Point(col * Globals.cellSize, row * Globals.cellSize);
     }
 
-    public int getCurrentRow(Entity e) {
-        double col = e.getHitBox().getY() / Globals.cellSize;
-        return (int)col;
+    public Point getBoardPosition(Entity e) {
+        Point p = e.getHitBox().getCenter();
+        double row = p.getY() / Globals.cellSize;
+        double col = p.getX() / Globals.cellSize;
+        return new Point((int)col, (int)row);
     }
 
-    public int getCurrentCol(Entity e) {
-        double row = e.getHitBox().getX() / Globals.cellSize;
+    public int getCurrentRow(Entity e) {
+        double row = e.getHitBox().getY() / Globals.cellSize;
         return (int)row;
     }
 
-    public void render() {
-        for (int row = 0; row < width; row++) {
-            for (int col = 0; col < height; col++) {
-                matrix[row][col].render();
+    public int getCurrentCol(Entity e) {
+        double col = e.getHitBox().getX() / Globals.cellSize;
+        return (int)col;
+    }
+
+    public void update() {
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                field[row][col].update();
+                if (field[row][col].clearable()) {
+                    field[row][col] = new Entity(spawnAt(row, col), pGrass);
+                }
             }
+        }
+        objects.removeIf(Entity::clearable);
+        enemies.removeIf(Entity::clearable);
+        players.removeIf(Entity::clearable);
+        objects.addAll(newSpawn);
+        newSpawn.clear();
+        for (Entity e:objects) {
+            e.update();
+        }
+        for (Entity e:enemies) {
+            e.update();
+        }
+        for (Entity e:players) {
+            e.update();
+        }
+        if (cleared) {
+            Resources.soundDataMap.get("next_level").play();
+            createLevelFromFile(Resources.levelList.get((num + 1) % Resources.levelList.size()), true);
+            cleared = false;
+        }
+    }
+
+    public void render() {
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                field[row][col].render();
+            }
+        }
+        for (Entity e:objects) {
+            e.render();
+        }
+        for (Entity e:enemies) {
+            e.render();
+        }
+        for (Entity e:players) {
+            e.render();
         }
     }
 }

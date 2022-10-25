@@ -2,26 +2,19 @@ package input;
 
 import entity.Entity;
 import javafx.scene.input.KeyCode;
+import world.World;
 
 public abstract class InputComponent {
-    public abstract void handle(Entity e);
-    public abstract void addKeybind(KeyCode k, Command c);
-    public abstract void removeKeybind(KeyCode k);
+    public abstract void onAttach(Entity e);
+    public abstract void handle(Entity e, World w);
 
     public static InputComponent Null = new InputComponent() {
         @Override
-        public void handle(Entity e) {
-            return;
+        public void onAttach(Entity e) {
         }
 
         @Override
-        public void addKeybind(KeyCode k, Command c) {
-            return;
-        }
-
-        @Override
-        public void removeKeybind(KeyCode k) {
-            return;
+        public void handle(Entity e, World w) {
         }
     };
 }
