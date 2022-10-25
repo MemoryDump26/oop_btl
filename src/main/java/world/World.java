@@ -3,6 +3,7 @@ package world;
 import attack.AttackComponent;
 import attack.BombAttack;
 import collision.CollisionComponent;
+import collision.PowerCollisionComponent;
 import entity.Entity;
 import geometry.Point;
 import input.*;
@@ -40,9 +41,7 @@ public class World {
     private static Entity pFlame;
     private static Entity pBalloom;
     private static Entity pOneal;
-    private static Entity pFlamePower;
-    private static Entity pBombPower;
-    private static Entity pSpeedPower;
+    private static Entity pPower;
     private static Entity pPortal;
 
     public enum Direction {
@@ -125,7 +124,6 @@ public class World {
         );
         pFlame.kill();
         pFlame.getSprite().setTickPerFrame(3);
-        pFlame.setHarmful(true);
 
         pBalloom = new Entity(
             new Point(0, 0),
@@ -137,7 +135,6 @@ public class World {
             gc
         );
         pBalloom.setSpeed(1);
-        pBalloom.setHarmful(true);
 
         pOneal = new Entity(
             new Point(0, 0),
@@ -149,40 +146,16 @@ public class World {
             gc
         );
         pOneal.setSpeed(1);
-        pOneal.setHarmful(true);
 
-        pFlamePower = new Entity(
+        pPower = new Entity(
             new Point(0, 0),
             InputComponent.Null,
-            CollisionComponent.FlamePower,
+            CollisionComponent.Null,
             AttackComponent.Null,
             this,
             Resources.spriteDataMap.get("power"),
             gc
         );
-        pFlamePower.getSprite().setCurrentAnimation("flames");
-
-        pBombPower = new Entity(
-            new Point(0, 0),
-            InputComponent.Null,
-            CollisionComponent.BombPower,
-            AttackComponent.Null,
-            this,
-            Resources.spriteDataMap.get("power"),
-            gc
-        );
-        pBombPower.getSprite().setCurrentAnimation("bombs");
-
-        pSpeedPower = new Entity(
-            new Point(0, 0),
-            InputComponent.Null,
-            CollisionComponent.SpeedPower,
-            AttackComponent.Null,
-            this,
-            Resources.spriteDataMap.get("power"),
-            gc
-        );
-        pSpeedPower.getSprite().setCurrentAnimation("speed");
 
         pPortal = new Entity(
             new Point(0, 0),
@@ -245,16 +218,25 @@ public class World {
                             ins.setInput(new BrickLogic(pPortal));
                             break;
                         case 'f':
+                            Entity flamePower = new Entity(new Point(), pPower);
+                            flamePower.setCollision(new PowerCollisionComponent(Command.FlamePower));
+                            flamePower.getSprite().setCurrentAnimation("flames");
                             ins = new Entity(spawnAt(row, col), pBrick);
-                            ins.setInput(new BrickLogic(pFlamePower));
+                            ins.setInput(new BrickLogic(flamePower));
                             break;
                         case 'b':
+                            Entity bombPower = new Entity(new Point(), pPower);
+                            bombPower.setCollision(new PowerCollisionComponent(Command.BombPower));
+                            bombPower.getSprite().setCurrentAnimation("bombs");
                             ins = new Entity(spawnAt(row, col), pBrick);
-                            ins.setInput(new BrickLogic(pBombPower));
+                            ins.setInput(new BrickLogic(bombPower));
                             break;
                         case 's':
+                            Entity speedPower = new Entity(new Point(), pPower);
+                            speedPower.setCollision(new PowerCollisionComponent(Command.SpeedPower));
+                            speedPower.getSprite().setCurrentAnimation("speed");
                             ins = new Entity(spawnAt(row, col), pBrick);
-                            ins.setInput(new BrickLogic(pSpeedPower));
+                            ins.setInput(new BrickLogic(speedPower));
                             break;
                         default:
                             ins = pGrass;
