@@ -4,7 +4,6 @@ import attack.BombAttack;
 import entity.Entity;
 import geometry.Point;
 import geometry.Rectangle;
-import input.PlayerInputComponent;
 import options.Globals;
 import world.World;
 
@@ -250,7 +249,7 @@ public abstract class CollisionComponent {
         @Override
         public void handle(Entity e, World w) {
             if (e.isDead()) return;
-            for (Entity m:w.getNearbyPlayers(e)) {
+            for (Entity m:w.getNearbyEntities(e, false, false, false, true)) {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
                     if (m.getAttack() instanceof BombAttack a) {
@@ -273,7 +272,7 @@ public abstract class CollisionComponent {
         @Override
         public void handle(Entity e, World w) {
             if (e.isDead()) return;
-            for (Entity m:w.getNearbyPlayers(e)) {
+            for (Entity m:w.getNearbyEntities(e, false, false, false, true)) {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
                     if (m.getAttack() instanceof BombAttack a) {
@@ -296,7 +295,7 @@ public abstract class CollisionComponent {
         @Override
         public void handle(Entity e, World w) {
             if (e.isDead()) return;
-            for (Entity m:w.getNearbyPlayers(e)) {
+            for (Entity m:w.getNearbyEntities(e, false, false, false, true)) {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
                     m.setSpeed(m.getSpeed() + 1);
@@ -317,7 +316,7 @@ public abstract class CollisionComponent {
         @Override
         public void handle(Entity e, World w) {
             if (e.isDead()) return;
-            for (Entity m:w.getNearbyPlayers(e)) {
+            for (Entity m:w.getNearbyEntities(e, false, false, false, true)) {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
                     if (w.isLevelCleared()) {

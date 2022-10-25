@@ -21,10 +21,10 @@ public class World {
 
     private int num;
     public Entity[][] field;
-    public ArrayList<Entity> objects = new ArrayList<Entity>();
-    public ArrayList<Entity> players = new ArrayList<Entity>();
-    public ArrayList<Entity> enemies = new ArrayList<Entity>();
-    public ArrayList<Entity> newSpawn = new ArrayList<Entity>();
+    public ArrayList<Entity> objects = new ArrayList<>();
+    public ArrayList<Entity> players = new ArrayList<>();
+    public ArrayList<Entity> enemies = new ArrayList<>();
+    public ArrayList<Entity> newSpawn = new ArrayList<>();
     private int width;
     private int height;
     private boolean cleared = false;
@@ -271,18 +271,27 @@ public class World {
     }
 
     public ArrayList<Entity> getNearbyEntities(Entity e) {
-        ArrayList<Entity> result = new ArrayList<Entity>();
-        result.addAll(getNearbyStaticEntities(e));
-        result.addAll(objects);
-        result.addAll(enemies);
-        result.addAll(getNearbyPlayers(e));
-        result.remove(e);
+        return getNearbyEntities(e, true, true, true, true);
+    }
+
+    public ArrayList<Entity> getNearbyEntities(
+            Entity e,
+            boolean incStatic,
+            boolean incObjects,
+            boolean incEnemies,
+            boolean incPlayers
+    ) {
+        ArrayList<Entity> result = new ArrayList<>();
+        if (incStatic) result.addAll(getNearbyStaticEntities(e));
+        if (incObjects) result.addAll(getNearby(e, objects));
+        if (incEnemies) result.addAll(getNearby(e, enemies));
+        if (incPlayers) result.addAll(getNearby(e, players));
 
         return result;
     }
 
     public ArrayList<Entity> getNearbyStaticEntities(Entity e) {
-        ArrayList<Entity> result = new ArrayList<Entity>();
+        ArrayList<Entity> result = new ArrayList<>();
         Point p = getBoardPosition(e);
         int row = (int)p.getY();
         int col = (int)p.getX();
@@ -297,44 +306,44 @@ public class World {
         return result;
     }
 
-    public ArrayList<Entity> getNearbyPlayers(Entity e) {
-        ArrayList<Entity> result = new ArrayList<Entity>();
-        result.addAll(players);
+    private ArrayList<Entity> getNearby(Entity e, ArrayList<Entity> fromSet) {
+        ArrayList<Entity> result = new ArrayList<>();
+        Point pE = getBoardPosition(e);
+        int eRow = (int)pE.getY();
+        int eCol = (int)pE.getX();
+        for (Entity m:fromSet) {
+            Point pM = getBoardPosition(m);
+            int mRow = (int)pM.getY();
+            int mCol = (int)pM.getX();
+            if (Math.abs(eRow - mRow) < 2 && Math.abs(eCol - mCol) < 2) result.add(m);
+        }
         result.remove(e);
         return result;
     }
 
-    public ArrayList<Direction> getAvailableMoves(Entity e) {
+    public ArrayList<Direction> getAvailableMoves(
+            Entity e,
+            ArrayList<Entity> constraintSet
+    ) {
         Point p = getBoardPosition(e);
         int row = (int) p.getY();
         int col = (int) p.getX();
+        /*int row = getCurrentRow(e);
+        int col = getCurrentCol(e);*/
         ArrayList<Direction> result = new ArrayList<>();
-        if (col >= 0 && col < width) {
-            if (row > 0 && !field[row - 1][col].getCollisionState()) result.add(Direction.UP);
-            if (row < height - 1 && !field[row + 1][col].getCollisionState()) result.add(Direction.DOWN);
-        }
-        if (row >= 0 && row < height) {
-            if (col > 0 && !field[row][col - 1].getCollisionState()) result.add(Direction.LEFT);
-            if (col < width - 1 && !field[row][col + 1].getCollisionState()) result.add(Direction.RIGHT);
-        }
+        if (!isOccupied(row - 1, col, constraintSet)) result.add(Direction.UP);
+        if (!isOccupied(row + 1, col, constraintSet)) result.add(Direction.DOWN);
+        if (!isOccupied(row, col - 1, constraintSet)) result.add(Direction.LEFT);
+        if (!isOccupied(row, col + 1, constraintSet)) result.add(Direction.RIGHT);
         return result;
     }
 
-    public boolean isOccupied(int row, int col) {
-        if (field[row][col].getCollisionState()) return true;
-        for (Entity e:objects) {
-            int eRow = getCurrentRow(e);
-            int eCol = getCurrentCol(e);
-            if (eRow == row && eCol == col) return true;
-        }
-        for (Entity e:enemies) {
-            int eRow = getCurrentRow(e);
-            int eCol = getCurrentCol(e);
-            if (eRow == row && eCol == col) return true;
-        }
-        for (Entity e:players) {
-            int eRow = getCurrentRow(e);
-            int eCol = getCurrentCol(e);
+    public boolean isOccupied(int row, int col, ArrayList<Entity> constraintSet) {
+        for (Entity e:constraintSet) {
+            if (!e.getCollisionState()) continue;
+            Point p = getBoardPosition(e);
+            int eRow = (int) p.getY();
+            int eCol = (int) p.getX();
             if (eRow == row && eCol == col) return true;
         }
         return false;
@@ -436,7 +445,6 @@ public class World {
         }
         for (Entity e:players) {
             e.update();
-            //System.out.printf("%f, %f\n", e.getHitBox().getX(), e.getHitBox().getY());
         }
         if (cleared) {
             createLevelFromFile(Resources.levelList.get((num + 1) % Resources.levelList.size()), true);

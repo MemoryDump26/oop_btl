@@ -12,6 +12,14 @@ public class RandomMovementAI extends InputComponent {
     protected World.Direction currentDirection = World.Direction.UP;
     protected Timer dirChangeCooldown = new Timer(3);
     protected Random r = new Random();
+    protected boolean[] inc = new boolean[4];
+
+    public RandomMovementAI(boolean incStatic, boolean incObjects, boolean incEnemies, boolean incPlayers) {
+        inc[0] = incStatic;
+        inc[1] = incObjects;
+        inc[2] = incEnemies;
+        inc[3] = incPlayers;
+    }
 
     @Override
     public void onAttach(Entity e) {
@@ -22,7 +30,7 @@ public class RandomMovementAI extends InputComponent {
     public void handle(Entity e, World w) {
         if (e.isDead()) return;
 
-        availMove = w.getAvailableMoves(e);
+        availMove = w.getAvailableMoves(e, w.getNearbyEntities(e, inc[0], inc[1], inc[2], inc[3]));
         if (!availMove.contains(currentDirection) && availMove.size() > 0) {
             currentDirection = availMove.get(r.nextInt(availMove.size()));
         }

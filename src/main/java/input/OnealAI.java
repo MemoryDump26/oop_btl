@@ -1,10 +1,18 @@
 package input;
 
 import entity.Entity;
-import geometry.Point;
+import geometry.Rectangle;
 import world.World;
 
 public class OnealAI extends RandomMovementAI {
+    public OnealAI(boolean incStatic, boolean incObjects, boolean incEnemies, boolean incPlayers) {
+        super(incStatic, incObjects, incEnemies, incPlayers);
+    }
+
+    public OnealAI() {
+        super(true, true, true, false);
+    }
+
     @Override
     public void onAttach(Entity e) {
         super.onAttach(e);
@@ -13,11 +21,13 @@ public class OnealAI extends RandomMovementAI {
     @Override
     public void handle(Entity e, World w) {
         if (e.isDead()) return;
-        for (Entity p:w.getNearbyPlayers(e)) {
-            if (p.getHitBox().intersect(e.getHitBox(), 0, -1)) p.kill();
-            if (p.getHitBox().intersect(e.getHitBox(), 0, 1)) p.kill();
-            if (p.getHitBox().intersect(e.getHitBox(), -1, 0)) p.kill();
-            if (p.getHitBox().intersect(e.getHitBox(), 1, 0)) p.kill();
+        Rectangle eBox = e.getHitBox();
+        for (Entity p:w.getNearbyEntities(e, false, false, false, true)) {
+            Rectangle pBox = p.getHitBox();
+            if (pBox.intersect(eBox, 0, -1)) p.kill();
+            if (pBox.intersect(eBox, 0, 1)) p.kill();
+            if (pBox.intersect(eBox, -1, 0)) p.kill();
+            if (pBox.intersect(eBox, 1, 0)) p.kill();
         }
         super.handle(e, w);
     }
