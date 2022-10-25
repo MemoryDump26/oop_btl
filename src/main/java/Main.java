@@ -8,7 +8,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
 import javafx.stage.Stage;
 import resources.Resources;
-import resources.SoundFX;
 import world.World;
 
 public class Main extends Application {
@@ -23,13 +22,13 @@ public class Main extends Application {
         gc.setImageSmoothing(false);
         Resources.getSprites();
         Resources.getLevels();
-        Resources.getSoundFX();
+        Resources.getSounds();
         world = new World(gc);
         world.createLevelFromFile(Resources.levelList.get(0), false);
     }
 
     public void start(Stage stage) {
-        SoundFX.play("/stage_theme.mp3");
+        Resources.soundDataMap.get("stage_theme").play();
         stage.setScene(scene);
         stage.setTitle("ayy lmao");
         root.getChildren().add(mainCanvas);

@@ -2,40 +2,44 @@ package input;
 
 import entity.Entity;
 import javafx.scene.input.KeyCode;
+import resources.Resources;
 import world.World;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class PlayerInputComponent extends InputComponent {
-    private Map<KeyCode, Command> pKeybinds = new HashMap<KeyCode, Command>();
-    private Map<KeyCode, Command> hKeybinds = new HashMap<KeyCode, Command>();
-    private Map<KeyCode, Command> rKeybinds = new HashMap<KeyCode, Command>();
+    private Map<KeyCode, Command<Entity>> pKeybinds = new HashMap<>();
+    private Map<KeyCode, Command<Entity>> hKeybinds = new HashMap<>();
+    private Map<KeyCode, Command<Entity>> rKeybinds = new HashMap<>();
 
     @Override
     public void onAttach(Entity e) {
     }
 
     public void handle(Entity e, World w) {
-        if (e.isDead()) return;
-        for (Map.Entry<KeyCode, Command> k : pKeybinds.entrySet()) {
+        if (e.isDead()) {
+            Resources.soundDataMap.get("player_die").play();
+            return;
+        }
+        for (Map.Entry<KeyCode, Command<Entity>> k : pKeybinds.entrySet()) {
             if (Input.isKeyPressed(k.getKey())) {
                 k.getValue().execute(e);
             }
         }
-        for (Map.Entry<KeyCode, Command> k : hKeybinds.entrySet()) {
+        for (Map.Entry<KeyCode, Command<Entity>> k : hKeybinds.entrySet()) {
             if (Input.isKeyHeld(k.getKey())) {
                 k.getValue().execute(e);
             }
         }
-        for (Map.Entry<KeyCode, Command> k : rKeybinds.entrySet()) {
+        for (Map.Entry<KeyCode, Command<Entity>> k : rKeybinds.entrySet()) {
             if (Input.isKeyReleased(k.getKey())) {
                 k.getValue().execute(e);
             }
         }
     }
 
-    public void addKeybind(KeyCode k, Command c, String type) {
+    public void addKeybind(KeyCode k, Command<Entity> c, String type) {
         switch (type) {
             case "press" -> pKeybinds.put(k, c);
             case "hold" -> hKeybinds.put(k, c);

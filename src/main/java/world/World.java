@@ -447,6 +447,7 @@ public class World {
             e.update();
         }
         if (cleared) {
+            Resources.soundDataMap.get("next_level").play();
             createLevelFromFile(Resources.levelList.get((num + 1) % Resources.levelList.size()), true);
             cleared = false;
         }
