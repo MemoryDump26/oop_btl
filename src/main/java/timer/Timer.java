@@ -1,23 +1,24 @@
 package timer;
 
-import entity.Entity;
-import input.Command;
-
 public class Timer {
 
     private long startTime = 0;
     private long pauseTime = 0;
     private long duration;
-    private boolean oneShot;
-    private Command c;
-    private Entity e;
 
     private boolean running = false;
     private boolean pausing = false;
 
-    public Timer(long duration, boolean oneShot) {
+    public Timer(long duration) {
         this.duration = duration;
-        this.oneShot = oneShot;
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
     }
 
     public void start() {
@@ -48,14 +49,12 @@ public class Timer {
         pausing = false;
     }
 
-    public void update() {
-        if (getElapsedTimeInSecond() >= duration && oneShot) {
-            pause();
-        }
-    }
-
     public boolean isRunning() {return running;}
     public boolean isPausing() {return pausing;}
+    public boolean isFinished() {
+        if (getElapsedTimeInSecond() >= duration) return true;
+        else return false;
+    }
 
     public long getElapsedTimeInSecond() {
         if (!running) return 0;

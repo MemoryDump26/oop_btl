@@ -304,6 +304,22 @@ public class World {
         return result;
     }
 
+    public ArrayList<Direction> getAvailableMoves(Entity e) {
+        Point p = getBoardPosition(e);
+        int row = (int) p.getY();
+        int col = (int) p.getX();
+        ArrayList<Direction> result = new ArrayList<>();
+        if (col >= 0 && col < width) {
+            if (row > 0 && !field[row - 1][col].getCollisionState()) result.add(Direction.UP);
+            if (row < height - 1 && !field[row + 1][col].getCollisionState()) result.add(Direction.DOWN);
+        }
+        if (row >= 0 && row < height) {
+            if (col > 0 && !field[row][col - 1].getCollisionState()) result.add(Direction.LEFT);
+            if (col < width - 1 && !field[row][col + 1].getCollisionState()) result.add(Direction.RIGHT);
+        }
+        return result;
+    }
+
     public boolean isOccupied(int row, int col) {
         if (field[row][col].getCollisionState()) return true;
         for (Entity e:objects) {

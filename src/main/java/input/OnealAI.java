@@ -4,33 +4,21 @@ import entity.Entity;
 import geometry.Point;
 import world.World;
 
-public class OnealAI extends BalloomAI {
-    /*private ArrayList<World.Direction> availMove = new ArrayList<>();
-    private World.Direction currentDirection = World.Direction.UP;
-    private Random r = new Random();*/
-    private boolean foundPlayer = false;
-    private int playerRow;
-    private int playerCol;
-
+public class OnealAI extends RandomMovementAI {
     @Override
     public void onAttach(Entity e) {
+        super.onAttach(e);
     }
 
     @Override
     public void handle(Entity e, World w) {
-        foundPlayer = false;
-        int eRow = w.getCurrentRow(e);
-        int eCol = w.getCurrentCol(e);
-        playerRow = Integer.MIN_VALUE;
-        playerCol = Integer.MIN_VALUE;
+        if (e.isDead()) return;
         for (Entity p:w.getNearbyPlayers(e)) {
-            Point player = w.getBoardPosition(p);
-            int pRow = (int)player.getY();
-            int pCol = (int)player.getX();
-            if (eRow == pRow) {
-
-            }
+            if (p.getHitBox().intersect(e.getHitBox(), 0, -1)) p.kill();
+            if (p.getHitBox().intersect(e.getHitBox(), 0, 1)) p.kill();
+            if (p.getHitBox().intersect(e.getHitBox(), -1, 0)) p.kill();
+            if (p.getHitBox().intersect(e.getHitBox(), 1, 0)) p.kill();
         }
-        if (!foundPlayer) super.handle(e, w);
+        super.handle(e, w);
     }
 }
