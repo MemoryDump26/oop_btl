@@ -8,5 +8,5 @@ Intelij: Mở tab Maven -> oop_btl -> Plugins -> javafx -> javafx:run.
 ### Build bằng Intelij (để debug,...):
 Thêm dòng sau vào VM option của Intelij:
 ```
---module-path $Classpath$ --add-modules javafx.controls
+--module-path $Classpath$ --add-modules=javafx.controls,javafx.media
 ```
