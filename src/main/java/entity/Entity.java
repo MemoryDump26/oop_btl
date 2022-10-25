@@ -21,8 +21,6 @@ public class Entity {
     protected boolean destructible;
     protected boolean harmful = false;
     protected boolean dead = false;
-    public ArrayList<World.Direction> availMove = new ArrayList<>();
-    public World.Direction currentDirection = World.Direction.UP;
 
     protected World w;
     protected InputComponent input;
@@ -43,10 +41,10 @@ public class Entity {
         this.collision = collision;
         this.attack = attack;
         this.w = w;
-        this.collisionState = collision.getDefaultState();
-        this.destructible = collision.isDestructibles();
         this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), sprite.w, sprite.h);
         this.sprite = new Sprite(sprite, gc);
+        input.onAttach(this);
+        collision.onAttach(this);
     }
 
     public Entity(Point spawn, Entity p) {
@@ -54,18 +52,19 @@ public class Entity {
         this.collision = p.collision;
         this.attack = p.attack;
         this.w = p.w;
-        this.collisionState = collision.getDefaultState();
-        this.destructible = collision.isDestructibles();
+        this.destructible = p.destructible;
         this.harmful = p.harmful;
         this.dead = p.dead;
         this.speed = p.speed;
         this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), p.hitBox.getW(), p.hitBox.getH());
         this.sprite = new Sprite(p.sprite);
+        input.onAttach(this);
+        collision.onAttach(this);
     }
 
     public void update() {
         input.handle(this, w);
-        collision.handle(this, w.getNearbyEntities(this));
+        collision.handle(this, w);
         velocity.zero();
     }
 
@@ -73,24 +72,42 @@ public class Entity {
         sprite.render(hitBox.getX(), hitBox.getY());
     }
 
-    public Rectangle getHitBox() {return hitBox;}
-    public Sprite getSprite() {return sprite;}
     public double getSpeed() {return speed;}
     public Point getVelocity() {return velocity;}
+    public Rectangle getHitBox() {return hitBox;}
     public boolean getCollisionState() {return collisionState;}
+    public boolean isDestructible() {return destructible;}
+    public boolean isHarmful() {return harmful;}
     public boolean isDead() {return dead;}
     public boolean clearable() {
         return dead && sprite.isPausing();
     }
-    public boolean isHarmful() {
-        return harmful;
-    }
+
+    public InputComponent getInput() {return input;}
+    public CollisionComponent getCollision() {return collision;}
+    public AttackComponent getAttack() {return attack;}
+    public Sprite getSprite() {return sprite;}
 
     public void setSpeed(double speed) {this.speed = speed;}
     public void setVelocity(Point velocity) {this.velocity = velocity;}
+    public void setHitBox(Rectangle hitBox) {this.hitBox = hitBox;}
     public void setCollisionState(boolean collisionState) {this.collisionState = collisionState;}
-    public void setHarmful(boolean harmful) {
-        this.harmful = harmful;
+    public void setDestructible(boolean destructible) {this.destructible = destructible;}
+    public void setHarmful(boolean harmful) {this.harmful = harmful;}
+    public void setDead(boolean dead) {this.dead = dead;}
+
+    public void setInput(InputComponent input) {
+        this.input = input;
+        input.onAttach(this);
+    }
+
+    public void setCollision(CollisionComponent collision) {
+        this.collision = collision;
+        collision.onAttach(this);
+    }
+
+    public void setAttack(AttackComponent attack) {
+        this.attack = attack;
     }
 
     public void move(double x, double y) {
@@ -127,7 +144,7 @@ public class Entity {
     }
 
     public void kill() {
-        if (destructible) {
+        if (!dead && destructible) {
             sprite.setCurrentAnimation("dead");
             sprite.setTickPerFrame(10);
             sprite.setLoop(false);

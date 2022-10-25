@@ -1,13 +1,13 @@
 package world;
 
 import attack.AttackComponent;
+import attack.BombAttack;
 import collision.CollisionComponent;
 import entity.Entity;
 import geometry.Point;
-import input.BalloomAI;
-import input.BombLogic;
-import input.InputComponent;
+import input.*;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
 import resources.Resources;
 import options.Globals;
 
@@ -23,16 +23,26 @@ public class World {
     public Entity[][] field;
     public ArrayList<Entity> objects = new ArrayList<Entity>();
     public ArrayList<Entity> players = new ArrayList<Entity>();
+    public ArrayList<Entity> enemies = new ArrayList<Entity>();
     public ArrayList<Entity> newSpawn = new ArrayList<Entity>();
     private int width;
     private int height;
+    private boolean cleared = false;
 
+    private PlayerInputComponent p1Inp = new PlayerInputComponent();
+    private PlayerInputComponent p2Inp = new PlayerInputComponent();
+
+    private static Entity pPlayer;
     private static Entity pWall;
     private static Entity pBrick;
     private static Entity pGrass;
     private static Entity pBomb;
     private static Entity pFlame;
     private static Entity pBalloom;
+    private static Entity pFlamePower;
+    private static Entity pBombPower;
+    private static Entity pSpeedPower;
+    private static Entity pPortal;
 
     public enum Direction {
         UP,
@@ -43,6 +53,23 @@ public class World {
 
     public World(GraphicsContext gc) {
         this.gc = gc;
+
+        p1Inp.addKeybind(KeyCode.W, Command.Up, "hold");
+        p1Inp.addKeybind(KeyCode.A, Command.Left, "hold");
+        p1Inp.addKeybind(KeyCode.S, Command.Down, "hold");
+        p1Inp.addKeybind(KeyCode.D, Command.Right, "hold");
+        p1Inp.addKeybind(KeyCode.J, Command.Attack, "press");
+
+        pPlayer = new Entity(
+            new Point(0, 0),
+            InputComponent.Null,
+            CollisionComponent.Dynamic,
+            AttackComponent.Null,
+            this,
+            Resources.spriteDataMap.get("player"),
+            gc
+        );
+        pPlayer.setSpeed(3);
 
         pWall = new Entity(
             new Point(0, 0),
@@ -96,6 +123,7 @@ public class World {
             gc
         );
         pFlame.kill();
+        pFlame.getSprite().setTickPerFrame(3);
         pFlame.setHarmful(true);
 
         pBalloom = new Entity(
@@ -109,9 +137,52 @@ public class World {
         );
         pBalloom.setSpeed(1);
         pBalloom.setHarmful(true);
+
+        pFlamePower = new Entity(
+            new Point(0, 0),
+            InputComponent.Null,
+            CollisionComponent.FlamePower,
+            AttackComponent.Null,
+            this,
+            Resources.spriteDataMap.get("power"),
+            gc
+        );
+        pFlamePower.getSprite().setCurrentAnimation("flames");
+
+        pBombPower = new Entity(
+            new Point(0, 0),
+            InputComponent.Null,
+            CollisionComponent.BombPower,
+            AttackComponent.Null,
+            this,
+            Resources.spriteDataMap.get("power"),
+            gc
+        );
+        pBombPower.getSprite().setCurrentAnimation("bombs");
+
+        pSpeedPower = new Entity(
+            new Point(0, 0),
+            InputComponent.Null,
+            CollisionComponent.SpeedPower,
+            AttackComponent.Null,
+            this,
+            Resources.spriteDataMap.get("power"),
+            gc
+        );
+        pSpeedPower.getSprite().setCurrentAnimation("speed");
+
+        pPortal = new Entity(
+            new Point(0, 0),
+            InputComponent.Null,
+            CollisionComponent.Portal,
+            AttackComponent.Null,
+            this,
+            Resources.spriteDataMap.get("portal"),
+            gc
+        );
     }
 
-    public void createLevelFromFile(File file) {
+    public void createLevelFromFile(File file, boolean isNextLevel) {
         try {
             Scanner sc = new Scanner(file);
             num = sc.nextInt();
@@ -119,12 +190,27 @@ public class World {
             width = sc.nextInt();
             sc.nextLine();
             field = new Entity[height][width];
+
+            objects.clear();
+            enemies.clear();
+            newSpawn.clear();
+            if (!isNextLevel) players.clear();
+            int currentPlayer = 0;
             for (int row = 0; row < height; row++) {
                 String tmp = sc.nextLine();
                 for (int col = 0; col < width; col++) {
                     System.out.printf("%c", tmp.charAt(col));
-                    Entity ins;
+                    Entity ins = pGrass;
                     switch (tmp.charAt(col)) {
+                        case 'p':
+                            if (currentPlayer < players.size()) {
+                                players.get(currentPlayer).moveTo(row * Globals.cellSize, col * Globals.cellSize);
+                                currentPlayer++;
+                            }
+                            else {
+                                spawnPlayer(row, col, p1Inp, new BombAttack(1, 1));
+                            }
+                            break;
                         case '#':
                             ins = pWall;
                             break;
@@ -132,8 +218,25 @@ public class World {
                             ins = pBrick;
                             break;
                         case '1':
-                            ins = pGrass;
-                            objects.add(new Entity(spawnAt(row, col), pBalloom));
+                            Entity balloom = new Entity(spawnAt(row, col), pBalloom);
+                            balloom.setInput(new BalloomAI());
+                            enemies.add(balloom);
+                            break;
+                        case 'x':
+                            ins = new Entity(spawnAt(row, col), pBrick);
+                            ins.setInput(new BrickLogic(pPortal));
+                            break;
+                        case 'f':
+                            ins = new Entity(spawnAt(row, col), pBrick);
+                            ins.setInput(new BrickLogic(pFlamePower));
+                            break;
+                        case 'b':
+                            ins = new Entity(spawnAt(row, col), pBrick);
+                            ins.setInput(new BrickLogic(pBombPower));
+                            break;
+                        case 's':
+                            ins = new Entity(spawnAt(row, col), pBrick);
+                            ins.setInput(new BrickLogic(pSpeedPower));
                             break;
                         default:
                             ins = pGrass;
@@ -151,6 +254,17 @@ public class World {
 
     public ArrayList<Entity> getNearbyEntities(Entity e) {
         ArrayList<Entity> result = new ArrayList<Entity>();
+        result.addAll(getNearbyStaticEntities(e));
+        result.addAll(objects);
+        result.addAll(enemies);
+        result.addAll(getNearbyPlayers(e));
+        result.remove(e);
+
+        return result;
+    }
+
+    public ArrayList<Entity> getNearbyStaticEntities(Entity e) {
+        ArrayList<Entity> result = new ArrayList<Entity>();
         Point p = getBoardPosition(e);
         int row = (int)p.getY();
         int col = (int)p.getX();
@@ -161,15 +275,35 @@ public class World {
                 result.add(field[i][j]);
             }
         }
-        result.addAll(objects);
+        result.remove(e);
+        return result;
+    }
+
+    public ArrayList<Entity> getNearbyPlayers(Entity e) {
+        ArrayList<Entity> result = new ArrayList<Entity>();
         result.addAll(players);
         result.remove(e);
-
         return result;
+    }
+
+    public boolean isLevelCleared() {
+        return enemies.isEmpty();
+    }
+
+    public void setCleared(boolean cleared) {
+        this.cleared = cleared;
     }
 
     public void spawn(int row, int col, Entity e) {
         newSpawn.add(new Entity(spawnAt(row, col), e));
+    }
+
+    public void spawnPlayer(int row, int col, InputComponent input, AttackComponent attack) {
+        Entity p = new Entity(spawnAt(row, col), pPlayer);
+        p.setInput(input);
+        p.setAttack(attack);
+        p.setDestructible(false);
+        players.add(p);
     }
 
     public void spawnFlame(int row, int col, int power, int rowOffset, int colOffset) {
@@ -195,30 +329,16 @@ public class World {
                 if (rowOffset == 0 && colOffset == -1) animation = "horizontalLeft";
                 if (rowOffset == 0 && colOffset == 1) animation = "horizontalRight";
             }
+            if (field[row][col].getCollisionState()) {
+                animation = "hidden";
+            }
+            else {
+                spawnFlame(row + rowOffset, col + colOffset, power - 1, rowOffset, colOffset);
+            }
             pFlame.getSprite().setCurrentAnimation(animation);
             spawn(row, col, pFlame);
-            spawnFlame(row + rowOffset, col + colOffset, power - 1, rowOffset, colOffset);
         }
     }
-
-    public void spawnBomb(int row, int col, int power) {
-        Entity entity = field[row][col];
-        if (field[row][col] == pBomb) {
-        } else {
-            Entity b = new Entity(
-                    spawnAt(row, col),
-                    new BombLogic(power),
-                    CollisionComponent.Bomb,
-                    AttackComponent.Null,
-                    this,
-                    Resources.spriteDataMap.get("bomb"),
-                    gc
-            );
-            b.getSprite().setCurrentAnimation("bomb");
-            newSpawn.add(b);
-        }
-    }
-
     public Point spawnAt(int row, int col) {
         return new Point(col * Globals.cellSize, row * Globals.cellSize);
     }
@@ -243,20 +363,29 @@ public class World {
     public void update() {
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
-                if (field[row][col].isDead()) {
+                field[row][col].update();
+                if (field[row][col].clearable()) {
                     field[row][col] = new Entity(spawnAt(row, col), pGrass);
                 }
             }
         }
         objects.removeIf(Entity::clearable);
+        enemies.removeIf(Entity::clearable);
         players.removeIf(Entity::clearable);
         objects.addAll(newSpawn);
         newSpawn.clear();
+        for (Entity e:objects) {
+            e.update();
+        }
+        for (Entity e:enemies) {
+            e.update();
+        }
         for (Entity e:players) {
             e.update();
         }
-        for (Entity e:objects) {
-            e.update();
+        if (cleared) {
+            createLevelFromFile(Resources.levelList.get((num + 1) % Resources.levelList.size()), true);
+            cleared = false;
         }
     }
 
@@ -267,6 +396,9 @@ public class World {
             }
         }
         for (Entity e:objects) {
+            e.render();
+        }
+        for (Entity e:enemies) {
             e.render();
         }
         for (Entity e:players) {

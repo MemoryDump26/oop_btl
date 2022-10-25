@@ -12,6 +12,10 @@ public class PlayerInputComponent extends InputComponent {
     private Map<KeyCode, Command> hKeybinds = new HashMap<KeyCode, Command>();
     private Map<KeyCode, Command> rKeybinds = new HashMap<KeyCode, Command>();
 
+    @Override
+    public void onAttach(Entity e) {
+    }
+
     public void handle(Entity e, World w) {
         if (e.isDead()) return;
         for (Map.Entry<KeyCode, Command> k : pKeybinds.entrySet()) {

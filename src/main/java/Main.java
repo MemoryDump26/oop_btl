@@ -1,10 +1,4 @@
-import attack.BombAttack;
-import collision.CollisionComponent;
-import entity.Entity;
-import geometry.Point;
-import input.Command;
 import input.Input;
-import input.PlayerInputComponent;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -12,12 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
-import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import options.Globals;
 import resources.Resources;
 import resources.SoundFX;
 import timer.Timer;
@@ -28,11 +17,10 @@ public class Main extends Application {
     Scene scene = new Scene(root);
     Canvas mainCanvas = new Canvas(1000, 1000);
     GraphicsContext gc = mainCanvas.getGraphicsContext2D();
-    Font theFont = Font.font("Ariel", FontWeight.BOLD, 48);
 
-    PlayerInputComponent p1Inp = new PlayerInputComponent();
     World world;
-    Timer t1 = new Timer(5, false);
+
+    Timer t1 = new Timer(999, false);
 
     public Main() {
         gc.setImageSmoothing(false);
@@ -40,25 +28,7 @@ public class Main extends Application {
         Resources.getLevels();
         Resources.getSoundFX();
         world = new World(gc);
-        world.createLevelFromFile(Resources.levelList.get(0));
-        Entity p1 = new Entity(
-            new Point(Globals.cellSize, Globals.cellSize),
-            p1Inp,
-            CollisionComponent.Dynamic,
-            new BombAttack(1),
-            world,
-            Resources.spriteDataMap.get("player"),
-            gc
-        );
-        world.players.add(p1);
-
-        p1Inp.addKeybind(KeyCode.W, Command.Up, "hold");
-        p1Inp.addKeybind(KeyCode.A, Command.Left, "hold");
-        p1Inp.addKeybind(KeyCode.S, Command.Down, "hold");
-        p1Inp.addKeybind(KeyCode.D, Command.Right, "hold");
-        p1Inp.addKeybind(KeyCode.J, Command.Attack, "press");
-        p1.setSpeed(4);
-        t1.start();
+        world.createLevelFromFile(Resources.levelList.get(0), false);
     }
 
     public void start(Stage stage) {
@@ -67,19 +37,10 @@ public class Main extends Application {
         stage.setTitle("ayy lmao");
         root.getChildren().add(mainCanvas);
 
-        gc.setFill(Color.AQUA);
-        gc.setStroke(Color.BLACK);
-        gc.setLineWidth(2);
-        gc.setFont(theFont);
-
         Input.attachEventHandlers(scene);
 
         new AnimationTimer() {
             public void handle(long currentNanoTime) {
-                if (Input.isKeyPressed(KeyCode.P)) {
-                    if (t1.isPausing()) t1.resume();
-                    else t1.pause();
-                }
                 update();
                 renderClear();
                 render();
@@ -93,10 +54,12 @@ public class Main extends Application {
     public void update() {
         world.update();
     }
+
     public void renderClear() {
         gc.setGlobalBlendMode(BlendMode.SRC_OVER);
         gc.fillRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
     }
+
     public void render() {
         world.render();
     }
