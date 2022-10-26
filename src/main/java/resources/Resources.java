@@ -7,12 +7,16 @@ import sprite.SpriteData;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Resources {
-    public static Map<String, SpriteData> spriteDataMap = new HashMap<String, SpriteData>();
+    public static Map<String, SpriteData> spriteDataMap = new HashMap<>();
     public static Map<String, AudioClip> soundDataMap = new HashMap<>();
-    public static ArrayList<File> levelList = new ArrayList<File>();
+    public static ArrayList<File> levelList = new ArrayList<>();
+
     public static void getSprites() {
         try {
             ArrayList<String> spriteDirArray = new ArrayList<>();
@@ -69,6 +73,7 @@ public class Resources {
     public static void getSounds() {
         try {
             ArrayList<String> soundDirArray = new ArrayList<>();
+
             String tmp = ClassLoader.getSystemClassLoader().getResource("sounds").getPath();
             if (File.separator.equals("\\")) tmp = tmp.substring(1);
             String soundDirPath = tmp;
@@ -90,10 +95,9 @@ public class Resources {
 
     public static void loadSound(String fileName) {
         try {
-            System.out.printf("%s\n",fileName);
             fileName = fileName.replace("\\", "/");
             String[] parsed = fileName.split("[/\\\\.]");
-           if (!soundDataMap.containsKey(parsed[parsed.length-2])) {
+            if (!soundDataMap.containsKey(parsed[parsed.length-2])) {
                 soundDataMap.put(parsed[parsed.length - 2], new AudioClip("File:" + fileName));
             }
         }

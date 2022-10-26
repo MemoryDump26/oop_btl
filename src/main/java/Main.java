@@ -8,12 +8,12 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
 import javafx.stage.Stage;
 import resources.Resources;
-import resources.SoundFX;
 import world.World;
+
 public class Main extends Application {
     Group root = new Group();
     Scene scene = new Scene(root);
-    Canvas mainCanvas = new Canvas(1000, 500);
+    Canvas mainCanvas = new Canvas(1000, 1000);
     GraphicsContext gc = mainCanvas.getGraphicsContext2D();
 
     World world;
@@ -28,9 +28,7 @@ public class Main extends Application {
     }
 
     public void start(Stage stage) {
-        SoundFX.playSound("stage_theme", 1, false);
-        //Resources.soundDataMap.get("stage_theme").play();
-
+        Resources.soundDataMap.get("stage_theme").play();
         stage.setScene(scene);
         stage.setTitle("ayy lmao");
         root.getChildren().add(mainCanvas);

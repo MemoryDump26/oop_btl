@@ -5,8 +5,8 @@ import entity.Entity;
 import geometry.Point;
 import geometry.Rectangle;
 import options.Globals;
-import resources.SoundFX;
 import world.World;
+
 import java.util.ArrayList;
 
 public abstract class CollisionComponent {
@@ -238,6 +238,7 @@ public abstract class CollisionComponent {
             }
         }
     };
+
     public static CollisionComponent Portal = new CollisionComponent() {
         @Override
         public void onAttach(Entity e) {
@@ -252,7 +253,6 @@ public abstract class CollisionComponent {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
                     if (w.isLevelCleared()) {
-                        SoundFX.playSound("next_level", 1, false);
                         w.setCleared(true);
                         break;
                     }

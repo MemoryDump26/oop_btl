@@ -39,6 +39,7 @@ public class BombAttack extends AttackComponent {
             b.getSprite().setCurrentAnimation("bomb");
             w.spawn(row, col, b);
             numOfBombs--;
+            Resources.soundDataMap.get("place_bomb").play();
         }
     }
 }

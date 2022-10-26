@@ -2,7 +2,7 @@ package input;
 
 import attack.BombAttack;
 import entity.Entity;
-import resources.SoundFX;
+import resources.Resources;
 import timer.Timer;
 import world.World;
 
@@ -28,10 +28,10 @@ public class BombLogic extends InputComponent {
         if (t.isFinished()) {
             t.stop();
             e.kill();
+            Resources.soundDataMap.get("explosion").play();
         }
         if (!exploded && e.isDead()) {
             parent.setNumOfBombs(parent.getNumOfBombs() + 1);
-            SoundFX.playSound("explosion", 1, true);
             w.spawnFlame(w.getCurrentRow(e), w.getCurrentCol(e), power, 0, 0);
             exploded = true;
         }
