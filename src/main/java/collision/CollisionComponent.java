@@ -204,6 +204,7 @@ public abstract class CollisionComponent {
 
         @Override
         public void handle(Entity e, World w) {
+            if (e.isDead()) return;
             if (e.getCollisionState() == false) {
                 boolean notColliding = true;
                 for (Entity m:w.getNearbyEntities(e)) {

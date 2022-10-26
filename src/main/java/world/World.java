@@ -201,7 +201,8 @@ public class World {
                             ins = pWall;
                             break;
                         case '*':
-                            ins = pBrick;
+                            ins = new Entity(spawnAt(row, col), pBrick);
+                            ins.setInput(new BrickLogic());
                             break;
                         case '1':
                             Entity balloom = new Entity(spawnAt(row, col), pBalloom);
@@ -364,6 +365,7 @@ public class World {
     }
 
     public void spawn(int row, int col, Entity e) {
+        if (e == null) return;
         newSpawn.add(new Entity(spawnAt(row, col), e));
     }
 

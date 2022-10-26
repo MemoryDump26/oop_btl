@@ -25,10 +25,9 @@ public class BrickLogic extends InputComponent {
 
     @Override
     public void handle(Entity e, World w) {
-        if (spawned) return;
-        if (e.isDead() && spawnOnDead != null) {
-            w.spawn(w.getCurrentRow(e), w.getCurrentCol(e), spawnOnDead);
-            spawned = true;
-        }
+        if (!e.isDead() || spawned) return;
+        e.setCollisionState(false);
+        w.spawn(w.getCurrentRow(e), w.getCurrentCol(e), spawnOnDead);
+        spawned = true;
     }
 }

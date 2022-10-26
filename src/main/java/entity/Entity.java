@@ -143,8 +143,9 @@ public class Entity {
 
     public void kill() {
         if (!dead && destructible) {
+            collisionState = false;
             sprite.setCurrentAnimation("dead");
-            sprite.setTickPerFrame(10);
+            sprite.setTickPerFrame(15);
             sprite.setLoop(false);
             dead = true;
         }
