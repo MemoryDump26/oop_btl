@@ -2,7 +2,7 @@ package collision;
 
 import entity.Entity;
 import input.Command;
-import resources.Resources;
+import resources.SoundFX;
 import world.World;
 
 public class PowerCollisionComponent extends CollisionComponent {
@@ -24,8 +24,8 @@ public class PowerCollisionComponent extends CollisionComponent {
         for (Entity m:w.getNearbyEntities(e, false, false, false, true)) {
             if (!m.getCollisionState()) continue;
             if (e.getHitBox().intersect(m.getHitBox())) {
+                SoundFX.playSound("powerup", 1, true);
                 c.execute(m);
-                Resources.soundDataMap.get("powerup").play();
                 e.kill();
                 break;
             }
