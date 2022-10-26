@@ -28,11 +28,10 @@ public class BombLogic extends InputComponent {
         if (t.getElapsedTimeInSecond() >= 2) {
             t.stop();
             e.kill();
-            SoundFX.stopSound();
-            SoundFX.play("/explosion.wav");
         }
         if (!exploded && e.isDead()) {
             parent.setNumOfBombs(parent.getNumOfBombs() + 1);
+            SoundFX.playSound("explosion", 1, true);
             w.spawnFlame(w.getCurrentRow(e), w.getCurrentCol(e), power, 0, 0);
             exploded = true;
         }

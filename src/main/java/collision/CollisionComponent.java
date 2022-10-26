@@ -2,10 +2,9 @@ package collision;
 
 import attack.BombAttack;
 import entity.Entity;
-import input.PlayerInputComponent;
 import options.Globals;
+import resources.SoundFX;
 import world.World;
-
 public abstract class CollisionComponent {
     public abstract void onAttach(Entity e);
     public abstract void handle(Entity e, World w);
@@ -161,6 +160,7 @@ public abstract class CollisionComponent {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
                     if (m.getAttack() instanceof BombAttack a) {
+                        SoundFX.playSound("powerup", 1, true);
                         a.setPower(a.getPower() + 1);
                         e.kill();
                         break;
@@ -184,6 +184,7 @@ public abstract class CollisionComponent {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
                     if (m.getAttack() instanceof BombAttack a) {
+                        SoundFX.playSound("powerup", 1, true);
                         a.setNumOfBombs(a.getNumOfBombs() + 1);
                         e.kill();
                         break;
@@ -206,6 +207,7 @@ public abstract class CollisionComponent {
             for (Entity m:w.getNearbyPlayers(e)) {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
+                    SoundFX.playSound("powerup", 1, true);
                     m.setSpeed(m.getSpeed() + 1);
                     e.kill();
                     break;
@@ -224,10 +226,11 @@ public abstract class CollisionComponent {
         @Override
         public void handle(Entity e, World w) {
             if (e.isDead()) return;
-            for (Entity m:w.getNearbyPlayers(e)) {
+            for (Entity m : w.getNearbyPlayers(e)) {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
                     if (w.isLevelCleared()) {
+                        SoundFX.playSound("next_level", 1, false);
                         w.setCleared(true);
                         break;
                     }

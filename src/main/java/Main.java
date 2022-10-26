@@ -11,11 +11,10 @@ import resources.Resources;
 import resources.SoundFX;
 import timer.Timer;
 import world.World;
-
 public class Main extends Application {
     Group root = new Group();
     Scene scene = new Scene(root);
-    Canvas mainCanvas = new Canvas(1000, 1000);
+    Canvas mainCanvas = new Canvas(1000, 500);
     GraphicsContext gc = mainCanvas.getGraphicsContext2D();
 
     World world;
@@ -32,7 +31,7 @@ public class Main extends Application {
     }
 
     public void start(Stage stage) {
-        SoundFX.play("/stage_theme.mp3");
+        SoundFX.playSound("stage_theme", 1, true);
         stage.setScene(scene);
         stage.setTitle("ayy lmao");
         root.getChildren().add(mainCanvas);

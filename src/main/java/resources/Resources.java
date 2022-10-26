@@ -7,14 +7,11 @@ import sprite.SpriteData;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Resources {
     public static Map<String, SpriteData> spriteDataMap = new HashMap<String, SpriteData>();
-    public static Map<String, AudioClip> soundDataMap = new HashMap<>();
+    public static Map<String, AudioClip> soundDataMap = new TreeMap<>();
     public static ArrayList<File> levelList = new ArrayList<File>();
 
     public static void getSprites() {
@@ -75,8 +72,8 @@ public class Resources {
         try {
             ArrayList<String> SoundDirArray = new ArrayList<String>();
 
-            String soundDirPath = ClassLoader.getSystemClassLoader().getResource("SoundFX").getPath();
-            if (File.separator.equals("\\")) soundDirPath = soundDirPath.substring(1);
+            String tmp = ClassLoader.getSystemClassLoader().getResource("SoundFX").getPath();
+            String soundDirPath = tmp.substring(1);
             System.out.printf(soundDirPath);
 
             String finalSoundDirPath = soundDirPath;
@@ -99,14 +96,16 @@ public class Resources {
     public static void loadSound(String fileName) {
         try {
             System.out.printf("%s\n",fileName);
-            String[] parsed = fileName.split("/|\\|(?<=\\D)(?=\\d)|\\.");
-            if (!soundDataMap.containsKey(parsed[parsed.length-2])) {
-                soundDataMap.put(parsed[parsed.length - 2], new AudioClip("File:/" + fileName));
+            String[] parsed = fileName.split("/|\\\\|(?<=\\D)(?=\\d)|\\.");
+            for (String i : parsed) {
+                System.out.printf("%s\n", i);
+            }
+           if (!soundDataMap.containsKey(parsed[parsed.length-2])) {
+                soundDataMap.put(parsed[parsed.length - 2], new AudioClip("File:" + fileName));
             }
         }
         catch (Exception e) {
             System.out.printf("Can't load sounds: %s\n", fileName);
         }
     }
-
 }
