@@ -11,7 +11,7 @@ import java.util.*;
 
 public class Resources {
     public static Map<String, SpriteData> spriteDataMap = new HashMap<String, SpriteData>();
-    public static Map<String, AudioClip> soundDataMap = new TreeMap<>();
+    public static Map<String, AudioClip> soundDataMap = new HashMap<>();
     public static ArrayList<File> levelList = new ArrayList<File>();
     public static void getSprites() {
         try {
@@ -70,8 +70,8 @@ public class Resources {
         try {
             ArrayList<String> soundDirArray = new ArrayList<>();
             String tmp = ClassLoader.getSystemClassLoader().getResource("sounds").getPath();
-            String soundDirPath = tmp.substring(1);
-            System.out.printf(soundDirPath);
+            if (File.separator.equals("\\")) tmp = tmp.substring(1);
+            String soundDirPath = tmp;
 
             Files.walk(Path.of(soundDirPath)).forEach((path) -> {
                 String fileName = path.toString();
@@ -92,7 +92,7 @@ public class Resources {
         try {
             System.out.printf("%s\n",fileName);
             fileName = fileName.replace("\\", "/");
-            String[] parsed = fileName.split("/|\\\\|(?<=\\D)(?=\\d)|\\.");
+            String[] parsed = fileName.split("[/\\\\.]");
            if (!soundDataMap.containsKey(parsed[parsed.length-2])) {
                 soundDataMap.put(parsed[parsed.length - 2], new AudioClip("File:" + fileName));
             }

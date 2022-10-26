@@ -29,6 +29,8 @@ public class Main extends Application {
 
     public void start(Stage stage) {
         SoundFX.playSound("stage_theme", 1, false);
+        //Resources.soundDataMap.get("stage_theme").play();
+
         stage.setScene(scene);
         stage.setTitle("ayy lmao");
         root.getChildren().add(mainCanvas);
