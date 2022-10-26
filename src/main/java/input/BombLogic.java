@@ -15,7 +15,7 @@ public class BombLogic extends InputComponent {
     public BombLogic(int power, BombAttack parent) {
         this.power = power;
         this.parent = parent;
-        this.t = new Timer(3, true);
+        this.t = new Timer(2);
         t.start();
     }
 
@@ -25,7 +25,7 @@ public class BombLogic extends InputComponent {
 
     @Override
     public void handle(Entity e, World w) {
-        if (t.getElapsedTimeInSecond() >= 2) {
+        if (t.isFinished()) {
             t.stop();
             e.kill();
         }

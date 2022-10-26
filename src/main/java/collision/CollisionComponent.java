@@ -2,9 +2,13 @@ package collision;
 
 import attack.BombAttack;
 import entity.Entity;
+import geometry.Point;
+import geometry.Rectangle;
 import options.Globals;
 import resources.SoundFX;
 import world.World;
+import java.util.ArrayList;
+
 public abstract class CollisionComponent {
     public abstract void onAttach(Entity e);
     public abstract void handle(Entity e, World w);
@@ -32,47 +36,136 @@ public abstract class CollisionComponent {
         @Override
         public void handle(Entity e, World w) {
             if (e.isDead()) return;
-            e.getHitBox().move(e.getVelocity().getX(), 0);
-            for (Entity m:w.getNearbyEntities(e)) {
-                if (!m.getCollisionState()) continue;
-                if (e.getHitBox().intersect(m.getHitBox())) {
+
+            ArrayList<Entity> collidingWith = new ArrayList<>();
+            boolean[] collidingAt = new boolean[4];
+            Point offset = new Point(0, 0);
+
+            Rectangle eBox = e.getHitBox();
+            Point eVec = e.getVelocity();
+
+            // Solving X axis collision
+            double diffX = eBox.getX() % Globals.cellSize;
+            if (diffX > 0 && diffX < e.getSpeed()) {
+                eBox.move(-diffX, 0);
+            }
+            else if (Globals.cellSize - diffX > 0 && Globals.cellSize - diffX < e.getSpeed()) {
+                eBox.move(Globals.cellSize - diffX, 0);
+            }
+            else {
+                eBox.move(eVec.getX(), 0);
+                Point[] eCorners = new Point[]{
+                        eBox.getTopLeft(),
+                        eBox.getTopRight(),
+                        eBox.getBotLeft(),
+                        eBox.getBotRight(),
+                };
+
+                // Get colliding entities
+                for (Entity nearby : w.getNearbyEntities(e)) {
+                    if (!nearby.getCollisionState()) continue;
+                    for (int i = 0; i < 4; i++) {
+                        if (nearby.getHitBox().contains(eCorners[i])) {
+                            collidingWith.add(nearby);
+                            collidingAt[i] = true;
+                        }
+                    }
+                    if (collidingWith.size() > 1) break;
+                }
+
+                // Calculating main offset
+                if (collidingWith.size() > 0) {
+                    Rectangle collBox = collidingWith.get(0).getHitBox();
                     double eX = e.getHitBox().getX();
                     double eW = e.getHitBox().getW();
-                    double mX = m.getHitBox().getX();
-                    double mW = m.getHitBox().getW();
+                    double mX = collBox.getX();
+                    double mW = collBox.getW();
                     double xOffset = 0;
-                    if (eX <= mX) xOffset = mX - (eX + eW);
-                    else xOffset = (mX + mW) - eX;
-                    e.getHitBox().move(xOffset, 0);
-                    break;
+                    if (eX < mX) xOffset = mX - (eX + eW);
+                    else if (eX > mX) xOffset = (mX + mW) - eX;
+                    offset.setX(xOffset);
                 }
-            }
-            int col = w.getCurrentCol(e);
-            int gridX = col * (int)Globals.cellSize;
-            double eX = e.getHitBox().getX();
-            if (eX - gridX < e.getSpeed()) e.moveTo(gridX, e.getHitBox().getY());
-            else if (gridX + Globals.cellSize - eX < e.getSpeed()) e.moveTo(gridX + Globals.cellSize, e.getHitBox().getY());
 
-            e.getHitBox().move(0, e.getVelocity().getY());
-            for (Entity m:w.getNearbyEntities(e)) {
-                if (!m.getCollisionState()) continue;
-                if (e.getHitBox().intersect(m.getHitBox())) {
+                // Calculating side offset
+                if (collidingWith.size() == 1) {
+                    double yOffset = 0;
+                    if (eVec.getY() != 0) yOffset = 0;
+                    else if (collidingAt[0] || collidingAt[1]) {
+                        yOffset = e.getSpeed();
+                    }
+                    else {
+                        yOffset = -e.getSpeed();
+                    }
+                    offset.setY(yOffset);
+                }
+
+                // Final step
+                eBox.move(offset);
+            }
+
+            // reset
+            collidingWith.clear();
+            collidingAt = new boolean[4];
+            offset.zero();
+
+            // Solving Y axis collision
+            double diffY = eBox.getY() % Globals.cellSize;
+            if (diffY > 0 && diffY < e.getSpeed()) {
+                eBox.move(0, -diffY);
+            }
+            else if (Globals.cellSize - diffY > 0 && Globals.cellSize - diffY < e.getSpeed()) {
+                eBox.move(0, Globals.cellSize - diffY);
+            }
+            else {
+                eBox.move(0, eVec.getY());
+                Point[] eCorners = new Point[]{
+                        eBox.getTopLeft(),
+                        eBox.getTopRight(),
+                        eBox.getBotLeft(),
+                        eBox.getBotRight(),
+                };
+
+                // Get colliding entities
+                for (Entity nearby : w.getNearbyEntities(e)) {
+                    if (!nearby.getCollisionState()) continue;
+                    for (int i = 0; i < 4; i++) {
+                        if (nearby.getHitBox().contains(eCorners[i])) {
+                            collidingWith.add(nearby);
+                            collidingAt[i] = true;
+                        }
+                    }
+                    if (collidingWith.size() > 1) break;
+                }
+
+                // Calculating main offset
+                if (collidingWith.size() > 0) {
+                    Rectangle collBox = collidingWith.get(0).getHitBox();
                     double eY = e.getHitBox().getY();
                     double eH = e.getHitBox().getH();
-                    double mY = m.getHitBox().getY();
-                    double mH = m.getHitBox().getH();
+                    double mY = collBox.getY();
+                    double mH = collBox.getH();
                     double yOffset = 0;
-                    if (eY <= mY) yOffset = mY - (eY + eH);
-                    else yOffset = (mY + mH) - eY;
-                    e.getHitBox().move(0, yOffset);
-                    break;
+                    if (eY < mY) yOffset = mY - (eY + eH);
+                    else if (eY > mY) yOffset = (mY + mH) - eY;
+                    offset.setY(yOffset);
                 }
+
+                // Calculating side offset
+                if (collidingWith.size() == 1) {
+                    double xOffset = 0;
+                    if (eVec.getX() != 0) xOffset = 0;
+                    else if (collidingAt[0] || collidingAt[2]) {
+                        xOffset = e.getSpeed();
+                    }
+                    else {
+                        xOffset = -e.getSpeed();
+                    }
+                    offset.setX(xOffset);
+                }
+
+                // Final step
+                eBox.move(offset);
             }
-            int row = w.getCurrentRow(e);
-            int gridY = row * (int)Globals.cellSize;
-            double eY = e.getHitBox().getY();
-            if (eY - gridY < e.getSpeed()) e.moveTo(e.getHitBox().getX(), gridY);
-            else if (gridY + Globals.cellSize - eY < e.getSpeed()) e.moveTo(e.getHitBox().getX(), gridY + Globals.cellSize);
         }
     };
 
@@ -145,77 +238,6 @@ public abstract class CollisionComponent {
             }
         }
     };
-
-    public static CollisionComponent FlamePower = new CollisionComponent() {
-        @Override
-        public void onAttach(Entity e) {
-            e.setCollisionState(false);
-            e.setDestructible(true);
-        }
-
-        @Override
-        public void handle(Entity e, World w) {
-            if (e.isDead()) return;
-            for (Entity m:w.getNearbyPlayers(e)) {
-                if (!m.getCollisionState()) continue;
-                if (e.getHitBox().intersect(m.getHitBox())) {
-                    if (m.getAttack() instanceof BombAttack a) {
-                        SoundFX.playSound("powerup", 1, true);
-                        a.setPower(a.getPower() + 1);
-                        e.kill();
-                        break;
-                    }
-                }
-            }
-        }
-    };
-
-    public static CollisionComponent BombPower = new CollisionComponent() {
-        @Override
-        public void onAttach(Entity e) {
-            e.setCollisionState(false);
-            e.setDestructible(true);
-        }
-
-        @Override
-        public void handle(Entity e, World w) {
-            if (e.isDead()) return;
-            for (Entity m:w.getNearbyPlayers(e)) {
-                if (!m.getCollisionState()) continue;
-                if (e.getHitBox().intersect(m.getHitBox())) {
-                    if (m.getAttack() instanceof BombAttack a) {
-                        SoundFX.playSound("powerup", 1, true);
-                        a.setNumOfBombs(a.getNumOfBombs() + 1);
-                        e.kill();
-                        break;
-                    }
-                }
-            }
-        }
-    };
-
-    public static CollisionComponent SpeedPower = new CollisionComponent() {
-        @Override
-        public void onAttach(Entity e) {
-            e.setCollisionState(false);
-            e.setDestructible(true);
-        }
-
-        @Override
-        public void handle(Entity e, World w) {
-            if (e.isDead()) return;
-            for (Entity m:w.getNearbyPlayers(e)) {
-                if (!m.getCollisionState()) continue;
-                if (e.getHitBox().intersect(m.getHitBox())) {
-                    SoundFX.playSound("powerup", 1, true);
-                    m.setSpeed(m.getSpeed() + 1);
-                    e.kill();
-                    break;
-                }
-            }
-        }
-    };
-
     public static CollisionComponent Portal = new CollisionComponent() {
         @Override
         public void onAttach(Entity e) {
@@ -226,7 +248,7 @@ public abstract class CollisionComponent {
         @Override
         public void handle(Entity e, World w) {
             if (e.isDead()) return;
-            for (Entity m : w.getNearbyPlayers(e)) {
+            for (Entity m:w.getNearbyEntities(e, false, false, false, true)) {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
                     if (w.isLevelCleared()) {

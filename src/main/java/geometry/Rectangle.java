@@ -56,6 +56,18 @@ public class Rectangle {
         return new Point(x, y);
     }
 
+    public Point getTopRight() {
+        return new Point(x + w - 1, y);
+    }
+
+    public Point getBotLeft() {
+        return new Point(x, y + h - 1);
+    }
+
+    public Point getBotRight() {
+        return new Point(x + w - 1, y + h - 1);
+    }
+
     public Point getCenter() {
         int centerX = (int)x + (int)w / 2;
         int centerY = (int)y + (int)h / 2;
@@ -69,6 +81,12 @@ public class Rectangle {
 
     public void move(Point p) {
         move(p.getX(), p.getY());
+    }
+
+    public boolean contains(Point p) {
+        if (this.x > p.getX() || this.x + this.w - 1 < p.getX()) return false;
+        else if (this.y > p.getY() || this.y + this.h - 1 < p.getY()) return false;
+        return true;
     }
 
     public boolean intersect(double x, double y, double w, double h) {

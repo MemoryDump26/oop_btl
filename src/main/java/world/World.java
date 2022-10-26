@@ -3,6 +3,7 @@ package world;
 import attack.AttackComponent;
 import attack.BombAttack;
 import collision.CollisionComponent;
+import collision.PowerCollisionComponent;
 import entity.Entity;
 import geometry.Point;
 import input.*;
@@ -21,10 +22,10 @@ public class World {
 
     private int num;
     public Entity[][] field;
-    public ArrayList<Entity> objects = new ArrayList<Entity>();
-    public ArrayList<Entity> players = new ArrayList<Entity>();
-    public ArrayList<Entity> enemies = new ArrayList<Entity>();
-    public ArrayList<Entity> newSpawn = new ArrayList<Entity>();
+    public ArrayList<Entity> objects = new ArrayList<>();
+    public ArrayList<Entity> players = new ArrayList<>();
+    public ArrayList<Entity> enemies = new ArrayList<>();
+    public ArrayList<Entity> newSpawn = new ArrayList<>();
     private int width;
     private int height;
     private boolean cleared = false;
@@ -39,9 +40,8 @@ public class World {
     private static Entity pBomb;
     private static Entity pFlame;
     private static Entity pBalloom;
-    private static Entity pFlamePower;
-    private static Entity pBombPower;
-    private static Entity pSpeedPower;
+    private static Entity pOneal;
+    private static Entity pPower;
     private static Entity pPortal;
 
     public enum Direction {
@@ -124,11 +124,10 @@ public class World {
         );
         pFlame.kill();
         pFlame.getSprite().setTickPerFrame(3);
-        pFlame.setHarmful(true);
 
         pBalloom = new Entity(
             new Point(0, 0),
-            new BalloomAI(),
+            InputComponent.Null,
             CollisionComponent.Dynamic,
             AttackComponent.Null,
             this,
@@ -136,40 +135,27 @@ public class World {
             gc
         );
         pBalloom.setSpeed(1);
-        pBalloom.setHarmful(true);
 
-        pFlamePower = new Entity(
+        pOneal = new Entity(
             new Point(0, 0),
             InputComponent.Null,
-            CollisionComponent.FlamePower,
+            CollisionComponent.Dynamic,
+            AttackComponent.Null,
+            this,
+            Resources.spriteDataMap.get("oneal"),
+            gc
+        );
+        pOneal.setSpeed(1);
+
+        pPower = new Entity(
+            new Point(0, 0),
+            InputComponent.Null,
+            CollisionComponent.Null,
             AttackComponent.Null,
             this,
             Resources.spriteDataMap.get("power"),
             gc
         );
-        pFlamePower.getSprite().setCurrentAnimation("flames");
-
-        pBombPower = new Entity(
-            new Point(0, 0),
-            InputComponent.Null,
-            CollisionComponent.BombPower,
-            AttackComponent.Null,
-            this,
-            Resources.spriteDataMap.get("power"),
-            gc
-        );
-        pBombPower.getSprite().setCurrentAnimation("bombs");
-
-        pSpeedPower = new Entity(
-            new Point(0, 0),
-            InputComponent.Null,
-            CollisionComponent.SpeedPower,
-            AttackComponent.Null,
-            this,
-            Resources.spriteDataMap.get("power"),
-            gc
-        );
-        pSpeedPower.getSprite().setCurrentAnimation("speed");
 
         pPortal = new Entity(
             new Point(0, 0),
@@ -222,21 +208,35 @@ public class World {
                             balloom.setInput(new BalloomAI());
                             enemies.add(balloom);
                             break;
+                        case '2':
+                            Entity oneal = new Entity(spawnAt(row, col), pOneal);
+                            oneal.setInput(new OnealAI());
+                            enemies.add(oneal);
+                            break;
                         case 'x':
                             ins = new Entity(spawnAt(row, col), pBrick);
                             ins.setInput(new BrickLogic(pPortal));
                             break;
                         case 'f':
+                            Entity flamePower = new Entity(new Point(), pPower);
+                            flamePower.setCollision(new PowerCollisionComponent(Command.FlamePower));
+                            flamePower.getSprite().setCurrentAnimation("flames");
                             ins = new Entity(spawnAt(row, col), pBrick);
-                            ins.setInput(new BrickLogic(pFlamePower));
+                            ins.setInput(new BrickLogic(flamePower));
                             break;
                         case 'b':
+                            Entity bombPower = new Entity(new Point(), pPower);
+                            bombPower.setCollision(new PowerCollisionComponent(Command.BombPower));
+                            bombPower.getSprite().setCurrentAnimation("bombs");
                             ins = new Entity(spawnAt(row, col), pBrick);
-                            ins.setInput(new BrickLogic(pBombPower));
+                            ins.setInput(new BrickLogic(bombPower));
                             break;
                         case 's':
+                            Entity speedPower = new Entity(new Point(), pPower);
+                            speedPower.setCollision(new PowerCollisionComponent(Command.SpeedPower));
+                            speedPower.getSprite().setCurrentAnimation("speed");
                             ins = new Entity(spawnAt(row, col), pBrick);
-                            ins.setInput(new BrickLogic(pSpeedPower));
+                            ins.setInput(new BrickLogic(speedPower));
                             break;
                         default:
                             ins = pGrass;
@@ -253,18 +253,27 @@ public class World {
     }
 
     public ArrayList<Entity> getNearbyEntities(Entity e) {
-        ArrayList<Entity> result = new ArrayList<Entity>();
-        result.addAll(getNearbyStaticEntities(e));
-        result.addAll(objects);
-        result.addAll(enemies);
-        result.addAll(getNearbyPlayers(e));
-        result.remove(e);
+        return getNearbyEntities(e, true, true, true, true);
+    }
+
+    public ArrayList<Entity> getNearbyEntities(
+            Entity e,
+            boolean incStatic,
+            boolean incObjects,
+            boolean incEnemies,
+            boolean incPlayers
+    ) {
+        ArrayList<Entity> result = new ArrayList<>();
+        if (incStatic) result.addAll(getNearbyStaticEntities(e));
+        if (incObjects) result.addAll(getNearby(e, objects));
+        if (incEnemies) result.addAll(getNearby(e, enemies));
+        if (incPlayers) result.addAll(getNearby(e, players));
 
         return result;
     }
 
     public ArrayList<Entity> getNearbyStaticEntities(Entity e) {
-        ArrayList<Entity> result = new ArrayList<Entity>();
+        ArrayList<Entity> result = new ArrayList<>();
         Point p = getBoardPosition(e);
         int row = (int)p.getY();
         int col = (int)p.getX();
@@ -279,11 +288,47 @@ public class World {
         return result;
     }
 
-    public ArrayList<Entity> getNearbyPlayers(Entity e) {
-        ArrayList<Entity> result = new ArrayList<Entity>();
-        result.addAll(players);
+    private ArrayList<Entity> getNearby(Entity e, ArrayList<Entity> fromSet) {
+        ArrayList<Entity> result = new ArrayList<>();
+        Point pE = getBoardPosition(e);
+        int eRow = (int)pE.getY();
+        int eCol = (int)pE.getX();
+        for (Entity m:fromSet) {
+            Point pM = getBoardPosition(m);
+            int mRow = (int)pM.getY();
+            int mCol = (int)pM.getX();
+            if (Math.abs(eRow - mRow) < 2 && Math.abs(eCol - mCol) < 2) result.add(m);
+        }
         result.remove(e);
         return result;
+    }
+
+    public ArrayList<Direction> getAvailableMoves(
+            Entity e,
+            ArrayList<Entity> constraintSet
+    ) {
+        Point p = getBoardPosition(e);
+        int row = (int) p.getY();
+        int col = (int) p.getX();
+        /*int row = getCurrentRow(e);
+        int col = getCurrentCol(e);*/
+        ArrayList<Direction> result = new ArrayList<>();
+        if (!isOccupied(row - 1, col, constraintSet)) result.add(Direction.UP);
+        if (!isOccupied(row + 1, col, constraintSet)) result.add(Direction.DOWN);
+        if (!isOccupied(row, col - 1, constraintSet)) result.add(Direction.LEFT);
+        if (!isOccupied(row, col + 1, constraintSet)) result.add(Direction.RIGHT);
+        return result;
+    }
+
+    public boolean isOccupied(int row, int col, ArrayList<Entity> constraintSet) {
+        for (Entity e:constraintSet) {
+            if (!e.getCollisionState()) continue;
+            Point p = getBoardPosition(e);
+            int eRow = (int) p.getY();
+            int eCol = (int) p.getX();
+            if (eRow == row && eCol == col) return true;
+        }
+        return false;
     }
 
     public boolean isLevelCleared() {
@@ -384,6 +429,7 @@ public class World {
             e.update();
         }
         if (cleared) {
+            Resources.soundDataMap.get("next_level").play();
             createLevelFromFile(Resources.levelList.get((num + 1) % Resources.levelList.size()), true);
             cleared = false;
         }

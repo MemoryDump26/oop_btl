@@ -13,7 +13,7 @@ public class BombAttack extends AttackComponent {
 
     public BombAttack(int power, int numOfBombs) {
         this.power = power;
-        this.numOfBombs = 1;
+        this.numOfBombs = numOfBombs;
     }
 
     public int getPower() {return power;}
@@ -39,6 +39,7 @@ public class BombAttack extends AttackComponent {
             b.getSprite().setCurrentAnimation("bomb");
             w.spawn(row, col, b);
             numOfBombs--;
+            Resources.soundDataMap.get("place_bomb").play();
         }
     }
 }

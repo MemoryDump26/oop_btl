@@ -4,12 +4,12 @@ import entity.Entity;
 import geometry.Rectangle;
 import world.World;
 
-public class BalloomAI extends RandomMovementAI {
-    public BalloomAI(boolean incStatic, boolean incObjects, boolean incEnemies, boolean incPlayers) {
+public class OnealAI extends RandomMovementAI {
+    public OnealAI(boolean incStatic, boolean incObjects, boolean incEnemies, boolean incPlayers) {
         super(incStatic, incObjects, incEnemies, incPlayers);
     }
 
-    public BalloomAI() {
+    public OnealAI() {
         super(true, true, true, false);
     }
 

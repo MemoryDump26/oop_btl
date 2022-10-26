@@ -9,7 +9,6 @@ import javafx.scene.effect.BlendMode;
 import javafx.stage.Stage;
 import resources.Resources;
 import resources.SoundFX;
-import timer.Timer;
 import world.World;
 public class Main extends Application {
     Group root = new Group();
@@ -19,19 +18,17 @@ public class Main extends Application {
 
     World world;
 
-    Timer t1 = new Timer(999, false);
-
     public Main() {
         gc.setImageSmoothing(false);
         Resources.getSprites();
         Resources.getLevels();
-        Resources.getSoundFX();
+        Resources.getSounds();
         world = new World(gc);
         world.createLevelFromFile(Resources.levelList.get(0), false);
     }
 
     public void start(Stage stage) {
-        SoundFX.playSound("stage_theme", 1, true);
+        SoundFX.playSound("stage_theme", 1, false);
         stage.setScene(scene);
         stage.setTitle("ayy lmao");
         root.getChildren().add(mainCanvas);

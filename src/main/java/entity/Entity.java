@@ -11,15 +11,12 @@ import sprite.SpriteData;
 import javafx.scene.canvas.GraphicsContext;
 import world.World;
 
-import java.util.ArrayList;
-
 public class Entity {
     protected double speed;
     protected Point velocity = new Point(0, 0);
     protected Rectangle hitBox;
     protected boolean collisionState;
     protected boolean destructible;
-    protected boolean harmful = false;
     protected boolean dead = false;
 
     protected World w;
@@ -53,7 +50,6 @@ public class Entity {
         this.attack = p.attack;
         this.w = p.w;
         this.destructible = p.destructible;
-        this.harmful = p.harmful;
         this.dead = p.dead;
         this.speed = p.speed;
         this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), p.hitBox.getW(), p.hitBox.getH());
@@ -77,7 +73,6 @@ public class Entity {
     public Rectangle getHitBox() {return hitBox;}
     public boolean getCollisionState() {return collisionState;}
     public boolean isDestructible() {return destructible;}
-    public boolean isHarmful() {return harmful;}
     public boolean isDead() {return dead;}
     public boolean clearable() {
         return dead && sprite.isPausing();
@@ -93,7 +88,6 @@ public class Entity {
     public void setHitBox(Rectangle hitBox) {this.hitBox = hitBox;}
     public void setCollisionState(boolean collisionState) {this.collisionState = collisionState;}
     public void setDestructible(boolean destructible) {this.destructible = destructible;}
-    public void setHarmful(boolean harmful) {this.harmful = harmful;}
     public void setDead(boolean dead) {this.dead = dead;}
 
     public void setInput(InputComponent input) {
@@ -108,6 +102,10 @@ public class Entity {
 
     public void setAttack(AttackComponent attack) {
         this.attack = attack;
+    }
+
+    public void setSprite(Sprite sprite) {
+        this.sprite = sprite;
     }
 
     public void move(double x, double y) {
