@@ -256,6 +256,20 @@ public class World {
         return getNearbyEntities(e, true, true, true, true);
     }
 
+    public ArrayList<Entity> getAllEntities(
+            boolean incStatic,
+            boolean incObjects,
+            boolean incEnemies,
+            boolean incPlayers
+    ) {
+        ArrayList<Entity> result = new ArrayList<>();
+        if (incStatic) result.addAll(getAllStaticEntities());
+        if (incObjects) result.addAll(objects);
+        if (incEnemies) result.addAll(enemies);
+        if (incPlayers) result.addAll(players);
+        return result;
+    }
+
     public ArrayList<Entity> getNearbyEntities(
             Entity e,
             boolean incStatic,
@@ -269,6 +283,16 @@ public class World {
         if (incEnemies) result.addAll(getNearby(e, enemies));
         if (incPlayers) result.addAll(getNearby(e, players));
 
+        return result;
+    }
+
+    public ArrayList<Entity> getAllStaticEntities() {
+        ArrayList<Entity> result = new ArrayList<>();
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                result.add(field[i][j]);
+            }
+        }
         return result;
     }
 
