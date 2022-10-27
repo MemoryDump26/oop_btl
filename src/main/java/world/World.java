@@ -225,28 +225,28 @@ public class World {
                             break;
                         case 'x':
                             ins = new Entity(spawnAt(row, col), pBrick);
-                            Command<World> spawnPortalCommand = new WorldSpawnCommand(row, col, pPortal);
-                            TargetedCommand<World> spawnPortal = new TargetedCommand<>(spawnPortalCommand, this);
+                            TargetedCommand<World> spawnPortalEntityCommand = new WorldSpawnCommand(row, col, pPortal);
+                            RemoteCommand<World> spawnPortal = new RemoteCommand<>(spawnPortalEntityCommand, this);
                             CommandOnDead portalBrick = new CommandOnDead(spawnPortal);
                             //ins.setInput(new BrickLogic(pPortal));
                             break;
                         case 'f':
                             Entity flamePower = new Entity(new Point(), pPower);
-                            flamePower.setCollision(new PowerCollisionComponent(Command.FlamePower));
+                            flamePower.setCollision(new PowerCollisionComponent(EntityCommand.FlamePower));
                             flamePower.getSprite().setCurrentAnimation("flames");
                             ins = new Entity(spawnAt(row, col), pBrick);
                             ins.setInput(new BrickLogic(flamePower));
                             break;
                         case 'b':
                             Entity bombPower = new Entity(new Point(), pPower);
-                            bombPower.setCollision(new PowerCollisionComponent(Command.BombPower));
+                            bombPower.setCollision(new PowerCollisionComponent(EntityCommand.BombPower));
                             bombPower.getSprite().setCurrentAnimation("bombs");
                             ins = new Entity(spawnAt(row, col), pBrick);
                             ins.setInput(new BrickLogic(bombPower));
                             break;
                         case 's':
                             Entity speedPower = new Entity(new Point(), pPower);
-                            speedPower.setCollision(new PowerCollisionComponent(Command.SpeedPower));
+                            speedPower.setCollision(new PowerCollisionComponent(EntityCommand.SpeedPower));
                             speedPower.getSprite().setCurrentAnimation("speed");
                             ins = new Entity(spawnAt(row, col), pBrick);
                             ins.setInput(new BrickLogic(speedPower));

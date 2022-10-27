@@ -1,15 +1,16 @@
 package components.collision;
 
 import components.Component;
+import components.commands.TargetedCommand;
 import entity.Entity;
-import components.commands.Command;
+import components.commands.EntityCommand;
 import resources.Resources;
 import world.World;
 
 public class PowerCollisionComponent extends Component<Entity> {
-    private Command<Entity> c;
+    private TargetedCommand<Entity> c;
 
-    public PowerCollisionComponent(Command<Entity> c) {
+    public PowerCollisionComponent(TargetedCommand<Entity> c) {
         this.c = c;
     }
 

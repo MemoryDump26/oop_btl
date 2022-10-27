@@ -4,49 +4,49 @@ import components.attack.BombAttack;
 import components.input.PlayerInputComponent;
 import entity.Entity;
 
-public abstract class Command<T> {
+public abstract class EntityCommand<T> {
     public abstract void execute(T e);
 
-    public static <T> Command<T> getNull() {
-        return new Command<T>() {
+    public static <T> EntityCommand<T> getNull() {
+        return new EntityCommand<T>() {
             @Override
             public void execute(T e) {
             }
         };
     }
 
-    public static Command<Entity> Up = new Command<>() {
+    public static EntityCommand<Entity> Up = new EntityCommand<>() {
         @Override
         public void execute(Entity e) {
             e.moveUp();
         }
     };
-    public static Command<Entity> Down = new Command<>() {
+    public static EntityCommand<Entity> Down = new EntityCommand<>() {
         @Override
         public void execute(Entity e) {
             e.moveDown();
         }
     };
-    public static Command<Entity> Left = new Command<>() {
+    public static EntityCommand<Entity> Left = new EntityCommand<>() {
         @Override
         public void execute(Entity e) {
             e.moveLeft();
         }
     };
-    public static Command<Entity> Right = new Command<>() {
+    public static EntityCommand<Entity> Right = new EntityCommand<>() {
         @Override
         public void execute(Entity e) {
             e.moveRight();
         }
     };
-    public static Command<Entity> Attack = new Command<>() {
+    public static EntityCommand<Entity> Attack = new EntityCommand<>() {
         @Override
         public void execute(Entity e) {
             e.attack();
         }
     };
 
-    public static Command<Entity> BombPower = new Command<>() {
+    public static EntityCommand<Entity> BombPower = new EntityCommand<>() {
         @Override
         public void execute(Entity e) {
             if (e.getAttack() instanceof BombAttack b) {
@@ -57,7 +57,7 @@ public abstract class Command<T> {
     };
 
 
-    public static Command<Entity> FlamePower = new Command<>() {
+    public static EntityCommand<Entity> FlamePower = new EntityCommand<>() {
         @Override
         public void execute(Entity e) {
             if (e.getAttack() instanceof BombAttack b) {
@@ -67,7 +67,7 @@ public abstract class Command<T> {
         }
     };
 
-    public static Command<Entity> SpeedPower = new Command<>() {
+    public static EntityCommand<Entity> SpeedPower = new EntityCommand<>() {
         @Override
         public void execute(Entity e) {
             if (e.getInput() instanceof PlayerInputComponent) {

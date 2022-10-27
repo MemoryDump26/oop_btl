@@ -1,10 +1,9 @@
 package components.commands;
 
 import entity.Entity;
-import resources.Resources;
 import world.World;
 
-public class WorldSpawnCommand extends Command<World> {
+public class WorldSpawnCommand implements TargetedCommand<World> {
     private int row;
     private int col;
     Entity p;

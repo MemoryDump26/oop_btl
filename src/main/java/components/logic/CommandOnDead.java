@@ -1,7 +1,6 @@
 package components.logic;
 
 import components.Component;
-import components.commands.Command;
 import components.commands.IndieCommand;
 import entity.Entity;
 

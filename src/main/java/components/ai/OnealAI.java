@@ -3,7 +3,7 @@ package components.ai;
 import entity.Entity;
 import geometry.Point;
 import geometry.Rectangle;
-import components.commands.Command;
+import components.commands.EntityCommand;
 import world.World;
 
 import java.util.ArrayList;
@@ -92,10 +92,10 @@ public class OnealAI extends RandomMovementAI {
             e.setSpeed(2);
             super.currentDirection = playerDirection;
             switch (playerDirection) {
-                case UP -> Command.Up.execute(e);
-                case DOWN -> Command.Down.execute(e);
-                case LEFT -> Command.Left.execute(e);
-                case RIGHT -> Command.Right.execute(e);
+                case UP -> EntityCommand.Up.execute(e);
+                case DOWN -> EntityCommand.Down.execute(e);
+                case LEFT -> EntityCommand.Left.execute(e);
+                case RIGHT -> EntityCommand.Right.execute(e);
             }
         }
         else {
