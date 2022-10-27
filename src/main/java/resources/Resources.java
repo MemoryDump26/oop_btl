@@ -40,6 +40,21 @@ public class Resources {
         }
     }
 
+    public static void loadCustomSprite(String fileName) {
+        try {
+            String[] parsed = fileName.split("/|\\\\|(?<=\\D)(?=\\d)|\\.");
+            Image i = new Image("sprites" + File.separator + fileName);
+            if (!spriteDataMap.containsKey(parsed[0])) {
+                spriteDataMap.put(parsed[0], new SpriteData(i.getWidth(), i.getHeight()));
+            }
+            spriteDataMap.get(parsed[0]).addFrame(parsed[1], i);
+        }
+        catch (Exception e) {
+            System.out.printf("Can't load sprite: %s\n", fileName);
+        }
+    }
+
+
     public static void loadSprite(String fileName) {
         try {
             String[] parsed = fileName.split("/|\\\\|(?<=\\D)(?=\\d)|\\.");

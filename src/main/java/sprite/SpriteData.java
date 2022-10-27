@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SpriteData {
-    public Map<String, ArrayList<Image>> animations = new HashMap<String, ArrayList<Image>>();
-    public String currentAnimation = new String();
+    public Map<String, ArrayList<Image>> animations = new HashMap<>();
+    public String currentAnimation;
     public double w;
     public double h;
 
@@ -26,7 +26,7 @@ public class SpriteData {
         this.h = Globals.cellSize;
     }
 
-    public SpriteData(int w, int h) {
+    public SpriteData(double w, double h) {
         this.w = w;
         this.h = h;
     }

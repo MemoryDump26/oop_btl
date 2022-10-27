@@ -34,9 +34,6 @@ public class World {
     private int height;
     private boolean cleared = false;
 
-    private PlayerInputComponent p1Inp = new PlayerInputComponent();
-    private PlayerInputComponent p2Inp = new PlayerInputComponent();
-
     private static Entity pPlayer;
     private static Entity pWall;
     private static Entity pBrick;
@@ -57,12 +54,6 @@ public class World {
 
     public World(GraphicsContext gc) {
         this.gc = gc;
-
-        p1Inp.addKeybind(KeyCode.W, Command.Up, "hold");
-        p1Inp.addKeybind(KeyCode.A, Command.Left, "hold");
-        p1Inp.addKeybind(KeyCode.S, Command.Down, "hold");
-        p1Inp.addKeybind(KeyCode.D, Command.Right, "hold");
-        p1Inp.addKeybind(KeyCode.J, Command.Attack, "press");
 
         pPlayer = new Entity(
             Point.ZERO,
@@ -200,7 +191,16 @@ public class World {
                                 currentPlayer++;
                             }
                             else {
-                                spawnPlayer(row, col, p1Inp, new BombAttack(1, 1));
+                                PlayerInputComponent inp;
+                                if (currentPlayer < Globals.playerKeybinds.size()) {
+                                    inp = Globals.playerKeybinds.get(currentPlayer);
+                                }
+                                else {
+                                    inp = new PlayerInputComponent();
+                                    Globals.playerKeybinds.add(inp);
+                                }
+                                spawnPlayer(row, col, inp, new BombAttack(1, 1));
+                                currentPlayer++;
                             }
                             break;
                         case '#':
