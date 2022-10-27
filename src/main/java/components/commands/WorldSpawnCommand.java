@@ -6,8 +6,7 @@ import world.World;
 public class WorldSpawnCommand implements TargetedCommand<World> {
     private int row;
     private int col;
-    Entity p;
-    private boolean executed = false;
+    private Entity p;
 
     public WorldSpawnCommand(int row, int col, Entity p) {
         this.row = row;
@@ -17,8 +16,6 @@ public class WorldSpawnCommand implements TargetedCommand<World> {
 
     @Override
     public void execute(World w) {
-        if (executed) return;
         w.spawn(row, col, p);
-        executed = true;
     }
 }

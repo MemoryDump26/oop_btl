@@ -6,6 +6,7 @@ import entity.Entity;
 import geometry.Point;
 import components.logic.BombLogic;
 import resources.Resources;
+import sprite.Sprite;
 import world.World;
 
 public class BombAttack extends Component<Entity> {
@@ -32,16 +33,12 @@ public class BombAttack extends Component<Entity> {
             Point p = w.getBoardPosition(e);
             int row = (int) p.getY();
             int col = (int) p.getX();
-            Entity b = new Entity(
-                Point.ZERO,
-                new BombLogic(power, this),
-                CollisionComponent.Bomb,
-                Component.getNull(),
-                w,
-                Resources.getSprite("bomb"),
-                e.getSprite().getGc()
-            );
+
+            Entity b = new Entity(Point.ZERO, w, new Sprite(Resources.getSprite("bomb"), e.getSprite().getGc()));
+            b.setInput(new BombLogic(power, this));
+            b.setCollision(CollisionComponent.Bomb);
             b.getSprite().setCurrentAnimation("bomb");
+
             w.spawn(row, col, b);
             numOfBombs--;
             Resources.getSound("place_bomb").play();

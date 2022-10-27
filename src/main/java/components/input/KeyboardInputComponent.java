@@ -18,6 +18,7 @@ public class KeyboardInputComponent extends Component<Entity> {
     }
 
     public void handle(Entity e) {
+        if (e.isDead()) return;
         for (Map.Entry<KeyCode, TargetedCommand<Entity>> k : pKeybinds.entrySet()) {
             if (Input.isKeyPressed(k.getKey())) {
                 k.getValue().execute(e);

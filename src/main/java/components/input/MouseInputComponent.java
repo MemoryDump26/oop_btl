@@ -19,6 +19,7 @@ public class MouseInputComponent extends Component<Entity> {
 
     @Override
     public void handle(Entity e) {
+        if (e.isDead()) return;
         for (Map.Entry<MouseButton, TargetedCommand<Entity>> m : pKeybinds.entrySet()) {
             if (Input.isMousePressed(m.getKey())) {
                 m.getValue().execute(e);

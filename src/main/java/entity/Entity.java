@@ -4,9 +4,6 @@ import components.Component;
 import geometry.Point;
 import geometry.Rectangle;
 import sprite.Sprite;
-import sprite.SpriteData;
-
-import javafx.scene.canvas.GraphicsContext;
 import world.World;
 
 import java.util.ArrayList;
@@ -26,42 +23,57 @@ public class Entity {
     protected Component<Entity> attack;
     protected Sprite sprite;
 
+    public Entity(Point spawn, World w, Sprite sprite) {
+        this(spawn, Component.getNull(), Component.getNull(), Component.getNull(), w, sprite);
+    }
+
     public Entity(
-        Point spawn,
-        Component<Entity> input,
-        Component<Entity> collision,
-        Component<Entity> attack,
-        World w,
-        SpriteData sprite,
-        GraphicsContext gc
+            Point spawn,
+            Component<Entity> input,
+            Component<Entity> collision,
+            Component<Entity> attack,
+            World w,
+            Sprite sprite
     ) {
         this.input = input;
         this.collision = collision;
         this.attack = attack;
         this.w = w;
-        this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), sprite.w, sprite.h);
-        this.sprite = new Sprite(sprite, gc);
+        this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), sprite.getData().getW(), sprite.getData().getH());
+        this.sprite = new Sprite(sprite);
         input.onAttach(this);
         collision.onAttach(this);
+    }
+
+    public Entity (Entity p) {
+        this(Point.ZERO, p);
     }
 
     public Entity(Point spawn, Entity p) {
+        this(
+                spawn,
+                p.getInput(),
+                p.getCollision(),
+                p.getAttack(),
+                p.getWorld(),
+                p.getSprite()
+        );
+        this.hitBox = new Rectangle(
+                spawn.getX(),
+                spawn.getY(),
+                p.getSprite().getData().getW(),
+                p.getSprite().getData().getH()
+        );
+        this.speed = p.getSpeed();
+        this.dead = p.isDead();
         this.auxiliaryComponent = new ArrayList<>(p.auxiliaryComponent);
-        this.input = p.input;
-        this.collision = p.collision;
-        this.attack = p.attack;
-        this.w = p.w;
-        this.destructible = p.destructible;
-        this.dead = p.dead;
-        this.speed = p.speed;
-        this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), p.hitBox.getW(), p.hitBox.getH());
-        this.sprite = new Sprite(p.sprite);
-        input.onAttach(this);
-        collision.onAttach(this);
+        for (Component<Entity> aux : auxiliaryComponent) {
+            aux.onAttach(this);
+        }
     }
 
     public void update() {
-        for (Component<Entity> aux:auxiliaryComponent) {
+        for (Component<Entity> aux : auxiliaryComponent) {
             aux.handle(this);
         }
         input.handle(this);
@@ -159,7 +171,7 @@ public class Entity {
         if (!dead && destructible) {
             collisionState = false;
             sprite.setCurrentAnimation("dead");
-            sprite.setTickPerFrame(15);
+            sprite.setTickPerFrame(8);
             sprite.setLoop(false);
             dead = true;
         }

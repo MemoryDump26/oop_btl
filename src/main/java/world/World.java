@@ -15,6 +15,7 @@ import components.logic.BrickLogic;
 import javafx.scene.canvas.GraphicsContext;
 import resources.Resources;
 import options.Globals;
+import sprite.Sprite;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,6 +35,7 @@ public class World {
     private int height;
     private boolean cleared = false;
 
+    private static Entity pNull;
     private static Entity pPlayer;
     private static Entity pWall;
     private static Entity pBrick;
@@ -55,115 +57,49 @@ public class World {
     public World(GraphicsContext gc) {
         this.gc = gc;
 
-        pPlayer = new Entity(
-            Point.ZERO,
-            Component.getNull(),
-            CollisionComponent.Dynamic,
-            Component.getNull(),
-            this,
-            Resources.getSprite("player"),
-            gc
-        );
+        pNull = new Entity(Point.ZERO, this, new Sprite(Resources.getSprite("grass"), gc));
+
+        IndieCommand playPlayerDyingNoise = new PlaySoundCommand("player_die");
+        Component<Entity> onPlayerDied = new CommandOnDead(playPlayerDyingNoise);
+        pPlayer = new Entity(pNull);
+        pPlayer.addAuxiliaryComponent(onPlayerDied);
+        pPlayer.setCollision(CollisionComponent.Dynamic);
+        pPlayer.setSprite(new Sprite(Resources.getSprite("player"), gc));
         pPlayer.setSpeed(3);
-        IndieCommand playerDyingNoise = new PlaySoundCommand("player_die");
-        Component<Entity> playerDied = new CommandOnDead<>(playerDyingNoise);
-        pPlayer.addAuxiliaryComponent(playerDied);
 
-        pWall = new Entity(
-            Point.ZERO,
-            Component.getNull(),
-            CollisionComponent.Static,
-            Component.getNull(),
-            this,
-            Resources.getSprite("wall"),
-            this.gc
-        );
+        pWall = new Entity(pNull);
+        pWall.setCollision(CollisionComponent.Static);
+        pWall.setSprite(new Sprite(Resources.getSprite("wall"), gc));
 
-        pBrick = new Entity(
-            Point.ZERO,
-            Component.getNull(),
-            CollisionComponent.Destructibles,
-            Component.getNull(),
-            this,
-            Resources.getSprite("brick"),
-            this.gc
-        );
+        pBrick = new Entity(pNull);
+        pBrick.setCollision(CollisionComponent.Destructibles);
+        pBrick.setSprite(new Sprite(Resources.getSprite("brick"), gc));
         pBrick.getSprite().setCurrentAnimation("brick");
 
-        pGrass = new Entity(
-            Point.ZERO,
-            Component.getNull(),
-            Component.getNull(),
-            Component.getNull(),
-            this,
-            Resources.getSprite("grass"),
-            gc
-        );
+        pGrass = new Entity(pNull);
 
-        pBomb = new Entity(
-            Point.ZERO,
-            Component.getNull(),
-            CollisionComponent.Bomb,
-            Component.getNull(),
-            this,
-            Resources.getSprite("bomb"),
-            gc
-        );
-        pBomb.getSprite().setCurrentAnimation("bomb");
+        pFlame = new Entity(pNull);
+        pFlame.setCollision(CollisionComponent.Flame);
+        pFlame.setSprite(new Sprite(Resources.getSprite("explosion"), gc));
+        pFlame.getSprite().setLoop(false);
+        pFlame.getSprite().setTickPerFrame(5);
 
-        pFlame = new Entity(
-            Point.ZERO,
-            Component.getNull(),
-            CollisionComponent.Flame,
-            Component.getNull(),
-            this,
-            Resources.getSprite("explosion"),
-            gc
-        );
-        pFlame.kill();
-        pFlame.getSprite().setTickPerFrame(3);
+        Entity enemyTemplate = new Entity(pNull);
+        enemyTemplate.setCollision(CollisionComponent.Dynamic);
+        enemyTemplate.setSpeed(1);
 
-        pBalloom = new Entity(
-            Point.ZERO,
-            Component.getNull(),
-            CollisionComponent.Dynamic,
-            Component.getNull(),
-            this,
-            Resources.getSprite("balloom"),
-            gc
-        );
-        pBalloom.setSpeed(1);
+        pBalloom = new Entity(enemyTemplate);
+        pBalloom.setSprite(new Sprite(Resources.getSprite("balloom"), gc));
 
-        pOneal = new Entity(
-            Point.ZERO,
-            Component.getNull(),
-            CollisionComponent.Dynamic,
-            Component.getNull(),
-            this,
-            Resources.getSprite("oneal"),
-            gc
-        );
-        pOneal.setSpeed(1);
+        pOneal = new Entity(enemyTemplate);
+        pOneal.setSprite(new Sprite(Resources.getSprite("oneal"), gc));
 
-        pPower = new Entity(
-            Point.ZERO,
-            Component.getNull(),
-            Component.getNull(),
-            Component.getNull(),
-            this,
-            Resources.getSprite("power"),
-            gc
-        );
+        pPower = new Entity(pNull);
+        pPower.setSprite(new Sprite(Resources.getSprite("power"), gc));
 
-        pPortal = new Entity(
-            Point.ZERO,
-            Component.getNull(),
-            CollisionComponent.Portal,
-            Component.getNull(),
-            this,
-            Resources.getSprite("portal"),
-            gc
-        );
+        pPortal = new Entity(pNull);
+        pPortal.setCollision(CollisionComponent.Portal);
+        pPortal.setSprite(new Sprite(Resources.getSprite("portal"), gc));
     }
 
     public void createLevelFromFile(File file, boolean isNextLevel) {
@@ -211,7 +147,6 @@ public class World {
                             break;
                         case '*':
                             ins = new Entity(spawnAt(row, col), pBrick);
-                            ins.setInput(new BrickLogic());
                             break;
                         case '1':
                             Entity balloom = new Entity(spawnAt(row, col), pBalloom);
@@ -224,25 +159,25 @@ public class World {
                             enemies.add(oneal);
                             break;
                         case 'x':
+                            Component<Entity> portalItem = CommandPresets.SpawnEntityOnDeadComponent(row, col, pPortal, this);
                             ins = new Entity(spawnAt(row, col), pBrick);
-                            TargetedCommand<World> spawnPortalEntityCommand = new WorldSpawnCommand(row, col, pPortal);
-                            RemoteCommand<World> spawnPortal = new RemoteCommand<>(spawnPortalEntityCommand, this);
-                            CommandOnDead portalBrick = new CommandOnDead(spawnPortal);
-                            //ins.setInput(new BrickLogic(pPortal));
+                            ins.addAuxiliaryComponent(portalItem);
                             break;
                         case 'f':
-                            Entity flamePower = new Entity(new Point(), pPower);
+                            Entity flamePower = new Entity(pPower);
                             flamePower.setCollision(new PowerCollisionComponent(EntityCommand.FlamePower));
                             flamePower.getSprite().setCurrentAnimation("flames");
+                            Component<Entity> flameItem = CommandPresets.SpawnEntityOnDeadComponent(row, col, flamePower, this);
                             ins = new Entity(spawnAt(row, col), pBrick);
-                            ins.setInput(new BrickLogic(flamePower));
+                            ins.addAuxiliaryComponent(flameItem);
                             break;
                         case 'b':
-                            Entity bombPower = new Entity(new Point(), pPower);
+                            Entity bombPower = new Entity(pPower);
                             bombPower.setCollision(new PowerCollisionComponent(EntityCommand.BombPower));
                             bombPower.getSprite().setCurrentAnimation("bombs");
+                            Component<Entity> bombItem = CommandPresets.SpawnEntityOnDeadComponent(row, col, bombPower, this);
                             ins = new Entity(spawnAt(row, col), pBrick);
-                            ins.setInput(new BrickLogic(bombPower));
+                            ins.addAuxiliaryComponent(bombItem);
                             break;
                         case 's':
                             Entity speedPower = new Entity(new Point(), pPower);

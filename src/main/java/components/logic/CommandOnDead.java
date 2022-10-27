@@ -4,8 +4,9 @@ import components.Component;
 import components.commands.IndieCommand;
 import entity.Entity;
 
-public class CommandOnDead<T> extends Component<Entity> {
+public class CommandOnDead extends Component<Entity> {
     private IndieCommand c;
+    private boolean executed = false;
 
     public CommandOnDead(IndieCommand c) {
         this.c = c;
@@ -17,6 +18,10 @@ public class CommandOnDead<T> extends Component<Entity> {
 
     @Override
     public void handle(Entity e) {
-        if (e.isDead()) c.execute();
+        if (executed) return;
+        if (e.isDead()) {
+            c.execute();
+            executed = true;
+        }
     }
 }
