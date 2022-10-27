@@ -38,13 +38,13 @@ public class BombAttack extends Component<Entity> {
                 CollisionComponent.Bomb,
                 Component.getNull(),
                 w,
-                Resources.spriteDataMap.get("bomb"),
+                Resources.getSprite("bomb"),
                 e.getSprite().getGc()
             );
             b.getSprite().setCurrentAnimation("bomb");
             w.spawn(row, col, b);
             numOfBombs--;
-            Resources.soundDataMap.get("place_bomb").play();
+            Resources.getSound("place_bomb").play();
         }
     }
 }

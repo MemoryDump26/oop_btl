@@ -10,6 +10,8 @@ import javafx.stage.Stage;
 import resources.Resources;
 import world.World;
 
+import java.io.File;
+
 public class Main extends Application {
     Group root = new Group();
     Scene scene = new Scene(root);
@@ -20,15 +22,18 @@ public class Main extends Application {
 
     public Main() {
         gc.setImageSmoothing(false);
-        Resources.getSprites();
-        Resources.getLevels();
-        Resources.getSounds();
+        Resources.loadAllSprites();
+        Resources.loadAllLevels();
+        Resources.loadAllSounds();
         world = new World(gc);
-        world.createLevelFromFile(Resources.levelList.get(0), false);
+        File devLevel = new File("/home/memorydump/programming/javaTest/oop_btl/src/main/resources/levels/leveldev69.txt");
+        world.createLevelFromFile(devLevel, false);
+        //world.createLevelFromFile(Resources.levelList.get(0), false);
     }
 
     public void start(Stage stage) {
-        Resources.soundDataMap.get("stage_theme").play();
+        //Resources.soundDataMap.get("stage_theme").play();
+        Resources.getSound("stage_theme").play();
         stage.setScene(scene);
         stage.setTitle("ayy lmao");
         root.getChildren().add(mainCanvas);

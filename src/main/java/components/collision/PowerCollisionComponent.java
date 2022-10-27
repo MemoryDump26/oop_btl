@@ -27,7 +27,7 @@ public class PowerCollisionComponent extends Component<Entity> {
             if (!m.getCollisionState()) continue;
             if (e.getHitBox().intersect(m.getHitBox())) {
                 c.execute(m);
-                Resources.soundDataMap.get("powerup").play();
+                Resources.getSound("powerup").play();
                 e.kill();
                 break;
             }

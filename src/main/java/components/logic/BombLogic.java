@@ -36,7 +36,7 @@ public class BombLogic extends Component<Entity> {
             parent.setNumOfBombs(parent.getNumOfBombs() + 1);
             w.spawnFlame(w.getCurrentRow(e), w.getCurrentCol(e), power, 0, 0);
             exploded = true;
-            Resources.soundDataMap.get("explosion").play();
+            Resources.getSound("explosion").play();
         }
     }
 }

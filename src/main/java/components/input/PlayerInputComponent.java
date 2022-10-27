@@ -19,7 +19,7 @@ public class PlayerInputComponent extends Component<Entity> {
 
     public void handle(Entity e) {
         if (e.isDead()) {
-            Resources.soundDataMap.get("player_die").play();
+            Resources.getSound("player_die").play();
             return;
         }
         for (Map.Entry<KeyCode, Command<Entity>> k : pKeybinds.entrySet()) {

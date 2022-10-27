@@ -61,7 +61,7 @@ public class World {
             CollisionComponent.Dynamic,
             Component.getNull(),
             this,
-            Resources.spriteDataMap.get("player"),
+            Resources.getSprite("player"),
             gc
         );
         pPlayer.setSpeed(3);
@@ -72,7 +72,7 @@ public class World {
             CollisionComponent.Static,
             Component.getNull(),
             this,
-            Resources.spriteDataMap.get("wall"),
+            Resources.getSprite("wall"),
             this.gc
         );
 
@@ -82,7 +82,7 @@ public class World {
             CollisionComponent.Destructibles,
             Component.getNull(),
             this,
-            Resources.spriteDataMap.get("brick"),
+            Resources.getSprite("brick"),
             this.gc
         );
         pBrick.getSprite().setCurrentAnimation("brick");
@@ -93,7 +93,7 @@ public class World {
             Component.getNull(),
             Component.getNull(),
             this,
-            Resources.spriteDataMap.get("grass"),
+            Resources.getSprite("grass"),
             gc
         );
 
@@ -103,7 +103,7 @@ public class World {
             CollisionComponent.Bomb,
             Component.getNull(),
             this,
-            Resources.spriteDataMap.get("bomb"),
+            Resources.getSprite("bomb"),
             gc
         );
         pBomb.getSprite().setCurrentAnimation("bomb");
@@ -114,7 +114,7 @@ public class World {
             CollisionComponent.Flame,
             Component.getNull(),
             this,
-            Resources.spriteDataMap.get("explosion"),
+            Resources.getSprite("explosion"),
             gc
         );
         pFlame.kill();
@@ -126,7 +126,7 @@ public class World {
             CollisionComponent.Dynamic,
             Component.getNull(),
             this,
-            Resources.spriteDataMap.get("balloom"),
+            Resources.getSprite("balloom"),
             gc
         );
         pBalloom.setSpeed(1);
@@ -137,7 +137,7 @@ public class World {
             CollisionComponent.Dynamic,
             Component.getNull(),
             this,
-            Resources.spriteDataMap.get("oneal"),
+            Resources.getSprite("oneal"),
             gc
         );
         pOneal.setSpeed(1);
@@ -148,7 +148,7 @@ public class World {
             Component.getNull(),
             Component.getNull(),
             this,
-            Resources.spriteDataMap.get("power"),
+            Resources.getSprite("power"),
             gc
         );
 
@@ -158,7 +158,7 @@ public class World {
             CollisionComponent.Portal,
             Component.getNull(),
             this,
-            Resources.spriteDataMap.get("portal"),
+            Resources.getSprite("portal"),
             gc
         );
     }
@@ -461,8 +461,8 @@ public class World {
             e.update();
         }
         if (cleared) {
-            Resources.soundDataMap.get("next_level").play();
-            createLevelFromFile(Resources.levelList.get((num + 1) % Resources.levelList.size()), true);
+            Resources.getSound("next_level").play();
+            createLevelFromFile(Resources.getLevel(num + 1), true);
             cleared = false;
         }
     }
