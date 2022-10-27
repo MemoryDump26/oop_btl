@@ -1,8 +1,9 @@
-package input;
+package input.ai;
 
 import entity.Entity;
 import geometry.Point;
 import geometry.Rectangle;
+import input.Command;
 import world.World;
 
 import java.util.ArrayList;
@@ -22,8 +23,9 @@ public class OnealAI extends RandomMovementAI {
     }
 
     @Override
-    public void handle(Entity e, World w) {
+    public void handle(Entity e) {
         if (e.isDead()) return;
+        World w = e.getWorld();
         Rectangle eBox = e.getHitBox();
         Point pE = w.getBoardPosition(e);
         int eRow = (int)pE.getY();
@@ -98,7 +100,7 @@ public class OnealAI extends RandomMovementAI {
         }
         else {
             e.setSpeed(1);
-            super.handle(e, w);
+            super.handle(e);
         }
     }
 }

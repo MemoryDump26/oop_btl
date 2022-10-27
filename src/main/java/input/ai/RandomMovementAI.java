@@ -1,13 +1,16 @@
-package input;
+package input.ai;
 
+import components.Component;
 import entity.Entity;
+import input.Command;
+import input.InputComponent;
 import timer.Timer;
 import world.World;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public class RandomMovementAI extends InputComponent {
+public class RandomMovementAI extends Component<Entity> {
     protected ArrayList<World.Direction> availMove;
     protected World.Direction currentDirection = World.Direction.UP;
     protected Timer dirChangeCooldown = new Timer(3);
@@ -27,8 +30,9 @@ public class RandomMovementAI extends InputComponent {
     }
 
     @Override
-    public void handle(Entity e, World w) {
+    public void handle(Entity e) {
         if (e.isDead()) return;
+        World w = e.getWorld();
 
         availMove = w.getAvailableMoves(e, w.getNearbyEntities(e, inc[0], inc[1], inc[2], inc[3]));
         if (!availMove.contains(currentDirection) && availMove.size() > 0) {

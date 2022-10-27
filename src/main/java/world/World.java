@@ -4,6 +4,7 @@ import attack.AttackComponent;
 import attack.BombAttack;
 import collision.CollisionComponent;
 import collision.PowerCollisionComponent;
+import components.Component;
 import entity.Entity;
 import geometry.Point;
 import input.*;
@@ -65,9 +66,9 @@ public class World {
 
         pPlayer = new Entity(
             new Point(0, 0),
-            InputComponent.Null,
+            Component.getNull(),
             CollisionComponent.Dynamic,
-            AttackComponent.Null,
+            Component.getNull(),
             this,
             Resources.spriteDataMap.get("player"),
             gc
@@ -76,9 +77,9 @@ public class World {
 
         pWall = new Entity(
             new Point(0, 0),
-            InputComponent.Null,
+            Component.getNull(),
             CollisionComponent.Static,
-            AttackComponent.Null,
+            Component.getNull(),
             this,
             Resources.spriteDataMap.get("wall"),
             this.gc
@@ -86,9 +87,9 @@ public class World {
 
         pBrick = new Entity(
             new Point(0, 0),
-            InputComponent.Null,
+            Component.getNull(),
             CollisionComponent.Destructibles,
-            AttackComponent.Null,
+            Component.getNull(),
             this,
             Resources.spriteDataMap.get("brick"),
             this.gc
@@ -97,9 +98,9 @@ public class World {
 
         pGrass = new Entity(
             new Point(0, 0),
-            InputComponent.Null,
-            CollisionComponent.Null,
-            AttackComponent.Null,
+            Component.getNull(),
+            Component.getNull(),
+            Component.getNull(),
             this,
             Resources.spriteDataMap.get("grass"),
             gc
@@ -107,9 +108,9 @@ public class World {
 
         pBomb = new Entity(
             new Point(0, 0),
-            InputComponent.Null,
+            Component.getNull(),
             CollisionComponent.Bomb,
-            AttackComponent.Null,
+            Component.getNull(),
             this,
             Resources.spriteDataMap.get("bomb"),
             gc
@@ -118,9 +119,9 @@ public class World {
 
         pFlame = new Entity(
             new Point(0, 0),
-            InputComponent.Null,
+            Component.getNull(),
             CollisionComponent.Flame,
-            AttackComponent.Null,
+            Component.getNull(),
             this,
             Resources.spriteDataMap.get("explosion"),
             gc
@@ -130,9 +131,9 @@ public class World {
 
         pBalloom = new Entity(
             new Point(0, 0),
-            InputComponent.Null,
+            Component.getNull(),
             CollisionComponent.Dynamic,
-            AttackComponent.Null,
+            Component.getNull(),
             this,
             Resources.spriteDataMap.get("balloom"),
             gc
@@ -141,9 +142,9 @@ public class World {
 
         pOneal = new Entity(
             new Point(0, 0),
-            InputComponent.Null,
+            Component.getNull(),
             CollisionComponent.Dynamic,
-            AttackComponent.Null,
+            Component.getNull(),
             this,
             Resources.spriteDataMap.get("oneal"),
             gc
@@ -152,9 +153,9 @@ public class World {
 
         pPower = new Entity(
             new Point(0, 0),
-            InputComponent.Null,
-            CollisionComponent.Null,
-            AttackComponent.Null,
+            Component.getNull(),
+            Component.getNull(),
+            Component.getNull(),
             this,
             Resources.spriteDataMap.get("power"),
             gc
@@ -162,9 +163,9 @@ public class World {
 
         pPortal = new Entity(
             new Point(0, 0),
-            InputComponent.Null,
+            Component.getNull(),
             CollisionComponent.Portal,
-            AttackComponent.Null,
+            Component.getNull(),
             this,
             Resources.spriteDataMap.get("portal"),
             gc
@@ -372,7 +373,7 @@ public class World {
         newSpawn.add(new Entity(spawnAt(row, col), e));
     }
 
-    public void spawnPlayer(int row, int col, InputComponent input, AttackComponent attack) {
+    public void spawnPlayer(int row, int col, PlayerInputComponent input, Component<Entity> attack) {
         Entity p = new Entity(spawnAt(row, col), pPlayer);
         p.setInput(input);
         p.setAttack(attack);

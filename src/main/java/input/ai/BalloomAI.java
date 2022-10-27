@@ -1,4 +1,4 @@
-package input;
+package input.ai;
 
 import entity.Entity;
 import geometry.Rectangle;
@@ -19,8 +19,9 @@ public class BalloomAI extends RandomMovementAI {
     }
 
     @Override
-    public void handle(Entity e, World w) {
+    public void handle(Entity e) {
         if (e.isDead()) return;
+        World w = e.getWorld();
         Rectangle eBox = e.getHitBox();
         for (Entity p:w.getNearbyEntities(e, false, false, false, true)) {
             Rectangle pBox = p.getHitBox();
@@ -29,6 +30,6 @@ public class BalloomAI extends RandomMovementAI {
             if (pBox.intersect(eBox, -1, 0)) p.kill();
             if (pBox.intersect(eBox, 1, 0)) p.kill();
         }
-        super.handle(e, w);
+        super.handle(e);
     }
 }

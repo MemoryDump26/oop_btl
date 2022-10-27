@@ -1,14 +1,14 @@
 package input;
 
+import components.Component;
 import entity.Entity;
 import javafx.scene.input.KeyCode;
 import resources.Resources;
-import world.World;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlayerInputComponent extends InputComponent {
+public class PlayerInputComponent extends Component<Entity> {
     private Map<KeyCode, Command<Entity>> pKeybinds = new HashMap<>();
     private Map<KeyCode, Command<Entity>> hKeybinds = new HashMap<>();
     private Map<KeyCode, Command<Entity>> rKeybinds = new HashMap<>();
@@ -17,7 +17,7 @@ public class PlayerInputComponent extends InputComponent {
     public void onAttach(Entity e) {
     }
 
-    public void handle(Entity e, World w) {
+    public void handle(Entity e) {
         if (e.isDead()) {
             Resources.soundDataMap.get("player_die").play();
             return;

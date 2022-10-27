@@ -1,11 +1,12 @@
 package collision;
 
+import components.Component;
 import entity.Entity;
 import input.Command;
 import resources.Resources;
 import world.World;
 
-public class PowerCollisionComponent extends CollisionComponent {
+public class PowerCollisionComponent extends Component<Entity> {
     private Command<Entity> c;
 
     public PowerCollisionComponent(Command<Entity> c) {
@@ -19,8 +20,9 @@ public class PowerCollisionComponent extends CollisionComponent {
     }
 
     @Override
-    public void handle(Entity e, World w) {
+    public void handle(Entity e) {
         if (e.isDead()) return;
+        World w = e.getWorld();
         for (Entity m:w.getNearbyEntities(e, false, false, false, true)) {
             if (!m.getCollisionState()) continue;
             if (e.getHitBox().intersect(m.getHitBox())) {

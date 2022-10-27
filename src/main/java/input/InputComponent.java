@@ -1,12 +1,10 @@
 package input;
 
 import entity.Entity;
-import javafx.scene.input.KeyCode;
-import world.World;
 
 public abstract class InputComponent {
     public abstract void onAttach(Entity e);
-    public abstract void handle(Entity e, World w);
+    public abstract void handle(Entity e);
 
     public static InputComponent Null = new InputComponent() {
         @Override
@@ -14,7 +12,7 @@ public abstract class InputComponent {
         }
 
         @Override
-        public void handle(Entity e, World w) {
+        public void handle(Entity e) {
         }
     };
 }

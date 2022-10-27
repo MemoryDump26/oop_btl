@@ -2,6 +2,7 @@ package entity;
 
 import attack.AttackComponent;
 import collision.CollisionComponent;
+import components.Component;
 import input.InputComponent;
 import geometry.Point;
 import geometry.Rectangle;
@@ -20,16 +21,16 @@ public class Entity {
     protected boolean dead = false;
 
     protected World w;
-    protected InputComponent input;
-    protected CollisionComponent collision;
-    protected AttackComponent attack;
+    protected Component<Entity> input;
+    protected Component<Entity> collision;
+    protected Component<Entity> attack;
     protected Sprite sprite;
 
     public Entity(
         Point spawn,
-        InputComponent input,
-        CollisionComponent collision,
-        AttackComponent attack,
+        Component<Entity> input,
+        Component<Entity> collision,
+        Component<Entity> attack,
         World w,
         SpriteData sprite,
         GraphicsContext gc
@@ -59,8 +60,8 @@ public class Entity {
     }
 
     public void update() {
-        input.handle(this, w);
-        collision.handle(this, w);
+        input.handle(this);
+        collision.handle(this);
         velocity.zero();
     }
 
@@ -78,9 +79,10 @@ public class Entity {
         return dead && sprite.isPausing();
     }
 
-    public InputComponent getInput() {return input;}
-    public CollisionComponent getCollision() {return collision;}
-    public AttackComponent getAttack() {return attack;}
+    public World getWorld() {return w;}
+    public Component<Entity> getInput() {return input;}
+    public Component<Entity> getCollision() {return collision;}
+    public Component<Entity> getAttack() {return attack;}
     public Sprite getSprite() {return sprite;}
 
     public void setSpeed(double speed) {this.speed = speed;}
@@ -90,18 +92,21 @@ public class Entity {
     public void setDestructible(boolean destructible) {this.destructible = destructible;}
     public void setDead(boolean dead) {this.dead = dead;}
 
-    public void setInput(InputComponent input) {
+    public void setWorld(World w) {this.w = w;}
+
+    public void setInput(Component<Entity> input) {
         this.input = input;
         input.onAttach(this);
     }
 
-    public void setCollision(CollisionComponent collision) {
+    public void setCollision(Component<Entity> collision) {
         this.collision = collision;
         collision.onAttach(this);
     }
 
-    public void setAttack(AttackComponent attack) {
+    public void setAttack(Component<Entity> attack) {
         this.attack = attack;
+        attack.onAttach(this);
     }
 
     public void setSprite(Sprite sprite) {
@@ -138,7 +143,7 @@ public class Entity {
     }
 
     public void attack() {
-        attack.handle(this, w);
+        attack.handle(this);
     }
 
     public void kill() {

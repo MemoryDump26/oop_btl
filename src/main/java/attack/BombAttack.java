@@ -1,13 +1,14 @@
 package attack;
 
 import collision.CollisionComponent;
+import components.Component;
 import entity.Entity;
 import geometry.Point;
-import input.BombLogic;
+import input.logic.BombLogic;
 import resources.Resources;
 import world.World;
 
-public class BombAttack extends AttackComponent {
+public class BombAttack extends Component<Entity> {
     private int power;
     private int numOfBombs;
 
@@ -22,8 +23,12 @@ public class BombAttack extends AttackComponent {
     public void setNumOfBombs(int numOfBombs) {this.numOfBombs = numOfBombs;}
 
     @Override
-    public void handle(Entity e, World w) {
+    public void onAttach(Entity e) {}
+
+    @Override
+    public void handle(Entity e) {
         if (numOfBombs > 0) {
+            World w = e.getWorld();
             Point p = w.getBoardPosition(e);
             int row = (int) p.getY();
             int col = (int) p.getX();
@@ -31,7 +36,7 @@ public class BombAttack extends AttackComponent {
                 new Point(0, 0),
                 new BombLogic(power, this),
                 CollisionComponent.Bomb,
-                AttackComponent.Null,
+                Component.getNull(),
                 w,
                 Resources.spriteDataMap.get("bomb"),
                 e.getSprite().getGc()
