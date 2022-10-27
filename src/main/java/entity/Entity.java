@@ -9,6 +9,8 @@ import sprite.SpriteData;
 import javafx.scene.canvas.GraphicsContext;
 import world.World;
 
+import java.util.ArrayList;
+
 public class Entity {
     protected double speed;
     protected Point velocity = new Point(0, 0);
@@ -18,6 +20,7 @@ public class Entity {
     protected boolean dead = false;
 
     protected World w;
+    protected ArrayList<Component<Entity>> auxiliaryComponent = new ArrayList<>();
     protected Component<Entity> input;
     protected Component<Entity> collision;
     protected Component<Entity> attack;
@@ -43,6 +46,7 @@ public class Entity {
     }
 
     public Entity(Point spawn, Entity p) {
+        this.auxiliaryComponent = new ArrayList<>(p.auxiliaryComponent);
         this.input = p.input;
         this.collision = p.collision;
         this.attack = p.attack;
@@ -57,6 +61,9 @@ public class Entity {
     }
 
     public void update() {
+        for (Component<Entity> aux:auxiliaryComponent) {
+            aux.handle(this);
+        }
         input.handle(this);
         collision.handle(this);
         velocity.zero();
@@ -90,6 +97,11 @@ public class Entity {
     public void setDead(boolean dead) {this.dead = dead;}
 
     public void setWorld(World w) {this.w = w;}
+
+    public void addAuxiliaryComponent(Component<Entity> c) {
+        auxiliaryComponent.add(c);
+        c.onAttach(this);
+    }
 
     public void setInput(Component<Entity> input) {
         this.input = input;

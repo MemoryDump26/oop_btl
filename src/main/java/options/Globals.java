@@ -1,6 +1,6 @@
 package options;
 
-import components.input.Command;
+import components.commands.Command;
 import components.input.PlayerInputComponent;
 import javafx.scene.input.KeyCode;
 

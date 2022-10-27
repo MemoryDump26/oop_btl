@@ -1,9 +1,9 @@
 package components.input;
 
 import components.Component;
+import components.commands.Command;
 import entity.Entity;
 import javafx.scene.input.KeyCode;
-import resources.Resources;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +19,7 @@ public class PlayerInputComponent extends Component<Entity> {
 
     public void handle(Entity e) {
         if (e.isDead()) {
-            Resources.getSound("player_die").play();
+            //Resources.getSound("player_die").play();
             return;
         }
         for (Map.Entry<KeyCode, Command<Entity>> k : pKeybinds.entrySet()) {

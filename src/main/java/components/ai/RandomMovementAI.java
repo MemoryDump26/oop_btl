@@ -2,7 +2,7 @@ package components.ai;
 
 import components.Component;
 import entity.Entity;
-import components.input.Command;
+import components.commands.Command;
 import timer.Timer;
 import world.World;
 

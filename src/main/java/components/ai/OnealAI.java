@@ -3,7 +3,7 @@ package components.ai;
 import entity.Entity;
 import geometry.Point;
 import geometry.Rectangle;
-import components.input.Command;
+import components.commands.Command;
 import world.World;
 
 import java.util.ArrayList;

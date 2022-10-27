@@ -4,15 +4,15 @@ import components.attack.BombAttack;
 import components.collision.CollisionComponent;
 import components.collision.PowerCollisionComponent;
 import components.Component;
-import components.input.Command;
+import components.commands.*;
 import components.input.PlayerInputComponent;
+import components.logic.CommandOnDead;
 import entity.Entity;
 import geometry.Point;
 import components.ai.BalloomAI;
 import components.ai.OnealAI;
 import components.logic.BrickLogic;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyCode;
 import resources.Resources;
 import options.Globals;
 
@@ -65,6 +65,9 @@ public class World {
             gc
         );
         pPlayer.setSpeed(3);
+        IndieCommand playerDyingNoise = new PlaySoundCommand("player_die");
+        Component<Entity> playerDied = new CommandOnDead<>(playerDyingNoise);
+        pPlayer.addAuxiliaryComponent(playerDied);
 
         pWall = new Entity(
             Point.ZERO,
@@ -222,7 +225,10 @@ public class World {
                             break;
                         case 'x':
                             ins = new Entity(spawnAt(row, col), pBrick);
-                            ins.setInput(new BrickLogic(pPortal));
+                            Command<World> spawnPortalCommand = new WorldSpawnCommand(row, col, pPortal);
+                            TargetedCommand<World> spawnPortal = new TargetedCommand<>(spawnPortalCommand, this);
+                            CommandOnDead portalBrick = new CommandOnDead(spawnPortal);
+                            //ins.setInput(new BrickLogic(pPortal));
                             break;
                         case 'f':
                             Entity flamePower = new Entity(new Point(), pPower);
@@ -379,7 +385,7 @@ public class World {
         Entity p = new Entity(spawnAt(row, col), pPlayer);
         p.setInput(input);
         p.setAttack(attack);
-        p.setDestructible(false);
+        //p.setDestructible(false);
         players.add(p);
     }
 

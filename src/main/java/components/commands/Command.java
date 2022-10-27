@@ -1,6 +1,7 @@
-package components.input;
+package components.commands;
 
 import components.attack.BombAttack;
+import components.input.PlayerInputComponent;
 import entity.Entity;
 
 public abstract class Command<T> {

@@ -7,11 +7,11 @@ public abstract class Component<T> {
     public static <T> Component<T> getNull() {
         return new Component<T>() {
             @Override
-            public void onAttach(Object e) {
+            public void onAttach(T e) {
             }
 
             @Override
-            public void handle(Object e) {
+            public void handle(T e) {
             }
         };
     }
