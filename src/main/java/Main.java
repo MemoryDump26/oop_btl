@@ -8,12 +8,13 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
 import javafx.stage.Stage;
 import resources.Resources;
+import view.ViewManager;
 import world.World;
 
 public class Main extends Application {
     Group root = new Group();
     Scene scene = new Scene(root);
-    Canvas mainCanvas = new Canvas(1000, 1000);
+    Canvas mainCanvas = new Canvas(992, 416);
     GraphicsContext gc = mainCanvas.getGraphicsContext2D();
 
     World world;
@@ -26,24 +27,34 @@ public class Main extends Application {
         world = new World(gc);
         world.createLevelFromFile(Resources.levelList.get(0), false);
     }
-
-    public void start(Stage stage) {
+    public void startGame(Stage gameStage) {
+        Resources.soundDataMap.get("title_screen").stop();
         Resources.soundDataMap.get("stage_theme").play();
-        stage.setScene(scene);
-        stage.setTitle("ayy lmao");
+        gameStage.setScene(scene);
+        gameStage.setTitle("ayy lmao");
         root.getChildren().add(mainCanvas);
-
+        gameStage.show();
+    }
+    public void start(Stage stage) {
+        ViewManager manager = new ViewManager();
+        stage = manager.getMainStage();
+        stage.setTitle("Bomberman");
+        stage.setResizable(false);
         Input.attachEventHandlers(scene);
-
+        Stage finalStage = stage;
         new AnimationTimer() {
             public void handle(long currentNanoTime) {
                 update();
                 renderClear();
                 render();
                 Input.clear();
+                if (ViewManager.game != null) {
+                    finalStage.close();
+                    startGame(finalStage);
+                    ViewManager.game = null;
+                }
             }
         }.start();
-
         stage.show();
     }
 
