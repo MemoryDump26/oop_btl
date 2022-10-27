@@ -1,7 +1,6 @@
 package components.input;
 
 import components.Component;
-import components.commands.EntityCommand;
 import components.commands.TargetedCommand;
 import entity.Entity;
 import javafx.scene.input.KeyCode;
@@ -9,7 +8,7 @@ import javafx.scene.input.KeyCode;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlayerInputComponent extends Component<Entity> {
+public class KeyboardInputComponent extends Component<Entity> {
     private Map<KeyCode, TargetedCommand<Entity>> pKeybinds = new HashMap<>();
     private Map<KeyCode, TargetedCommand<Entity>> hKeybinds = new HashMap<>();
     private Map<KeyCode, TargetedCommand<Entity>> rKeybinds = new HashMap<>();
@@ -19,10 +18,6 @@ public class PlayerInputComponent extends Component<Entity> {
     }
 
     public void handle(Entity e) {
-        if (e.isDead()) {
-            //Resources.getSound("player_die").play();
-            return;
-        }
         for (Map.Entry<KeyCode, TargetedCommand<Entity>> k : pKeybinds.entrySet()) {
             if (Input.isKeyPressed(k.getKey())) {
                 k.getValue().execute(e);

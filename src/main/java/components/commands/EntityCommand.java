@@ -1,7 +1,7 @@
 package components.commands;
 
 import components.attack.BombAttack;
-import components.input.PlayerInputComponent;
+import components.input.KeyboardInputComponent;
 import entity.Entity;
 
 public class EntityCommand {
@@ -26,7 +26,7 @@ public class EntityCommand {
     };
 
     public static TargetedCommand<Entity> SpeedPower = e -> {
-        if (e.getInput() instanceof PlayerInputComponent) {
+        if (e.getInput() instanceof KeyboardInputComponent) {
             double n = e.getSpeed() + 1;
             e.setSpeed(n);
         }

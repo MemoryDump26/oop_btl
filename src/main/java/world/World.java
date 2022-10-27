@@ -5,7 +5,7 @@ import components.collision.CollisionComponent;
 import components.collision.PowerCollisionComponent;
 import components.Component;
 import components.commands.*;
-import components.input.PlayerInputComponent;
+import components.input.KeyboardInputComponent;
 import components.logic.CommandOnDead;
 import entity.Entity;
 import geometry.Point;
@@ -194,12 +194,12 @@ public class World {
                                 currentPlayer++;
                             }
                             else {
-                                PlayerInputComponent inp;
+                                KeyboardInputComponent inp;
                                 if (currentPlayer < Globals.playerKeybinds.size()) {
                                     inp = Globals.playerKeybinds.get(currentPlayer);
                                 }
                                 else {
-                                    inp = new PlayerInputComponent();
+                                    inp = new KeyboardInputComponent();
                                     Globals.playerKeybinds.add(inp);
                                 }
                                 spawnPlayer(row, col, inp, new BombAttack(1, 1));
@@ -381,7 +381,7 @@ public class World {
         newSpawn.add(new Entity(spawnAt(row, col), e));
     }
 
-    public void spawnPlayer(int row, int col, PlayerInputComponent input, Component<Entity> attack) {
+    public void spawnPlayer(int row, int col, KeyboardInputComponent input, Component<Entity> attack) {
         Entity p = new Entity(spawnAt(row, col), pPlayer);
         p.setInput(input);
         p.setAttack(attack);
