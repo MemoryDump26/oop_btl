@@ -7,6 +7,9 @@ import collision.PowerCollisionComponent;
 import entity.Entity;
 import geometry.Point;
 import input.*;
+import input.ai.BalloomAI;
+import input.ai.OnealAI;
+import input.logic.BrickLogic;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import resources.Resources;
@@ -189,8 +192,8 @@ public class World {
                     Entity ins = pGrass;
                     switch (tmp.charAt(col)) {
                         case 'p':
-                            if (currentPlayer < players.size()) {
-                                players.get(currentPlayer).moveTo(row * Globals.cellSize, col * Globals.cellSize);
+                            if (isNextLevel && currentPlayer < players.size()) {
+                                players.get(currentPlayer).moveTo(col * Globals.cellSize, row * Globals.cellSize);
                                 currentPlayer++;
                             }
                             else {
