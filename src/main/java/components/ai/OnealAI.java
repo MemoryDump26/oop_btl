@@ -1,9 +1,9 @@
-package input.ai;
+package components.ai;
 
 import entity.Entity;
 import geometry.Point;
 import geometry.Rectangle;
-import input.Command;
+import components.input.Command;
 import world.World;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-import input.Input;
+import components.input.Input;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;

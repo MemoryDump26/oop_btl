@@ -1,4 +1,4 @@
-package collision;
+package components.collision;
 
 import components.Component;
 import entity.Entity;
@@ -10,22 +10,6 @@ import world.World;
 import java.util.ArrayList;
 
 public abstract class CollisionComponent {
-    public abstract void onAttach(Entity e);
-    public abstract void handle(Entity e);
-
-    public static Component<Entity> Null = new Component<Entity>() {
-        @Override
-        public void onAttach(Entity e) {
-            e.setCollisionState(false);
-            e.setDestructible(false);
-        }
-
-        @Override
-        public void handle(Entity e) {
-            return;
-        }
-    };
-
     public static Component<Entity> Dynamic = new Component<Entity>() {
         @Override
         public void onAttach(Entity e) {

@@ -1,4 +1,4 @@
-package input;
+package components.input;
 
 import components.Component;
 import entity.Entity;

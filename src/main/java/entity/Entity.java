@@ -1,9 +1,6 @@
 package entity;
 
-import attack.AttackComponent;
-import collision.CollisionComponent;
 import components.Component;
-import input.InputComponent;
 import geometry.Point;
 import geometry.Rectangle;
 import sprite.Sprite;

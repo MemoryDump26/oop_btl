@@ -1,9 +1,8 @@
-package input.ai;
+package components.ai;
 
 import components.Component;
 import entity.Entity;
-import input.Command;
-import input.InputComponent;
+import components.input.Command;
 import timer.Timer;
 import world.World;
 

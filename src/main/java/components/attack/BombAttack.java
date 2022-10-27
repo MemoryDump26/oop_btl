@@ -1,10 +1,10 @@
-package attack;
+package components.attack;
 
-import collision.CollisionComponent;
+import components.collision.CollisionComponent;
 import components.Component;
 import entity.Entity;
 import geometry.Point;
-import input.logic.BombLogic;
+import components.logic.BombLogic;
 import resources.Resources;
 import world.World;
 
@@ -33,7 +33,7 @@ public class BombAttack extends Component<Entity> {
             int row = (int) p.getY();
             int col = (int) p.getX();
             Entity b = new Entity(
-                new Point(0, 0),
+                Point.ZERO,
                 new BombLogic(power, this),
                 CollisionComponent.Bomb,
                 Component.getNull(),

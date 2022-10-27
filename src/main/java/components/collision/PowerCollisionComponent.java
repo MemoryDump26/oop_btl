@@ -1,8 +1,8 @@
-package collision;
+package components.collision;
 
 import components.Component;
 import entity.Entity;
-import input.Command;
+import components.input.Command;
 import resources.Resources;
 import world.World;
 

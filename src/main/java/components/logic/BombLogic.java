@@ -1,9 +1,8 @@
-package input.logic;
+package components.logic;
 
-import attack.BombAttack;
+import components.attack.BombAttack;
 import components.Component;
 import entity.Entity;
-import input.InputComponent;
 import resources.Resources;
 import timer.Timer;
 import world.World;

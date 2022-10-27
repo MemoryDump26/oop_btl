@@ -1,16 +1,16 @@
 package world;
 
-import attack.AttackComponent;
-import attack.BombAttack;
-import collision.CollisionComponent;
-import collision.PowerCollisionComponent;
+import components.attack.BombAttack;
+import components.collision.CollisionComponent;
+import components.collision.PowerCollisionComponent;
 import components.Component;
+import components.input.Command;
+import components.input.PlayerInputComponent;
 import entity.Entity;
 import geometry.Point;
-import input.*;
-import input.ai.BalloomAI;
-import input.ai.OnealAI;
-import input.logic.BrickLogic;
+import components.ai.BalloomAI;
+import components.ai.OnealAI;
+import components.logic.BrickLogic;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import resources.Resources;
@@ -65,7 +65,7 @@ public class World {
         p1Inp.addKeybind(KeyCode.J, Command.Attack, "press");
 
         pPlayer = new Entity(
-            new Point(0, 0),
+            Point.ZERO,
             Component.getNull(),
             CollisionComponent.Dynamic,
             Component.getNull(),
@@ -76,7 +76,7 @@ public class World {
         pPlayer.setSpeed(3);
 
         pWall = new Entity(
-            new Point(0, 0),
+            Point.ZERO,
             Component.getNull(),
             CollisionComponent.Static,
             Component.getNull(),
@@ -86,7 +86,7 @@ public class World {
         );
 
         pBrick = new Entity(
-            new Point(0, 0),
+            Point.ZERO,
             Component.getNull(),
             CollisionComponent.Destructibles,
             Component.getNull(),
@@ -97,7 +97,7 @@ public class World {
         pBrick.getSprite().setCurrentAnimation("brick");
 
         pGrass = new Entity(
-            new Point(0, 0),
+            Point.ZERO,
             Component.getNull(),
             Component.getNull(),
             Component.getNull(),
@@ -107,7 +107,7 @@ public class World {
         );
 
         pBomb = new Entity(
-            new Point(0, 0),
+            Point.ZERO,
             Component.getNull(),
             CollisionComponent.Bomb,
             Component.getNull(),
@@ -118,7 +118,7 @@ public class World {
         pBomb.getSprite().setCurrentAnimation("bomb");
 
         pFlame = new Entity(
-            new Point(0, 0),
+            Point.ZERO,
             Component.getNull(),
             CollisionComponent.Flame,
             Component.getNull(),
@@ -130,7 +130,7 @@ public class World {
         pFlame.getSprite().setTickPerFrame(3);
 
         pBalloom = new Entity(
-            new Point(0, 0),
+            Point.ZERO,
             Component.getNull(),
             CollisionComponent.Dynamic,
             Component.getNull(),
@@ -141,7 +141,7 @@ public class World {
         pBalloom.setSpeed(1);
 
         pOneal = new Entity(
-            new Point(0, 0),
+            Point.ZERO,
             Component.getNull(),
             CollisionComponent.Dynamic,
             Component.getNull(),
@@ -152,7 +152,7 @@ public class World {
         pOneal.setSpeed(1);
 
         pPower = new Entity(
-            new Point(0, 0),
+            Point.ZERO,
             Component.getNull(),
             Component.getNull(),
             Component.getNull(),
@@ -162,7 +162,7 @@ public class World {
         );
 
         pPortal = new Entity(
-            new Point(0, 0),
+            Point.ZERO,
             Component.getNull(),
             CollisionComponent.Portal,
             Component.getNull(),
@@ -180,6 +180,8 @@ public class World {
             width = sc.nextInt();
             sc.nextLine();
             field = new Entity[height][width];
+            gc.getCanvas().setWidth(width * Globals.cellSize);
+            gc.getCanvas().setHeight(height * Globals.cellSize);
 
             objects.clear();
             enemies.clear();

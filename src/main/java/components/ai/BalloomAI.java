@@ -1,4 +1,4 @@
-package input.ai;
+package components.ai;
 
 import entity.Entity;
 import geometry.Rectangle;

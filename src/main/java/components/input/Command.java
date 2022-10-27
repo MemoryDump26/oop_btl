@@ -1,10 +1,18 @@
-package input;
+package components.input;
 
-import attack.BombAttack;
+import components.attack.BombAttack;
 import entity.Entity;
 
 public abstract class Command<T> {
     public abstract void execute(T e);
+
+    public static <T> Command<T> getNull() {
+        return new Command<T>() {
+            @Override
+            public void execute(T e) {
+            }
+        };
+    }
 
     public static Command<Entity> Up = new Command<>() {
         @Override
@@ -65,13 +73,6 @@ public abstract class Command<T> {
                 double n = e.getSpeed() + 1;
                 e.setSpeed(n);
             }
-        }
-    };
-
-    public static Command<Object> Null = new Command<Object>() {
-        @Override
-        public void execute(Object o) {
-            return;
         }
     };
 }

@@ -1,8 +1,7 @@
-package input.logic;
+package components.logic;
 
 import components.Component;
 import entity.Entity;
-import input.InputComponent;
 import world.World;
 
 public class BrickLogic extends Component<Entity> {
