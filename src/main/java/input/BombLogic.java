@@ -28,12 +28,13 @@ public class BombLogic extends InputComponent {
         if (t.isFinished()) {
             t.stop();
             e.kill();
-            Resources.soundDataMap.get("explosion").play();
         }
         if (!exploded && e.isDead()) {
+            e.setCollisionState(false);
             parent.setNumOfBombs(parent.getNumOfBombs() + 1);
             w.spawnFlame(w.getCurrentRow(e), w.getCurrentCol(e), power, 0, 0);
             exploded = true;
+            Resources.soundDataMap.get("explosion").play();
         }
     }
 }
