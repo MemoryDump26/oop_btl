@@ -219,7 +219,7 @@ public abstract class CollisionComponent {
             if (e.isDead()) return;
             World w = e.getWorld();
             for (Entity m:w.getNearbyEntities(e))  {
-                if (!m.getCollisionState()) continue;
+                //if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
                     m.kill();
                 }

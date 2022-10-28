@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GhostMovementAI extends Component<Entity> {
-    private double speed = 1;
-    private Point velocityVector = new Point(1, 1);
-    private Point accelVector;
-    private ArrayList<Entity> worldBound = new ArrayList<>();
+    protected double speed = 1;
+    protected Point velocityVector = new Point(1, 1);
+    protected Point accelVector;
+    protected ArrayList<Entity> worldBound = new ArrayList<>();
     protected Random r = new Random();
 
     @Override
@@ -39,6 +39,6 @@ public class GhostMovementAI extends Component<Entity> {
                 break;
             }
         }
-        eBox.move(velocityVector.getX(), velocityVector.getY());
+        eBox.move(velocityVector);
     }
 }

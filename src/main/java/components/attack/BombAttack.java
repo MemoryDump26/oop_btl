@@ -1,8 +1,10 @@
 package components.attack;
 
+import components.ai.KondoriaAI;
 import components.collision.CollisionComponent;
 import components.Component;
 import entity.Entity;
+import geometry.Circle;
 import geometry.Point;
 import components.logic.BombLogic;
 import resources.Resources;
@@ -33,6 +35,16 @@ public class BombAttack extends Component<Entity> {
             Point p = w.getBoardPosition(e);
             int row = (int) p.getY();
             int col = (int) p.getX();
+
+            Circle fearRadius = new Circle(100);
+            fearRadius.setCenter(e.getHitBox().getCenter());
+            for (Entity enemies : w.getAllEntities(false, false, true, false)) {
+                if (fearRadius.contains(enemies.getHitBox().getCenter())) {
+                    if (enemies.getInput() instanceof KondoriaAI k) {
+                        k.setFeared(true);
+                    }
+                }
+            }
 
             Entity b = new Entity(Point.ZERO, w, new Sprite(Resources.getSprite("bomb"), e.getSprite().getGc()));
             b.setInput(new BombLogic(power, this));

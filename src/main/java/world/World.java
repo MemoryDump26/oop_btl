@@ -100,7 +100,6 @@ public class World {
         pOneal.setSprite(new Sprite(Resources.getSprite("oneal"), gc));
 
         pKondoria = new Entity(enemyTemplate);
-        pKondoria.setCollision(Component.getNull());
         pKondoria.setSprite(new Sprite(Resources.getSprite("kondoria"), gc));
 
         pPower = new Entity(pNull);
@@ -170,6 +169,8 @@ public class World {
                         case '3':
                             Entity kondoria = new Entity(spawnAt(row, col), pKondoria);
                             kondoria.setInput(new KondoriaAI());
+                            kondoria.setCollision(CollisionComponent.Destructibles);
+                            kondoria.setCollisionState(false);
                             enemies.add(kondoria);
                             break;
                         case 'x':

@@ -59,6 +59,11 @@ public class Point {
         this.y *= y;
         return this;
     }
+
+    public Point multiply(double x) {
+        return multiply(x, x);
+    }
+
     public Point add(Point p) {
         return add(p.getX(), p.getY());
     }
@@ -87,5 +92,9 @@ public class Point {
         this.x = newX;
         this.y = newY;
         return this;
+    }
+
+    public double getDistance(Point p) {
+        return Math.sqrt(Math.pow(this.x - p.x, 2) + Math.pow(this.y - p.y, 2));
     }
 }
