@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class Resources {
     private static Map<String, SpriteData> spriteDataMap = new HashMap<>();
-    private static Map<String, AudioClip> soundDataMap = new HashMap<>();
+    public static Map<String, AudioClip> soundDataMap = new HashMap<>();
     private static ArrayList<File> levelList = new ArrayList<>();
 
     public static void loadAllSprites() {

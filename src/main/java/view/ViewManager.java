@@ -1,5 +1,6 @@
 package view;
 
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -16,22 +17,23 @@ public class ViewManager {
     private Stage mainStage;
     private Scene mainScene;
 
-    public static String game = null;
+    public static int game = 0;
+    private Window tutorial;
 
 
     public ViewManager() {
-        Resources.soundDataMap.get("title_screen").setVolume(0.2);
-        Resources.soundDataMap.get("title_screen").play();
-        mainPane = new AnchorPane();
-        mainScene = new Scene(mainPane, WIDTH, HEIGHT);
-        mainStage = new Stage();
-        mainStage.setScene(mainScene);
-        createPlayButtons();
-        createHighScoreButtons();
-        createHowToPlayButtons();
-        createQuitButtons();
-        createBackground();
-
+            Resources.soundDataMap.get("title_screen").setVolume(0.2);
+            Resources.soundDataMap.get("title_screen").play();
+            mainPane = new AnchorPane();
+            mainScene = new Scene(mainPane, WIDTH, HEIGHT);
+            mainStage = new Stage();
+            mainStage.setScene(mainScene);
+            createPlayButtons();
+            createHighScoreButtons();
+            createHowToPlayButtons();
+            createQuitButtons();
+            createBackground();
+            createSubScene();
     }
 
     public Stage getMainStage()
@@ -39,62 +41,55 @@ public class ViewManager {
         return mainStage;
     }
 
+    public void createSubScene() {
+        tutorial = new Window();
+        mainPane.getChildren().add(tutorial);
+    }
+
     public void createPlayButtons() {
-        menuButton button = new menuButton(" Play ");
+        MenuButton button = new MenuButton(" Play ");
         button.setLayoutX(500);
         button.setLayoutY(400);
         mainPane.getChildren().add(button);
-        button.setOnMouseEntered(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                System.out.println("mouse enter");
-            }
-        });
-        button.setOnMousePressed(new EventHandler<MouseEvent>() {
+        button.setOnMouseReleased(new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
                 if (event.getButton().equals(MouseButton.PRIMARY)) {
-                    button.setButtonPressedStyle();
-                    game = "1";
+                    button.setButtonReleasedStyle();
+                    game ++;
                 }
             }
         });
     }
 
     public void createHighScoreButtons() {
-        menuButton button = new menuButton("Highscore");
+        MenuButton button = new MenuButton("Highscore");
         button.setLayoutX(500);
         button.setLayoutY(475);
         mainPane.getChildren().add(button);
-        button.setOnMouseEntered(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                System.out.println("mouse enter");
-            }
-        });
     }
 
     public void createHowToPlayButtons() {
-        menuButton button = new menuButton("Tutorial");
+        MenuButton button = new MenuButton("Tutorial");
         button.setLayoutX(500);
         button.setLayoutY(550);
         mainPane.getChildren().add(button);
-        button.setOnMouseEntered(new EventHandler<MouseEvent>() {
+        button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(MouseEvent mouseEvent) {
-                System.out.println("mouse enter");
+            public void handle(ActionEvent actionEvent) {
+                tutorial.moveSubScene();
             }
         });
     }
 
     public void createQuitButtons() {
-        menuButton button = new menuButton("Quit");
+        MenuButton button = new MenuButton("Quit");
         button.setLayoutX(500);
         button.setLayoutY(625);
         mainPane.getChildren().add(button);
-        button.setOnMouseEntered(new EventHandler<MouseEvent>() {
+        button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(MouseEvent mouseEvent) {
-                System.out.println("mouse enter");
+            public void handle(ActionEvent actionEvent) {
+                System.exit(0);
             }
         });
     }

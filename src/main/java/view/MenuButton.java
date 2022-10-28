@@ -11,12 +11,12 @@ import javafx.scene.text.Font;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-public class menuButton extends Button {
+public class MenuButton extends Button {
     private final String FONT_PATH = "src/main/resources/menu/BOMBERMA.TTF";
     private static final String BUTTON_PRESSED_STYLE = "-fx-background-color: transparent;-fx-background-image: url('file:src/main/resources/menu/red_button_pressed.png');";
     private static final String BUTTON_FREE_STYLE = "-fx-background-color: transparent;-fx-background-image: url('file:src/main/resources/menu/red_button.png');";
 
-    public menuButton(String text) {
+    public MenuButton(String text) {
         setText(text);
         setBackground(getBackground());
         setButtonFont();
@@ -28,6 +28,7 @@ public class menuButton extends Button {
     private void setButtonFont() {
         try {
             setFont(Font.loadFont(new FileInputStream(FONT_PATH), 25));
+            setTextFill(Color.ANTIQUEWHITE);
         } catch (FileNotFoundException e) {
             setFont(Font.font("BOMBERMA", 25));
             System.out.println("Font not found or could not be loaded. Using default \"Verdana\"");
@@ -35,14 +36,14 @@ public class menuButton extends Button {
 
     }
 
-    void setButtonPressedStyle() {
+    public void setButtonPressedStyle() {
         setStyle(BUTTON_PRESSED_STYLE);
         setPrefHeight(49);
         setLayoutY(getLayoutY() + 4);
 
     }
 
-    private void setButtonReleasedStyle() {
+    public void setButtonReleasedStyle() {
         setStyle(BUTTON_FREE_STYLE);
         setPrefHeight(49);
         setLayoutY(getLayoutY() - 4);
@@ -55,7 +56,6 @@ public class menuButton extends Button {
             public void handle(MouseEvent event) {
                 if (event.getButton().equals(MouseButton.PRIMARY)) {
                     setButtonPressedStyle();
-
                 }
             }
         });
