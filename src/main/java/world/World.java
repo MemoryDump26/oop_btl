@@ -1,16 +1,24 @@
 package world;
 
-import attack.AttackComponent;
-import attack.BombAttack;
-import collision.CollisionComponent;
-import collision.PowerCollisionComponent;
+import components.EntityComponents;
+import components.ai.KondoriaAI;
+import components.attack.BombAttack;
+import components.collision.CollisionComponent;
+import components.collision.PowerCollisionComponent;
+import components.Component;
+import components.commands.*;
+import components.commands.concrete.PlaySoundCommand;
+import components.input.KeyboardInputComponent;
+import components.logic.CommandOnDead;
 import entity.Entity;
 import geometry.Point;
-import input.*;
+import components.ai.BalloomAI;
+import components.ai.OnealAI;
+import components.logic.BrickLogic;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyCode;
 import resources.Resources;
 import options.Globals;
+import sprite.Sprite;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,9 +38,7 @@ public class World {
     private int height;
     private boolean cleared = false;
 
-    private PlayerInputComponent p1Inp = new PlayerInputComponent();
-    private PlayerInputComponent p2Inp = new PlayerInputComponent();
-
+    private static Entity pNull;
     private static Entity pPlayer;
     private static Entity pWall;
     private static Entity pBrick;
@@ -40,6 +46,7 @@ public class World {
     private static Entity pBomb;
     private static Entity pFlame;
     private static Entity pBalloom;
+    private static Entity pKondoria;
     private static Entity pOneal;
     private static Entity pPower;
     private static Entity pPortal;
@@ -54,118 +61,53 @@ public class World {
     public World(GraphicsContext gc) {
         this.gc = gc;
 
-        p1Inp.addKeybind(KeyCode.W, Command.Up, "hold");
-        p1Inp.addKeybind(KeyCode.A, Command.Left, "hold");
-        p1Inp.addKeybind(KeyCode.S, Command.Down, "hold");
-        p1Inp.addKeybind(KeyCode.D, Command.Right, "hold");
-        p1Inp.addKeybind(KeyCode.J, Command.Attack, "press");
+        pNull = new Entity(Point.ZERO, this, new Sprite(Resources.getSprite("grass"), gc));
 
-        pPlayer = new Entity(
-            new Point(0, 0),
-            InputComponent.Null,
-            CollisionComponent.Dynamic,
-            AttackComponent.Null,
-            this,
-            Resources.spriteDataMap.get("player"),
-            gc
-        );
+        IndieCommand playPlayerDyingNoise = new PlaySoundCommand("player_die");
+        Component<Entity> onPlayerDied = new CommandOnDead(playPlayerDyingNoise);
+        pPlayer = new Entity(pNull);
+        pPlayer.addAuxiliaryComponent(onPlayerDied);
+        pPlayer.setCollision(CollisionComponent.Dynamic);
+        pPlayer.setSprite(new Sprite(Resources.getSprite("player"), gc));
         pPlayer.setSpeed(3);
 
-        pWall = new Entity(
-            new Point(0, 0),
-            InputComponent.Null,
-            CollisionComponent.Static,
-            AttackComponent.Null,
-            this,
-            Resources.spriteDataMap.get("wall"),
-            this.gc
-        );
+        pWall = new Entity(pNull);
+        pWall.setCollision(CollisionComponent.Static);
+        pWall.setSprite(new Sprite(Resources.getSprite("wall"), gc));
 
-        pBrick = new Entity(
-            new Point(0, 0),
-            InputComponent.Null,
-            CollisionComponent.Destructibles,
-            AttackComponent.Null,
-            this,
-            Resources.spriteDataMap.get("brick"),
-            this.gc
-        );
+        pBrick = new Entity(pNull);
+        pBrick.setCollision(CollisionComponent.Destructibles);
+        pBrick.setSprite(new Sprite(Resources.getSprite("brick"), gc));
         pBrick.getSprite().setCurrentAnimation("brick");
 
-        pGrass = new Entity(
-            new Point(0, 0),
-            InputComponent.Null,
-            CollisionComponent.Null,
-            AttackComponent.Null,
-            this,
-            Resources.spriteDataMap.get("grass"),
-            gc
-        );
+        pGrass = new Entity(pNull);
 
-        pBomb = new Entity(
-            new Point(0, 0),
-            InputComponent.Null,
-            CollisionComponent.Bomb,
-            AttackComponent.Null,
-            this,
-            Resources.spriteDataMap.get("bomb"),
-            gc
-        );
-        pBomb.getSprite().setCurrentAnimation("bomb");
+        pFlame = new Entity(pNull);
+        pFlame.setCollision(CollisionComponent.Flame);
+        pFlame.setSprite(new Sprite(Resources.getSprite("explosion"), gc));
+        pFlame.getSprite().setLoop(false);
+        pFlame.getSprite().setTickPerFrame(5);
 
-        pFlame = new Entity(
-            new Point(0, 0),
-            InputComponent.Null,
-            CollisionComponent.Flame,
-            AttackComponent.Null,
-            this,
-            Resources.spriteDataMap.get("explosion"),
-            gc
-        );
-        pFlame.kill();
-        pFlame.getSprite().setTickPerFrame(3);
+        Entity enemyTemplate = new Entity(pNull);
+        enemyTemplate.addAuxiliaryComponent(EntityComponents.KillPlayerOnTouch);
+        enemyTemplate.setCollision(CollisionComponent.Dynamic);
+        enemyTemplate.setSpeed(1);
 
-        pBalloom = new Entity(
-            new Point(0, 0),
-            InputComponent.Null,
-            CollisionComponent.Dynamic,
-            AttackComponent.Null,
-            this,
-            Resources.spriteDataMap.get("balloom"),
-            gc
-        );
-        pBalloom.setSpeed(1);
+        pBalloom = new Entity(enemyTemplate);
+        pBalloom.setSprite(new Sprite(Resources.getSprite("balloom"), gc));
 
-        pOneal = new Entity(
-            new Point(0, 0),
-            InputComponent.Null,
-            CollisionComponent.Dynamic,
-            AttackComponent.Null,
-            this,
-            Resources.spriteDataMap.get("oneal"),
-            gc
-        );
-        pOneal.setSpeed(1);
+        pOneal = new Entity(enemyTemplate);
+        pOneal.setSprite(new Sprite(Resources.getSprite("oneal"), gc));
 
-        pPower = new Entity(
-            new Point(0, 0),
-            InputComponent.Null,
-            CollisionComponent.Null,
-            AttackComponent.Null,
-            this,
-            Resources.spriteDataMap.get("power"),
-            gc
-        );
+        pKondoria = new Entity(enemyTemplate);
+        pKondoria.setSprite(new Sprite(Resources.getSprite("kondoria"), gc));
 
-        pPortal = new Entity(
-            new Point(0, 0),
-            InputComponent.Null,
-            CollisionComponent.Portal,
-            AttackComponent.Null,
-            this,
-            Resources.spriteDataMap.get("portal"),
-            gc
-        );
+        pPower = new Entity(pNull);
+        pPower.setSprite(new Sprite(Resources.getSprite("power"), gc));
+
+        pPortal = new Entity(pNull);
+        pPortal.setCollision(CollisionComponent.Portal);
+        pPortal.setSprite(new Sprite(Resources.getSprite("portal"), gc));
     }
 
     public void createLevelFromFile(File file, boolean isNextLevel) {
@@ -176,6 +118,8 @@ public class World {
             width = sc.nextInt();
             sc.nextLine();
             field = new Entity[height][width];
+            gc.getCanvas().setWidth(width * Globals.cellSize);
+            gc.getCanvas().setHeight(height * Globals.cellSize);
 
             objects.clear();
             enemies.clear();
@@ -189,12 +133,21 @@ public class World {
                     Entity ins = pGrass;
                     switch (tmp.charAt(col)) {
                         case 'p':
-                            if (currentPlayer < players.size()) {
-                                players.get(currentPlayer).moveTo(row * Globals.cellSize, col * Globals.cellSize);
+                            if (isNextLevel && currentPlayer < players.size()) {
+                                players.get(currentPlayer).moveTo(col * Globals.cellSize, row * Globals.cellSize);
                                 currentPlayer++;
                             }
                             else {
-                                spawnPlayer(row, col, p1Inp, new BombAttack(1, 1));
+                                KeyboardInputComponent inp;
+                                if (currentPlayer < Globals.playerKeybinds.size()) {
+                                    inp = Globals.playerKeybinds.get(currentPlayer);
+                                }
+                                else {
+                                    inp = new KeyboardInputComponent();
+                                    Globals.playerKeybinds.add(inp);
+                                }
+                                spawnPlayer(row, col, inp, new BombAttack(1, 1));
+                                currentPlayer++;
                             }
                             break;
                         case '#':
@@ -202,7 +155,6 @@ public class World {
                             break;
                         case '*':
                             ins = new Entity(spawnAt(row, col), pBrick);
-                            ins.setInput(new BrickLogic());
                             break;
                         case '1':
                             Entity balloom = new Entity(spawnAt(row, col), pBalloom);
@@ -214,27 +166,37 @@ public class World {
                             oneal.setInput(new OnealAI());
                             enemies.add(oneal);
                             break;
+                        case '3':
+                            Entity kondoria = new Entity(spawnAt(row, col), pKondoria);
+                            kondoria.setInput(new KondoriaAI());
+                            kondoria.setCollision(CollisionComponent.Destructibles);
+                            kondoria.setCollisionState(false);
+                            enemies.add(kondoria);
+                            break;
                         case 'x':
+                            Component<Entity> portalItem = EntityComponents.SpawnEntityOnDeadComponent(row, col, pPortal, this);
                             ins = new Entity(spawnAt(row, col), pBrick);
-                            ins.setInput(new BrickLogic(pPortal));
+                            ins.addAuxiliaryComponent(portalItem);
                             break;
                         case 'f':
-                            Entity flamePower = new Entity(new Point(), pPower);
-                            flamePower.setCollision(new PowerCollisionComponent(Command.FlamePower));
+                            Entity flamePower = new Entity(pPower);
+                            flamePower.setCollision(new PowerCollisionComponent(EntityCommands.FlamePower));
                             flamePower.getSprite().setCurrentAnimation("flames");
+                            Component<Entity> flameItem = EntityComponents.SpawnEntityOnDeadComponent(row, col, flamePower, this);
                             ins = new Entity(spawnAt(row, col), pBrick);
-                            ins.setInput(new BrickLogic(flamePower));
+                            ins.addAuxiliaryComponent(flameItem);
                             break;
                         case 'b':
-                            Entity bombPower = new Entity(new Point(), pPower);
-                            bombPower.setCollision(new PowerCollisionComponent(Command.BombPower));
+                            Entity bombPower = new Entity(pPower);
+                            bombPower.setCollision(new PowerCollisionComponent(EntityCommands.BombPower));
                             bombPower.getSprite().setCurrentAnimation("bombs");
+                            Component<Entity> bombItem = EntityComponents.SpawnEntityOnDeadComponent(row, col, bombPower, this);
                             ins = new Entity(spawnAt(row, col), pBrick);
-                            ins.setInput(new BrickLogic(bombPower));
+                            ins.addAuxiliaryComponent(bombItem);
                             break;
                         case 's':
                             Entity speedPower = new Entity(new Point(), pPower);
-                            speedPower.setCollision(new PowerCollisionComponent(Command.SpeedPower));
+                            speedPower.setCollision(new PowerCollisionComponent(EntityCommands.SpeedPower));
                             speedPower.getSprite().setCurrentAnimation("speed");
                             ins = new Entity(spawnAt(row, col), pBrick);
                             ins.setInput(new BrickLogic(speedPower));
@@ -253,8 +215,25 @@ public class World {
         }
     }
 
+    public ArrayList<Entity> getWorldBoundEntities() {
+        ArrayList<Entity> result = new ArrayList<>();
+        for (int row = 0; row < height; row++) {
+            result.add(field[row][0]);
+            result.add(field[row][width - 1]);
+        }
+        for (int col = 1; col < width - 1; col++) {
+            result.add(field[0][col]);
+            result.add(field[height - 1][col]);
+        }
+        return result;
+    }
+
     public ArrayList<Entity> getNearbyEntities(Entity e) {
         return getNearbyEntities(e, true, true, true, true);
+    }
+
+    public ArrayList<Entity> getAllEntities() {
+        return getAllEntities(true, true, true, true);
     }
 
     public ArrayList<Entity> getAllEntities(
@@ -369,11 +348,11 @@ public class World {
         newSpawn.add(new Entity(spawnAt(row, col), e));
     }
 
-    public void spawnPlayer(int row, int col, InputComponent input, AttackComponent attack) {
+    public void spawnPlayer(int row, int col, KeyboardInputComponent input, Component<Entity> attack) {
         Entity p = new Entity(spawnAt(row, col), pPlayer);
         p.setInput(input);
         p.setAttack(attack);
-        p.setDestructible(false);
+        //p.setDestructible(false);
         players.add(p);
     }
 
@@ -455,8 +434,8 @@ public class World {
             e.update();
         }
         if (cleared) {
-            Resources.soundDataMap.get("next_level").play();
-            createLevelFromFile(Resources.levelList.get((num + 1) % Resources.levelList.size()), true);
+            Resources.getSound("next_level").play();
+            createLevelFromFile(Resources.getLevel(num + 1), true);
             cleared = false;
         }
     }

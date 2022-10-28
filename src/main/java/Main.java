@@ -1,4 +1,4 @@
-import input.Input;
+import components.input.Input;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -11,6 +11,8 @@ import resources.Resources;
 import view.ViewManager;
 import world.World;
 
+import java.io.File;
+
 public class Main extends Application {
     Group root = new Group();
     Scene scene = new Scene(root);
@@ -21,11 +23,13 @@ public class Main extends Application {
 
     public Main() {
         gc.setImageSmoothing(false);
-        Resources.getSprites();
-        Resources.getLevels();
-        Resources.getSounds();
+        Resources.loadAllSprites();
+        Resources.loadAllLevels();
+        Resources.loadAllSounds();
         world = new World(gc);
-        world.createLevelFromFile(Resources.levelList.get(0), false);
+        File devLevel = new File("/home/memorydump/programming/javaTest/oop_btl/src/main/resources/levels/leveldev69.txt");
+        //world.createLevelFromFile(devLevel, false);
+        world.createLevelFromFile(Resources.getLevel(0), false);
     }
     public void startGame(Stage gameStage) {
         Resources.soundDataMap.get("title_screen").stop();

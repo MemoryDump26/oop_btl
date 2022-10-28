@@ -1,9 +1,10 @@
-package input;
+package components.logic;
 
+import components.Component;
 import entity.Entity;
 import world.World;
 
-public class BrickLogic extends InputComponent {
+public class BrickLogic extends Component<Entity> {
     private Entity spawnOnDead;
     private boolean spawned = false;
 
@@ -24,8 +25,9 @@ public class BrickLogic extends InputComponent {
     }
 
     @Override
-    public void handle(Entity e, World w) {
+    public void handle(Entity e) {
         if (!e.isDead() || spawned) return;
+        World w = e.getWorld();
         e.setCollisionState(false);
         w.spawn(w.getCurrentRow(e), w.getCurrentCol(e), spawnOnDead);
         spawned = true;

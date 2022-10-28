@@ -1,14 +1,15 @@
-package collision;
+package components.collision;
 
+import components.Component;
+import components.commands.TargetedCommand;
 import entity.Entity;
-import input.Command;
 import resources.Resources;
 import world.World;
 
-public class PowerCollisionComponent extends CollisionComponent {
-    private Command<Entity> c;
+public class PowerCollisionComponent extends Component<Entity> {
+    private TargetedCommand<Entity> c;
 
-    public PowerCollisionComponent(Command<Entity> c) {
+    public PowerCollisionComponent(TargetedCommand<Entity> c) {
         this.c = c;
     }
 
@@ -19,13 +20,14 @@ public class PowerCollisionComponent extends CollisionComponent {
     }
 
     @Override
-    public void handle(Entity e, World w) {
+    public void handle(Entity e) {
         if (e.isDead()) return;
+        World w = e.getWorld();
         for (Entity m:w.getNearbyEntities(e, false, false, false, true)) {
             if (!m.getCollisionState()) continue;
             if (e.getHitBox().intersect(m.getHitBox())) {
                 c.execute(m);
-                Resources.soundDataMap.get("powerup").play();
+                Resources.getSound("powerup").play();
                 e.kill();
                 break;
             }

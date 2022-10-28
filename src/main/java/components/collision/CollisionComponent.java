@@ -1,6 +1,6 @@
-package collision;
+package components.collision;
 
-import attack.BombAttack;
+import components.Component;
 import entity.Entity;
 import geometry.Point;
 import geometry.Rectangle;
@@ -10,23 +10,7 @@ import world.World;
 import java.util.ArrayList;
 
 public abstract class CollisionComponent {
-    public abstract void onAttach(Entity e);
-    public abstract void handle(Entity e, World w);
-
-    public static CollisionComponent Null = new CollisionComponent() {
-        @Override
-        public void onAttach(Entity e) {
-            e.setCollisionState(false);
-            e.setDestructible(false);
-        }
-
-        @Override
-        public void handle(Entity e, World w) {
-            return;
-        }
-    };
-
-    public static CollisionComponent Dynamic = new CollisionComponent() {
+    public static Component<Entity> Dynamic = new Component<Entity>() {
         @Override
         public void onAttach(Entity e) {
             e.setCollisionState(true);
@@ -34,8 +18,9 @@ public abstract class CollisionComponent {
         }
 
         @Override
-        public void handle(Entity e, World w) {
+        public void handle(Entity e) {
             if (e.isDead()) return;
+            World w = e.getWorld();
 
             ArrayList<Entity> collidingWith = new ArrayList<>();
             boolean[] collidingAt = new boolean[4];
@@ -169,7 +154,7 @@ public abstract class CollisionComponent {
         }
     };
 
-    public static CollisionComponent Static = new CollisionComponent() {
+    public static Component<Entity> Static = new Component<Entity>() {
         @Override
         public void onAttach(Entity e) {
             e.setCollisionState(true);
@@ -177,12 +162,12 @@ public abstract class CollisionComponent {
         }
 
         @Override
-        public void handle(Entity e, World w) {
+        public void handle(Entity e) {
             return;
         }
     };
 
-    public static CollisionComponent Destructibles = new CollisionComponent() {
+    public static Component<Entity> Destructibles = new Component<Entity>() {
         @Override
         public void onAttach(Entity e) {
             e.setCollisionState(true);
@@ -190,12 +175,12 @@ public abstract class CollisionComponent {
         }
 
         @Override
-        public void handle(Entity e, World w) {
+        public void handle(Entity e) {
             return;
         }
     };
 
-    public static CollisionComponent Bomb = new CollisionComponent() {
+    public static Component<Entity> Bomb = new Component<Entity>() {
         @Override
         public void onAttach(Entity e) {
             e.setCollisionState(false);
@@ -203,8 +188,9 @@ public abstract class CollisionComponent {
         }
 
         @Override
-        public void handle(Entity e, World w) {
+        public void handle(Entity e) {
             if (e.isDead()) return;
+            World w = e.getWorld();
             if (e.getCollisionState() == false) {
                 boolean notColliding = true;
                 for (Entity m:w.getNearbyEntities(e)) {
@@ -221,7 +207,7 @@ public abstract class CollisionComponent {
         }
     };
 
-    public static CollisionComponent Flame = new CollisionComponent() {
+    public static Component<Entity> Flame = new Component<Entity>() {
         @Override
         public void onAttach(Entity e) {
             e.setCollisionState(false);
@@ -229,18 +215,20 @@ public abstract class CollisionComponent {
         }
 
         @Override
-        public void handle(Entity e, World w) {
+        public void handle(Entity e) {
+            if (e.isDead()) return;
+            World w = e.getWorld();
             for (Entity m:w.getNearbyEntities(e))  {
-                if (!m.getCollisionState()) continue;
+                //if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {
                     m.kill();
-                    break;
                 }
             }
+            e.kill();
         }
     };
 
-    public static CollisionComponent Portal = new CollisionComponent() {
+    public static Component<Entity> Portal = new Component<Entity>() {
         @Override
         public void onAttach(Entity e) {
             e.setCollisionState(false);
@@ -248,8 +236,9 @@ public abstract class CollisionComponent {
         }
 
         @Override
-        public void handle(Entity e, World w) {
+        public void handle(Entity e) {
             if (e.isDead()) return;
+            World w = e.getWorld();
             for (Entity m:w.getNearbyEntities(e, false, false, false, true)) {
                 if (!m.getCollisionState()) continue;
                 if (e.getHitBox().intersect(m.getHitBox())) {

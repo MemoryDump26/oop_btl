@@ -1,15 +1,12 @@
 package entity;
 
-import attack.AttackComponent;
-import collision.CollisionComponent;
-import input.InputComponent;
+import components.Component;
 import geometry.Point;
 import geometry.Rectangle;
 import sprite.Sprite;
-import sprite.SpriteData;
-
-import javafx.scene.canvas.GraphicsContext;
 import world.World;
+
+import java.util.ArrayList;
 
 public class Entity {
     protected double speed;
@@ -20,47 +17,67 @@ public class Entity {
     protected boolean dead = false;
 
     protected World w;
-    protected InputComponent input;
-    protected CollisionComponent collision;
-    protected AttackComponent attack;
+    protected ArrayList<Component<Entity>> auxiliaryComponent = new ArrayList<>();
+    protected Component<Entity> input;
+    protected Component<Entity> collision;
+    protected Component<Entity> attack;
     protected Sprite sprite;
 
+    public Entity(Point spawn, World w, Sprite sprite) {
+        this(spawn, Component.getNull(), Component.getNull(), Component.getNull(), w, sprite);
+    }
+
     public Entity(
-        Point spawn,
-        InputComponent input,
-        CollisionComponent collision,
-        AttackComponent attack,
-        World w,
-        SpriteData sprite,
-        GraphicsContext gc
+            Point spawn,
+            Component<Entity> input,
+            Component<Entity> collision,
+            Component<Entity> attack,
+            World w,
+            Sprite sprite
     ) {
         this.input = input;
         this.collision = collision;
         this.attack = attack;
         this.w = w;
-        this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), sprite.w, sprite.h);
-        this.sprite = new Sprite(sprite, gc);
+        this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), sprite.getData().getW(), sprite.getData().getH());
+        this.sprite = new Sprite(sprite);
         input.onAttach(this);
         collision.onAttach(this);
+    }
+
+    public Entity (Entity p) {
+        this(Point.ZERO, p);
     }
 
     public Entity(Point spawn, Entity p) {
-        this.input = p.input;
-        this.collision = p.collision;
-        this.attack = p.attack;
-        this.w = p.w;
-        this.destructible = p.destructible;
-        this.dead = p.dead;
-        this.speed = p.speed;
-        this.hitBox = new Rectangle(spawn.getX(), spawn.getY(), p.hitBox.getW(), p.hitBox.getH());
-        this.sprite = new Sprite(p.sprite);
-        input.onAttach(this);
-        collision.onAttach(this);
+        this(
+                spawn,
+                p.getInput(),
+                p.getCollision(),
+                p.getAttack(),
+                p.getWorld(),
+                p.getSprite()
+        );
+        this.hitBox = new Rectangle(
+                spawn.getX(),
+                spawn.getY(),
+                p.getSprite().getData().getW(),
+                p.getSprite().getData().getH()
+        );
+        this.speed = p.getSpeed();
+        this.dead = p.isDead();
+        this.auxiliaryComponent = new ArrayList<>(p.auxiliaryComponent);
+        for (Component<Entity> aux : auxiliaryComponent) {
+            aux.onAttach(this);
+        }
     }
 
     public void update() {
-        input.handle(this, w);
-        collision.handle(this, w);
+        for (Component<Entity> aux : auxiliaryComponent) {
+            aux.handle(this);
+        }
+        input.handle(this);
+        collision.handle(this);
         velocity.zero();
     }
 
@@ -78,9 +95,10 @@ public class Entity {
         return dead && sprite.isPausing();
     }
 
-    public InputComponent getInput() {return input;}
-    public CollisionComponent getCollision() {return collision;}
-    public AttackComponent getAttack() {return attack;}
+    public World getWorld() {return w;}
+    public Component<Entity> getInput() {return input;}
+    public Component<Entity> getCollision() {return collision;}
+    public Component<Entity> getAttack() {return attack;}
     public Sprite getSprite() {return sprite;}
 
     public void setSpeed(double speed) {this.speed = speed;}
@@ -90,18 +108,26 @@ public class Entity {
     public void setDestructible(boolean destructible) {this.destructible = destructible;}
     public void setDead(boolean dead) {this.dead = dead;}
 
-    public void setInput(InputComponent input) {
+    public void setWorld(World w) {this.w = w;}
+
+    public void addAuxiliaryComponent(Component<Entity> c) {
+        auxiliaryComponent.add(c);
+        c.onAttach(this);
+    }
+
+    public void setInput(Component<Entity> input) {
         this.input = input;
         input.onAttach(this);
     }
 
-    public void setCollision(CollisionComponent collision) {
+    public void setCollision(Component<Entity> collision) {
         this.collision = collision;
         collision.onAttach(this);
     }
 
-    public void setAttack(AttackComponent attack) {
+    public void setAttack(Component<Entity> attack) {
         this.attack = attack;
+        attack.onAttach(this);
     }
 
     public void setSprite(Sprite sprite) {
@@ -138,14 +164,14 @@ public class Entity {
     }
 
     public void attack() {
-        attack.handle(this, w);
+        attack.handle(this);
     }
 
     public void kill() {
         if (!dead && destructible) {
             collisionState = false;
             sprite.setCurrentAnimation("dead");
-            sprite.setTickPerFrame(15);
+            sprite.setTickPerFrame(8);
             sprite.setLoop(false);
             dead = true;
         }

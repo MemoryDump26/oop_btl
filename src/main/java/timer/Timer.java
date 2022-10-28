@@ -52,6 +52,7 @@ public class Timer {
     public boolean isRunning() {return running;}
     public boolean isPausing() {return pausing;}
     public boolean isFinished() {
+        if (!running) return true;
         if (getElapsedTimeInSecond() >= duration) return true;
         else return false;
     }
