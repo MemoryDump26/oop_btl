@@ -1,5 +1,6 @@
-package components.commands;
+package components.commands.concrete;
 
+import components.commands.TargetedCommand;
 import entity.Entity;
 import world.World;
 

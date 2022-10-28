@@ -3,7 +3,6 @@ package components.collision;
 import components.Component;
 import components.commands.TargetedCommand;
 import entity.Entity;
-import components.commands.EntityCommand;
 import resources.Resources;
 import world.World;
 

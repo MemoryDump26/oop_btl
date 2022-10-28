@@ -3,7 +3,7 @@ package components.ai;
 import entity.Entity;
 import geometry.Point;
 import geometry.Rectangle;
-import components.commands.EntityCommand;
+import components.commands.EntityCommands;
 import world.World;
 
 import java.util.ArrayList;
@@ -38,11 +38,6 @@ public class OnealAI extends RandomMovementAI {
 
         for (Entity p:players) {
             if (p.isDead()) continue;
-            Rectangle pBox = p.getHitBox();
-            if (pBox.intersect(eBox, 0, -1)) p.kill();
-            if (pBox.intersect(eBox, 0, 1)) p.kill();
-            if (pBox.intersect(eBox, -1, 0)) p.kill();
-            if (pBox.intersect(eBox, 1, 0)) p.kill();
 
             Point pP = w.getBoardPosition(p);
             int pRow = (int)pP.getY();
@@ -92,10 +87,10 @@ public class OnealAI extends RandomMovementAI {
             e.setSpeed(2);
             super.currentDirection = playerDirection;
             switch (playerDirection) {
-                case UP -> EntityCommand.Up.execute(e);
-                case DOWN -> EntityCommand.Down.execute(e);
-                case LEFT -> EntityCommand.Left.execute(e);
-                case RIGHT -> EntityCommand.Right.execute(e);
+                case UP -> EntityCommands.Up.execute(e);
+                case DOWN -> EntityCommands.Down.execute(e);
+                case LEFT -> EntityCommands.Left.execute(e);
+                case RIGHT -> EntityCommands.Right.execute(e);
             }
         }
         else {

@@ -2,7 +2,7 @@ package components.ai;
 
 import components.Component;
 import entity.Entity;
-import components.commands.EntityCommand;
+import components.commands.EntityCommands;
 import timer.Timer;
 import world.World;
 
@@ -44,10 +44,10 @@ public class RandomMovementAI extends Component<Entity> {
         }
 
         switch (currentDirection) {
-            case UP -> EntityCommand.Up.execute(e);
-            case DOWN -> EntityCommand.Down.execute(e);
-            case LEFT -> EntityCommand.Left.execute(e);
-            case RIGHT -> EntityCommand.Right.execute(e);
+            case UP -> EntityCommands.Up.execute(e);
+            case DOWN -> EntityCommands.Down.execute(e);
+            case LEFT -> EntityCommands.Left.execute(e);
+            case RIGHT -> EntityCommands.Right.execute(e);
         }
     }
 }

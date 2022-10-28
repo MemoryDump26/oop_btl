@@ -1,5 +1,6 @@
-package components.commands;
+package components.commands.concrete;
 
+import components.commands.IndieCommand;
 import resources.Resources;
 
 public class PlaySoundCommand implements IndieCommand {

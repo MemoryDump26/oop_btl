@@ -4,7 +4,7 @@ import components.attack.BombAttack;
 import components.input.KeyboardInputComponent;
 import entity.Entity;
 
-public class EntityCommand {
+public class EntityCommands {
     public static TargetedCommand<Entity> Up = Entity::moveUp;
     public static TargetedCommand<Entity> Down = Entity::moveDown;
     public static TargetedCommand<Entity> Left = Entity::moveLeft;

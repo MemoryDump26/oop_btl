@@ -1,4 +1,7 @@
-package components.commands;
+package components.commands.concrete;
+
+import components.commands.IndieCommand;
+import components.commands.TargetedCommand;
 
 public class RemoteCommand<T> implements IndieCommand {
     private TargetedCommand<T> command;

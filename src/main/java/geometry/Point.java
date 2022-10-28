@@ -16,6 +16,11 @@ public class Point {
         this.y = y;
     }
 
+    public Point(Point p) {
+        this.x = p.getX();
+        this.y = p.getY();
+    }
+
     public double getX() {
         return x;
     }
@@ -66,9 +71,21 @@ public class Point {
         return multiply(p.getX(), p.getY());
     }
 
-    public static void main(String[] args) {
-        Point p1 = new Point(2, 3);
-        p1.multiply(new Point(3, 3));
-        System.out.printf("%f, %f\n", p1.getX(), p1.getY());
+    // Vector math (should I change the name from Point to Vector2D hmm..)
+    public Point normalize() {
+        double length = Math.sqrt(x*x + y*y);
+        this.x /= length;
+        this.y /= length;
+        return this;
+    }
+
+    public Point rotate(double angleCCW) {
+        double s = Math.sin(angleCCW);
+        double c = Math.cos(angleCCW);
+        double newX = this.x*c + this.y*s;
+        double newY = -this.x*s + this.y*c;
+        this.x = newX;
+        this.y = newY;
+        return this;
     }
 }

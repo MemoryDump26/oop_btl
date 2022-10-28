@@ -1,10 +1,13 @@
 package world;
 
+import components.EntityComponents;
+import components.ai.KondoriaAI;
 import components.attack.BombAttack;
 import components.collision.CollisionComponent;
 import components.collision.PowerCollisionComponent;
 import components.Component;
 import components.commands.*;
+import components.commands.concrete.PlaySoundCommand;
 import components.input.KeyboardInputComponent;
 import components.logic.CommandOnDead;
 import entity.Entity;
@@ -43,6 +46,7 @@ public class World {
     private static Entity pBomb;
     private static Entity pFlame;
     private static Entity pBalloom;
+    private static Entity pKondoria;
     private static Entity pOneal;
     private static Entity pPower;
     private static Entity pPortal;
@@ -85,6 +89,7 @@ public class World {
         pFlame.getSprite().setTickPerFrame(5);
 
         Entity enemyTemplate = new Entity(pNull);
+        enemyTemplate.addAuxiliaryComponent(EntityComponents.KillPlayerOnTouch);
         enemyTemplate.setCollision(CollisionComponent.Dynamic);
         enemyTemplate.setSpeed(1);
 
@@ -93,6 +98,10 @@ public class World {
 
         pOneal = new Entity(enemyTemplate);
         pOneal.setSprite(new Sprite(Resources.getSprite("oneal"), gc));
+
+        pKondoria = new Entity(enemyTemplate);
+        pKondoria.setCollision(Component.getNull());
+        pKondoria.setSprite(new Sprite(Resources.getSprite("kondoria"), gc));
 
         pPower = new Entity(pNull);
         pPower.setSprite(new Sprite(Resources.getSprite("power"), gc));
@@ -158,30 +167,35 @@ public class World {
                             oneal.setInput(new OnealAI());
                             enemies.add(oneal);
                             break;
+                        case '3':
+                            Entity kondoria = new Entity(spawnAt(row, col), pKondoria);
+                            kondoria.setInput(new KondoriaAI());
+                            enemies.add(kondoria);
+                            break;
                         case 'x':
-                            Component<Entity> portalItem = CommandPresets.SpawnEntityOnDeadComponent(row, col, pPortal, this);
+                            Component<Entity> portalItem = EntityComponents.SpawnEntityOnDeadComponent(row, col, pPortal, this);
                             ins = new Entity(spawnAt(row, col), pBrick);
                             ins.addAuxiliaryComponent(portalItem);
                             break;
                         case 'f':
                             Entity flamePower = new Entity(pPower);
-                            flamePower.setCollision(new PowerCollisionComponent(EntityCommand.FlamePower));
+                            flamePower.setCollision(new PowerCollisionComponent(EntityCommands.FlamePower));
                             flamePower.getSprite().setCurrentAnimation("flames");
-                            Component<Entity> flameItem = CommandPresets.SpawnEntityOnDeadComponent(row, col, flamePower, this);
+                            Component<Entity> flameItem = EntityComponents.SpawnEntityOnDeadComponent(row, col, flamePower, this);
                             ins = new Entity(spawnAt(row, col), pBrick);
                             ins.addAuxiliaryComponent(flameItem);
                             break;
                         case 'b':
                             Entity bombPower = new Entity(pPower);
-                            bombPower.setCollision(new PowerCollisionComponent(EntityCommand.BombPower));
+                            bombPower.setCollision(new PowerCollisionComponent(EntityCommands.BombPower));
                             bombPower.getSprite().setCurrentAnimation("bombs");
-                            Component<Entity> bombItem = CommandPresets.SpawnEntityOnDeadComponent(row, col, bombPower, this);
+                            Component<Entity> bombItem = EntityComponents.SpawnEntityOnDeadComponent(row, col, bombPower, this);
                             ins = new Entity(spawnAt(row, col), pBrick);
                             ins.addAuxiliaryComponent(bombItem);
                             break;
                         case 's':
                             Entity speedPower = new Entity(new Point(), pPower);
-                            speedPower.setCollision(new PowerCollisionComponent(EntityCommand.SpeedPower));
+                            speedPower.setCollision(new PowerCollisionComponent(EntityCommands.SpeedPower));
                             speedPower.getSprite().setCurrentAnimation("speed");
                             ins = new Entity(spawnAt(row, col), pBrick);
                             ins.setInput(new BrickLogic(speedPower));
@@ -200,8 +214,25 @@ public class World {
         }
     }
 
+    public ArrayList<Entity> getWorldBoundEntities() {
+        ArrayList<Entity> result = new ArrayList<>();
+        for (int row = 0; row < height; row++) {
+            result.add(field[row][0]);
+            result.add(field[row][width - 1]);
+        }
+        for (int col = 1; col < width - 1; col++) {
+            result.add(field[0][col]);
+            result.add(field[height - 1][col]);
+        }
+        return result;
+    }
+
     public ArrayList<Entity> getNearbyEntities(Entity e) {
         return getNearbyEntities(e, true, true, true, true);
+    }
+
+    public ArrayList<Entity> getAllEntities() {
+        return getAllEntities(true, true, true, true);
     }
 
     public ArrayList<Entity> getAllEntities(
