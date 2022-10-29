@@ -1,7 +1,9 @@
 package world;
 
 import components.EntityComponents;
-import components.ai.KondoriaAI;
+import components.ai.*;
+import components.astar.Node;
+import components.astar.PathFinder;
 import components.attack.BombAttack;
 import components.collision.CollisionComponent;
 import components.collision.PowerCollisionComponent;
@@ -12,9 +14,8 @@ import components.input.KeyboardInputComponent;
 import components.logic.CommandOnDead;
 import entity.Entity;
 import geometry.Point;
-import components.ai.BalloomAI;
-import components.ai.OnealAI;
 import components.logic.BrickLogic;
+import geometry.Rectangle;
 import javafx.scene.canvas.GraphicsContext;
 import resources.Resources;
 import options.Globals;
@@ -46,16 +47,22 @@ public class World {
     private static Entity pBomb;
     private static Entity pFlame;
     private static Entity pBalloom;
-    private static Entity pKondoria;
     private static Entity pOneal;
+    private static Entity pKondoria;
+    private static Entity pAssasin;
+    private static Entity pLaserGunner;
     private static Entity pPower;
     private static Entity pPortal;
+
+    public ArrayList<Node> pathToDraw = new ArrayList<>();
+    public ArrayList<IndieCommand> commandsAfterDraw = new ArrayList<>();
 
     public enum Direction {
         UP,
         DOWN,
         LEFT,
         RIGHT,
+        NA,
     }
 
     public World(GraphicsContext gc) {
@@ -69,7 +76,7 @@ public class World {
         pPlayer.addAuxiliaryComponent(onPlayerDied);
         pPlayer.setCollision(CollisionComponent.Dynamic);
         pPlayer.setSprite(new Sprite(Resources.getSprite("player"), gc));
-        pPlayer.setSpeed(3);
+        pPlayer.setSpeed(3.69);
 
         pWall = new Entity(pNull);
         pWall.setCollision(CollisionComponent.Static);
@@ -101,6 +108,13 @@ public class World {
 
         pKondoria = new Entity(enemyTemplate);
         pKondoria.setSprite(new Sprite(Resources.getSprite("kondoria"), gc));
+
+        pAssasin = new Entity(enemyTemplate);
+        pAssasin.setSprite(new Sprite(Resources.getSprite("assasin"), gc));
+
+        pLaserGunner = new Entity(enemyTemplate);
+        pLaserGunner.setSpeed(0.5);
+        pLaserGunner.setSprite(new Sprite(Resources.getSprite("minvo"), gc));
 
         pPower = new Entity(pNull);
         pPower.setSprite(new Sprite(Resources.getSprite("power"), gc));
@@ -173,6 +187,16 @@ public class World {
                             kondoria.setCollisionState(false);
                             enemies.add(kondoria);
                             break;
+                        case '4':
+                            Entity assasin = new Entity(spawnAt(row, col), pAssasin);
+                            assasin.setInput(new AssasinAI());
+                            enemies.add(assasin);
+                            break;
+                        case '5':
+                            Entity laserGunner = new Entity(spawnAt(row, col), pLaserGunner);
+                            laserGunner.setInput(new LaserGunnerAI());
+                            enemies.add(laserGunner);
+                            break;
                         case 'x':
                             Component<Entity> portalItem = EntityComponents.SpawnEntityOnDeadComponent(row, col, pPortal, this);
                             ins = new Entity(spawnAt(row, col), pBrick);
@@ -213,6 +237,18 @@ public class World {
         } catch (FileNotFoundException e) {
             System.out.printf("Level file not found!!!\n");
         }
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public GraphicsContext getGc() {
+        return gc;
     }
 
     public ArrayList<Entity> getWorldBoundEntities() {
@@ -311,16 +347,20 @@ public class World {
             Entity e,
             ArrayList<Entity> constraintSet
     ) {
-        Point p = getBoardPosition(e);
-        int row = (int) p.getY();
-        int col = (int) p.getX();
-        /*int row = getCurrentRow(e);
-        int col = getCurrentCol(e);*/
+        Rectangle eBox = e.getHitBox();
         ArrayList<Direction> result = new ArrayList<>();
-        if (!isOccupied(row - 1, col, constraintSet)) result.add(Direction.UP);
-        if (!isOccupied(row + 1, col, constraintSet)) result.add(Direction.DOWN);
-        if (!isOccupied(row, col - 1, constraintSet)) result.add(Direction.LEFT);
-        if (!isOccupied(row, col + 1, constraintSet)) result.add(Direction.RIGHT);
+        result.add(Direction.UP);
+        result.add(Direction.DOWN);
+        result.add(Direction.LEFT);
+        result.add(Direction.RIGHT);
+        for (Entity n : constraintSet) {
+            if (!n.getCollisionState()) continue;
+            Rectangle nBox = n.getHitBox();
+            if (nBox.intersect(eBox, 0, -1)) result.remove(Direction.UP);
+            if (nBox.intersect(eBox, 0, 1)) result.remove(Direction.DOWN);
+            if (nBox.intersect(eBox, -1, 0)) result.remove(Direction.LEFT);
+            if (nBox.intersect(eBox, 1, 0)) result.remove(Direction.RIGHT);
+        }
         return result;
     }
 
@@ -352,7 +392,7 @@ public class World {
         Entity p = new Entity(spawnAt(row, col), pPlayer);
         p.setInput(input);
         p.setAttack(attack);
-        //p.setDestructible(false);
+        p.setDestructible(false);
         players.add(p);
     }
 
@@ -455,5 +495,16 @@ public class World {
         for (Entity e:players) {
             e.render();
         }
+
+        for (IndieCommand c : commandsAfterDraw) {
+            c.execute();
+        }
+
+        // astar debugging, can put in command as well :/
+        for (Node n : pathToDraw) {
+            PathFinder.drawPath(n, gc);
+        }
+        commandsAfterDraw.clear();
+        pathToDraw.clear();
     }
 }

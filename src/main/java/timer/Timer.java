@@ -4,16 +4,16 @@ public class Timer {
 
     private long startTime = 0;
     private long pauseTime = 0;
-    private long duration;
+    private double duration;
 
     private boolean running = false;
     private boolean pausing = false;
 
-    public Timer(long duration) {
+    public Timer(double duration) {
         this.duration = duration;
     }
 
-    public long getDuration() {
+    public double getDuration() {
         return duration;
     }
 
@@ -52,14 +52,14 @@ public class Timer {
     public boolean isRunning() {return running;}
     public boolean isPausing() {return pausing;}
     public boolean isFinished() {
-        if (!running) return true;
+        if (!running) return false;
         if (getElapsedTimeInSecond() >= duration) return true;
         else return false;
     }
 
-    public long getElapsedTimeInSecond() {
+    public double getElapsedTimeInSecond() {
         if (!running) return 0;
-        if (!pausing) return (System.nanoTime() - startTime) / 1000000000;
-        else return pauseTime / 1000000000;
+        if (!pausing) return (double)(System.nanoTime() - startTime) / 1000000000;
+        else return (double)pauseTime / 1000000000;
     }
 }

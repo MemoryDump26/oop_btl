@@ -19,7 +19,7 @@ import java.io.File;
 public class Main extends Application {
     Group root = new Group();
     Scene scene = new Scene(root);
-    Canvas mainCanvas = new Canvas(992, 416);
+    Canvas mainCanvas = new Canvas(1280, 720);
     GraphicsContext gc = mainCanvas.getGraphicsContext2D();
 
     int attempts = 0;
@@ -32,6 +32,7 @@ public class Main extends Application {
         Resources.loadAllSounds();
         root.getChildren().add(mainCanvas);
     }
+
     public void startGame(Stage gameStage) {
         world = new World(gc);
         File devLevel = new File("/home/memorydump/programming/javaTest/oop_btl/src/main/resources/levels/leveldev69.txt");
@@ -66,9 +67,10 @@ public class Main extends Application {
         }.start();
         gameStage.show();
     }
+
     public void start(Stage stage) {
         if (ViewManager.game == 0) {
-            Resources.soundDataMap.get("stage_theme").stop();
+        Resources.soundDataMap.get("stage_theme").stop();
         ViewManager manager = new ViewManager();
         stage = manager.getMainStage();
         stage.setTitle("Bomberman");

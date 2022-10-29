@@ -30,12 +30,15 @@ public abstract class CollisionComponent {
             Point eVec = e.getVelocity();
 
             // Solving X axis collision
-            double diffX = eBox.getX() % Globals.cellSize;
+            double diffX = Math.round(eBox.getX() % Globals.cellSize);
+            double gridX = Math.floor(eBox.getX() / Globals.cellSize);
             if (diffX > 0 && diffX < e.getSpeed()) {
-                eBox.move(-diffX, 0);
+                //eBox.move(-diffX, 0);
+                eBox.setX(gridX * Globals.cellSize);
             }
             else if (Globals.cellSize - diffX > 0 && Globals.cellSize - diffX < e.getSpeed()) {
-                eBox.move(Globals.cellSize - diffX, 0);
+                //eBox.move(Globals.cellSize - diffX, 0);
+                eBox.setX((gridX + 1) * Globals.cellSize);
             }
             else {
                 eBox.move(eVec.getX(), 0);
@@ -94,12 +97,15 @@ public abstract class CollisionComponent {
             offset.zero();
 
             // Solving Y axis collision
-            double diffY = eBox.getY() % Globals.cellSize;
+            double diffY = Math.round(eBox.getY() % Globals.cellSize);
+            double gridY = Math.floor(eBox.getY() / Globals.cellSize);
             if (diffY > 0 && diffY < e.getSpeed()) {
-                eBox.move(0, -diffY);
+                //eBox.move(0, -diffY);
+                eBox.setY(gridY * Globals.cellSize);
             }
             else if (Globals.cellSize - diffY > 0 && Globals.cellSize - diffY < e.getSpeed()) {
-                eBox.move(0, Globals.cellSize - diffY);
+                //eBox.move(0, Globals.cellSize - diffY);
+                eBox.setY((gridY + 1) *Globals.cellSize);
             }
             else {
                 eBox.move(0, eVec.getY());

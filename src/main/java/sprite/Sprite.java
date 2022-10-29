@@ -53,6 +53,10 @@ public class Sprite {
         this.loop = loop;
     }
 
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
     public void show() {
         visible = true;
     }
