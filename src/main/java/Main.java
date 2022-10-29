@@ -39,7 +39,6 @@ public class Main extends Application {
         //world.createLevelFromFile(devLevel, false);
         world.createLevelFromFile(Resources.getLevel(0), false);
         Resources.soundDataMap.get("title_screen").stop();
-        Resources.soundDataMap.get("stage_theme").setVolume(0.3);
         Resources.soundDataMap.get("stage_theme").play();
         gameStage.setScene(scene);
         gameStage.setTitle("ayy lmao");
@@ -70,6 +69,7 @@ public class Main extends Application {
     }
 
     public void start(Stage stage) {
+        Resources.soundDataMap.get("stage_theme").setVolume(0.3);
         if (ViewManager.game == 0) {
         Resources.soundDataMap.get("stage_theme").stop();
         ViewManager manager = new ViewManager();
