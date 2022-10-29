@@ -77,7 +77,7 @@ public class World {
         pPlayer.addAuxiliaryComponent(onPlayerDied);
         pPlayer.setCollision(CollisionComponent.Dynamic);
         pPlayer.setSprite(new Sprite(Resources.getSprite("player"), gc));
-        pPlayer.setSpeed(3);
+        pPlayer.setSpeed(3.69);
 
         pWall = new Entity(pNull);
         pWall.setCollision(CollisionComponent.Static);
