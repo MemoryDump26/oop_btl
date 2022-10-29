@@ -3,12 +3,10 @@ package sprite;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Sprite {
-    public static Object BrickTile;
     final private GraphicsContext gc;
     private SpriteData data;
-    public static Sprite grass;
 
-    private String currentAnimation = new String();
+    private String currentAnimation;
     private int currentFrame = 0;
     private int tickPerFrame = 4;
     private int ticks = 0;
@@ -33,6 +31,7 @@ public class Sprite {
     }
 
     public GraphicsContext getGc() {return gc;}
+    public SpriteData getData() {return data;}
 
     public void setCurrentAnimation(String name) {
         if (data.animations.containsKey(name)) {
@@ -52,6 +51,10 @@ public class Sprite {
 
     public void setLoop(boolean loop) {
         this.loop = loop;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
     public void show() {
@@ -75,11 +78,11 @@ public class Sprite {
     }
 
     public void render() {
-        render(0, 0, data.w, data.h);
+        render(0, 0, data.getW(), data.getH());
     }
 
     public void render(double x, double y) {
-        render(x, y, data.w, data.h);
+        render(x, y, data.getW(), data.getH());
     }
 
     public void render(double x, double y, double w, double h) {
