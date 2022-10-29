@@ -37,4 +37,9 @@ public class Line {
         double y0 = p.getY();
         return Math.abs((x2 - x1) * (y1 - y0) - (x1 - x0) * (y2 - y1)) / l;
     }
+
+    public void lengthenEnd(double newLength) {
+        double oldLength = getLength();
+        Point newEnd = new Point(end).subtract(start).normalize().multiply(newLength);
+    }
 }

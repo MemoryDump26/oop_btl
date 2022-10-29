@@ -1,8 +1,7 @@
 package world;
 
 import components.EntityComponents;
-import components.ai.AssasinAI;
-import components.ai.KondoriaAI;
+import components.ai.*;
 import components.astar.Node;
 import components.astar.PathFinder;
 import components.attack.BombAttack;
@@ -15,8 +14,6 @@ import components.input.KeyboardInputComponent;
 import components.logic.CommandOnDead;
 import entity.Entity;
 import geometry.Point;
-import components.ai.BalloomAI;
-import components.ai.OnealAI;
 import components.logic.BrickLogic;
 import geometry.Rectangle;
 import javafx.scene.canvas.GraphicsContext;
@@ -53,10 +50,12 @@ public class World {
     private static Entity pOneal;
     private static Entity pKondoria;
     private static Entity pAssasin;
+    private static Entity pLaserGunner;
     private static Entity pPower;
     private static Entity pPortal;
 
     public ArrayList<Node> pathToDraw = new ArrayList<>();
+    public ArrayList<IndieCommand> commandsAfterDraw = new ArrayList<>();
 
     public enum Direction {
         UP,
@@ -112,6 +111,10 @@ public class World {
 
         pAssasin = new Entity(enemyTemplate);
         pAssasin.setSprite(new Sprite(Resources.getSprite("assasin"), gc));
+
+        pLaserGunner = new Entity(enemyTemplate);
+        pLaserGunner.setSpeed(0.5);
+        pLaserGunner.setSprite(new Sprite(Resources.getSprite("minvo"), gc));
 
         pPower = new Entity(pNull);
         pPower.setSprite(new Sprite(Resources.getSprite("power"), gc));
@@ -188,6 +191,11 @@ public class World {
                             Entity assasin = new Entity(spawnAt(row, col), pAssasin);
                             assasin.setInput(new AssasinAI());
                             enemies.add(assasin);
+                            break;
+                        case '5':
+                            Entity laserGunner = new Entity(spawnAt(row, col), pLaserGunner);
+                            laserGunner.setInput(new LaserGunnerAI());
+                            enemies.add(laserGunner);
                             break;
                         case 'x':
                             Component<Entity> portalItem = EntityComponents.SpawnEntityOnDeadComponent(row, col, pPortal, this);
@@ -488,10 +496,15 @@ public class World {
             e.render();
         }
 
-        // debugging
+        for (IndieCommand c : commandsAfterDraw) {
+            c.execute();
+        }
+
+        // astar debugging, can put in command as well :/
         for (Node n : pathToDraw) {
             PathFinder.drawPath(n, gc);
         }
+        commandsAfterDraw.clear();
         pathToDraw.clear();
     }
 }
