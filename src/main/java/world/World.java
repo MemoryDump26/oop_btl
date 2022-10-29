@@ -3,6 +3,7 @@ package world;
 import components.EntityComponents;
 import components.ai.AssasinAI;
 import components.ai.KondoriaAI;
+import components.astar.Node;
 import components.astar.PathFinder;
 import components.attack.BombAttack;
 import components.collision.CollisionComponent;
@@ -55,7 +56,7 @@ public class World {
     private static Entity pPower;
     private static Entity pPortal;
 
-    private static PathFinder pathFinder;
+    public ArrayList<Node> pathToDraw = new ArrayList<>();
 
     public enum Direction {
         UP,
@@ -225,14 +226,21 @@ public class World {
                 System.out.println();
             }
             sc.close();
-            pathFinder = new PathFinder(width, height, this, gc);
         } catch (FileNotFoundException e) {
             System.out.printf("Level file not found!!!\n");
         }
     }
 
-    public PathFinder getPathFinder() {
-        return pathFinder;
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public GraphicsContext getGc() {
+        return gc;
     }
 
     public ArrayList<Entity> getWorldBoundEntities() {
@@ -479,6 +487,11 @@ public class World {
         for (Entity e:players) {
             e.render();
         }
-        pathFinder.drawAllPath();
+
+        // debugging
+        for (Node n : pathToDraw) {
+            PathFinder.drawPath(n, gc);
+        }
+        pathToDraw.clear();
     }
 }

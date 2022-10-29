@@ -30,7 +30,7 @@ public class GhostMovementAI extends Component<Entity> {
         velocityVector = velocityVector.add(accelVector);
         for (Entity b : w.getWorldBoundEntities()) {
             Rectangle pBox = b.getHitBox();
-            if (pBox.intersect(eBox, 0, -1) || pBox.intersect(eBox, 0, +1)) {
+            if (pBox.intersect(eBox, 0, -1) || pBox.intersect(eBox, 0, 1)) {
                 velocityVector.setY(-1 * velocityVector.getY());
                 break;
             }

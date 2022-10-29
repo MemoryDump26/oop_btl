@@ -10,20 +10,20 @@ import java.util.Collections;
 import static javafx.scene.paint.Color.BLACK;
 
 public class PathFinder {
-    private GraphicsContext gc;
-    private ArrayList<Node> testing = new ArrayList<>();
     private int width;
     private int height;
-    private ArrayList<Node> pathToDraw = new ArrayList<>();
     private Node[][] grid;
     private World w;
 
-    public PathFinder(int width, int height, World w, GraphicsContext gc) {
+    public PathFinder(World w) {
+        this(w.getWidth(), w.getHeight(), w);
+    }
+
+    public PathFinder(int width, int height, World w) {
         this.width = width;
         this.height = height;
         this.grid = new Node[height][width];
         this.w = w;
-        this.gc = gc;
 
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
@@ -41,39 +41,59 @@ public class PathFinder {
         }
     }
 
-    public World.Direction getDirection(int rowStart, int colStart, int rowEnd, int colEnd) {
-        Node startNode = grid[rowStart][colStart];
-        Node endNode = getPath(rowStart, colStart, rowEnd, colEnd);
-        if (endNode == null) return World.Direction.NA;
-        drawPath(endNode);
-        Node current = endNode;
+    public Node getStartNode(Node pathEnd) {
+        Node current = pathEnd;
         while (current.parent != null) {
-            if (current.parent.equals(startNode)) break;
             current = current.parent;
+        }
+        return current;
+    }
+
+    public World.Direction getDirection(int rowStart, int colStart, int rowEnd, int colEnd) {
+        Node pathEnd = getPath(rowStart, colStart, rowEnd, colEnd);
+        return getDirection(pathEnd);
+    }
+
+    public World.Direction getDirection(Node pathEnd) {
+        Node endNode = pathEnd;
+        if (endNode == null) return World.Direction.NA;
+
+        Node startNode = getStartNode(pathEnd);
+        int rowStart = startNode.row;
+        int colStart = startNode.col;
+
+        // Get the node next to start node.
+        Node nearest = endNode;
+        while (nearest.parent != null) {
+            if (nearest.parent.equals(startNode)) break;
+            nearest = nearest.parent;
         };
 
-        int cRow = current.row;
-        int cCol = current.col;
+        int nearestRow = nearest.row;
+        int nearestCol = nearest.col;
 
-        if (cRow == rowStart && cCol == colStart) return World.Direction.NA;
-        if (cRow == rowStart) {
-            if (cCol > colStart) return World.Direction.RIGHT;
+        if (nearestRow == rowStart && nearestCol == colStart) return World.Direction.NA;
+        if (nearestRow == rowStart) {
+            if (nearestCol > colStart) return World.Direction.RIGHT;
             else return World.Direction.LEFT;
         }
-        else if (cCol == colStart) {
-            if (cRow > rowStart) return World.Direction.DOWN;
+        else if (nearestCol == colStart) {
+            if (nearestRow > rowStart) return World.Direction.DOWN;
             else return World.Direction.UP;
         }
         return World.Direction.NA;
     }
 
     public Node getPath(int rowStart, int colStart, int rowEnd, int colEnd) {
+        ArrayList<Node> testing = new ArrayList<>();
+
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
                 grid[row][col].resetKeepNeighbor();
                 if (w.isOccupied(row, col, w.getAllStaticEntities())) grid[row][col].obstacle = true;
             }
         }
+
         Node startNode = grid[rowStart][colStart];
         startNode.distance = 0;
         Node endNode = grid[rowEnd][colEnd];
@@ -102,19 +122,12 @@ public class PathFinder {
         return Math.abs(a.row - b.row) + Math.abs(a.col - b.col);
     }
 
-    public void drawPath(Node start) {
-        pathToDraw.add(start);
-    }
-
-    public void drawAllPath() {
+    public static void drawPath(Node start, GraphicsContext gc) {
         double cs = Globals.cellSize;
-        for (Node start : pathToDraw) {
-            while (start != null) {
-                gc.setFill(BLACK);
-                gc.strokeRect(start.col * cs, start.row * cs, cs, cs);
-                start = start.parent;
-            }
+        while (start != null) {
+            gc.setFill(BLACK);
+            gc.strokeRect(start.col * cs, start.row * cs, cs, cs);
+            start = start.parent;
         }
-        pathToDraw.clear();
     }
 }

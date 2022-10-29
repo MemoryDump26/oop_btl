@@ -27,8 +27,8 @@ public class Main extends Application {
         Resources.loadAllSounds();
         world = new World(gc);
         File devLevel = new File("/home/memorydump/programming/javaTest/oop_btl/src/main/resources/levels/leveldev69.txt");
-        world.createLevelFromFile(devLevel, false);
-        //world.createLevelFromFile(Resources.getLevel(0), false);
+        //world.createLevelFromFile(devLevel, false);
+        world.createLevelFromFile(Resources.getLevel(0), false);
     }
 
     public void start(Stage stage) {
