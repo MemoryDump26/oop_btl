@@ -1,8 +1,8 @@
 package geometry;
 
 public class Line {
-    private Point start;
-    private Point end;
+    private Point start = new Point();
+    private Point end = new Point();
 
     public Line() {
     }
@@ -40,6 +40,7 @@ public class Line {
 
     public void lengthenEnd(double newLength) {
         double oldLength = getLength();
-        Point newEnd = new Point(end).subtract(start).normalize().multiply(newLength);
+        Point newEnd = new Point(end).subtract(start).normalize().multiply(newLength).add(start);
+        end = newEnd;
     }
 }
