@@ -79,8 +79,10 @@ public class Point {
     // Vector math (should I change the name from Point to Vector2D hmm..)
     public Point normalize() {
         double length = Math.sqrt(x*x + y*y);
-        this.x /= length;
-        this.y /= length;
+        if (length > 0) {
+            this.x /= length;
+            this.y /= length;
+        }
         return this;
     }
 
