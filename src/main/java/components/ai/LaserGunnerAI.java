@@ -14,6 +14,7 @@ import world.World;
 
 import java.util.ArrayList;
 
+import static javafx.scene.paint.Color.BLACK;
 import static javafx.scene.paint.Color.RED;
 
 public class LaserGunnerAI extends RandomMovementAI {
@@ -88,7 +89,7 @@ public class LaserGunnerAI extends RandomMovementAI {
             laser.lengthenEnd(1920);
             laserDrawCommand = createLaserCommand(laser, Globals.cellSize / 2, w.getGc());
             w.commandsAfterDraw.add(laserDrawCommand);
-            ArrayList<Entity> canDestroy = w.getAllEntities(true, false, true, true);
+            ArrayList<Entity> canDestroy = w.getAllEntities(true, false, false, true);
             canDestroy.remove(e);
             for (Entity m : canDestroy) {
                 Point pM = m.getHitBox().getCenter();
@@ -110,6 +111,8 @@ public class LaserGunnerAI extends RandomMovementAI {
                 gc.setStroke(RED);
                 gc.setLineWidth(width);
                 gc.strokeLine(laser.getStart().getX(), laser.getStart().getY(), laser.getEnd().getX(), laser.getEnd().getY());
+                gc.setLineWidth(1);
+                gc.setStroke(BLACK);
             }
         };
         RemoteCommand<GraphicsContext> drawLaserCommand = new RemoteCommand<>(drawLaser, gc);
