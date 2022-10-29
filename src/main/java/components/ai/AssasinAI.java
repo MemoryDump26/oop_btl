@@ -9,7 +9,6 @@ import world.World;
 
 public class AssasinAI extends RandomMovementAI {
     private PathFinder pf;
-    private boolean hiding = true;
 
     public AssasinAI(boolean incStatic, boolean incObjects, boolean incEnemies, boolean incPlayers) {
         super(incStatic, incObjects, incEnemies, incPlayers);
@@ -30,11 +29,6 @@ public class AssasinAI extends RandomMovementAI {
         if (e.isDead()) return;
         World w = e.getWorld();
 
-        if (!hiding) {
-            super.handle(e);
-            return;
-        }
-
         Point ePos = e.getHitBox().getCenter();
         Entity nearestPlayer = null;
         double minDistance = Double.MAX_VALUE;
@@ -47,6 +41,9 @@ public class AssasinAI extends RandomMovementAI {
                 minDistance = distance;
             }
         }
+
+        if (minDistance > 200) e.getSprite().setVisible(false);
+        else e.getSprite().setVisible(true);
 
         if (nearestPlayer != null) {
             ePos = w.getBoardPosition(e);
@@ -62,9 +59,5 @@ public class AssasinAI extends RandomMovementAI {
                 case NA -> super.handle(e);
             }
         }
-    }
-
-    private void attack(Node start) {
-
     }
 }
