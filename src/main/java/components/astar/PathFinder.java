@@ -10,17 +10,20 @@ import java.util.Collections;
 import static javafx.scene.paint.Color.BLACK;
 
 public class PathFinder {
+    private GraphicsContext gc;
     private ArrayList<Node> testing = new ArrayList<>();
     private int width;
     private int height;
+    private ArrayList<Node> pathToDraw = new ArrayList<>();
     private Node[][] grid;
     private World w;
 
-    public PathFinder(int width, int height, World w) {
+    public PathFinder(int width, int height, World w, GraphicsContext gc) {
         this.width = width;
         this.height = height;
         this.grid = new Node[height][width];
         this.w = w;
+        this.gc = gc;
 
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
@@ -38,11 +41,37 @@ public class PathFinder {
         }
     }
 
+    public World.Direction getDirection(int rowStart, int colStart, int rowEnd, int colEnd) {
+        Node startNode = grid[rowStart][colStart];
+        Node endNode = getPath(rowStart, colStart, rowEnd, colEnd);
+        if (endNode == null) return World.Direction.NA;
+        drawPath(endNode);
+        Node current = endNode;
+        while (current.parent != null) {
+            if (current.parent.equals(startNode)) break;
+            current = current.parent;
+        };
+
+        int cRow = current.row;
+        int cCol = current.col;
+
+        if (cRow == rowStart && cCol == colStart) return World.Direction.NA;
+        if (cRow == rowStart) {
+            if (cCol > colStart) return World.Direction.RIGHT;
+            else return World.Direction.LEFT;
+        }
+        else if (cCol == colStart) {
+            if (cRow > rowStart) return World.Direction.DOWN;
+            else return World.Direction.UP;
+        }
+        return World.Direction.NA;
+    }
+
     public Node getPath(int rowStart, int colStart, int rowEnd, int colEnd) {
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
                 grid[row][col].resetKeepNeighbor();
-                if (w.isOccupied(row, col, w.getAllEntities())) grid[row][col].obstacle = true;
+                if (w.isOccupied(row, col, w.getAllStaticEntities())) grid[row][col].obstacle = true;
             }
         }
         Node startNode = grid[rowStart][colStart];
@@ -65,19 +94,27 @@ public class PathFinder {
             testing.remove(0);
             Collections.sort(testing);
         }
-        return endNode;
+        if (endNode.visited) return endNode;
+        else return null;
     }
 
     public int getHeuristic(Node a, Node b) {
         return Math.abs(a.row - b.row) + Math.abs(a.col - b.col);
     }
 
-    public void drawPath(Node start, GraphicsContext gc) {
+    public void drawPath(Node start) {
+        pathToDraw.add(start);
+    }
+
+    public void drawAllPath() {
         double cs = Globals.cellSize;
-        while (start != null) {
-            gc.setFill(BLACK);
-            gc.strokeRect(start.col * cs, start.row * cs, cs, cs);
-            start = start.parent;
+        for (Node start : pathToDraw) {
+            while (start != null) {
+                gc.setFill(BLACK);
+                gc.strokeRect(start.col * cs, start.row * cs, cs, cs);
+                start = start.parent;
+            }
         }
+        pathToDraw.clear();
     }
 }
