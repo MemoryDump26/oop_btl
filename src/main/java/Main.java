@@ -35,8 +35,6 @@ public class Main extends Application {
 
     public void startGame(Stage gameStage) {
         world = new World(gc);
-        File devLevel = new File("/home/memorydump/programming/javaTest/oop_btl/src/main/resources/levels/leveldev69.txt");
-        //world.createLevelFromFile(devLevel, false);
         world.createLevelFromFile(Resources.getLevel(0), false);
         Resources.soundDataMap.get("title_screen").stop();
         Resources.soundDataMap.get("stage_theme").play();

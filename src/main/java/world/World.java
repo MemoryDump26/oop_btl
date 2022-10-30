@@ -402,7 +402,7 @@ public class World {
         Entity p = new Entity(spawnAt(row, col), pPlayer);
         p.setInput(input);
         p.setAttack(attack);
-        p.setDestructible(false);
+        //p.setDestructible(false);
         players.add(p);
     }
 
