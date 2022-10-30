@@ -51,6 +51,7 @@ public class World {
     private static Entity pKondoria;
     private static Entity pAssasin;
     private static Entity pLaserGunner;
+    private static Entity pProtector;
     private static Entity pPower;
     private static Entity pPortal;
 
@@ -113,8 +114,12 @@ public class World {
         pAssasin.setSprite(new Sprite(Resources.getSprite("assasin"), gc));
 
         pLaserGunner = new Entity(enemyTemplate);
-        pLaserGunner.setSpeed(0.5);
+        pLaserGunner.setSpeed(0.3);
         pLaserGunner.setSprite(new Sprite(Resources.getSprite("minvo"), gc));
+
+        pProtector = new Entity(enemyTemplate);
+        pProtector.setSpeed(0.5);
+        pProtector.setSprite(new Sprite(Resources.getSprite("protector"), gc));
 
         pPower = new Entity(pNull);
         pPower.setSprite(new Sprite(Resources.getSprite("power"), gc));
@@ -196,6 +201,11 @@ public class World {
                             Entity laserGunner = new Entity(spawnAt(row, col), pLaserGunner);
                             laserGunner.setInput(new LaserGunnerAI());
                             enemies.add(laserGunner);
+                            break;
+                        case '6':
+                            Entity protector = new Entity(spawnAt(row, col), pProtector);
+                            protector.setInput(new ProtectorAI());
+                            enemies.add(protector);
                             break;
                         case 'x':
                             Component<Entity> portalItem = EntityComponents.SpawnEntityOnDeadComponent(row, col, pPortal, this);
@@ -392,7 +402,7 @@ public class World {
         Entity p = new Entity(spawnAt(row, col), pPlayer);
         p.setInput(input);
         p.setAttack(attack);
-        p.setDestructible(false);
+        //p.setDestructible(false);
         players.add(p);
     }
 

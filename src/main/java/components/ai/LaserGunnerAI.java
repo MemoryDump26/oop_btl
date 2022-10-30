@@ -68,7 +68,8 @@ public class LaserGunnerAI extends RandomMovementAI {
             }
         }
 
-        if (pLaserGunner.getDistance(pNearestPlayer) < 200) target = pNearestPlayer;
+        if (pNearestPlayer != null && pLaserGunner.getDistance(pNearestPlayer) < 200) target = pNearestPlayer;
+
         if (target == null) {
             super.handle(e);
             return;

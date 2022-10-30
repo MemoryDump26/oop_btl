@@ -7,8 +7,10 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.media.AudioClip;
 import javafx.stage.Stage;
 import resources.Resources;
+
 public class ViewManager {
 
     private static final int WIDTH = 1280;
@@ -18,6 +20,8 @@ public class ViewManager {
     private Scene mainScene;
 
     public static int game = 0;
+
+    public static boolean muted = false;
     private Window tutorial;
 
 
@@ -29,7 +33,7 @@ public class ViewManager {
             mainStage = new Stage();
             mainStage.setScene(mainScene);
             createPlayButtons();
-            createHighScoreButtons();
+            createSoundButtons();
             createHowToPlayButtons();
             createQuitButtons();
             createBackground();
@@ -61,11 +65,29 @@ public class ViewManager {
         });
     }
 
-    public void createHighScoreButtons() {
-        MenuButton button = new MenuButton("Highscore");
+    public void createSoundButtons() {
+        MenuButton button = new MenuButton("Sound");
         button.setLayoutX(500);
         button.setLayoutY(475);
         mainPane.getChildren().add(button);
+        button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if (!muted) {
+                    for (AudioClip audio : Resources.soundDataMap.values()) {
+                        audio.stop();
+                        audio.setVolume(audio.getVolume() - 1);
+                    }
+                    muted = true;
+                } else {
+                    for (AudioClip audio : Resources.soundDataMap.values()) {
+                        audio.setVolume(audio.getVolume() + 1);
+                    }
+                    Resources.soundDataMap.get("title_screen").play();
+                    muted = false;
+                }
+            }
+        });
     }
 
     public void createHowToPlayButtons() {
